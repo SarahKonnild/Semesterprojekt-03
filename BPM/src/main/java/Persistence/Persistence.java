@@ -1,11 +1,11 @@
 package Persistence;
 
-import Domain.Batch;
-import Domain.BeerType;
+import Domain.*;
 import Interfaces.IPersistence;
 import com.mongodb.*;
 import com.mongodb.client.*;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 
 import java.text.DateFormat;
@@ -53,7 +53,7 @@ public class Persistence implements IPersistence {
 
 
     @Override
-    public List<Batch> getBatches() {
+    public ArrayList<Batch> getBatches() {
         //Remove debugger log
         Logger.getLogger("").setLevel(Level.WARNING);
 
@@ -66,6 +66,7 @@ public class Persistence implements IPersistence {
 
             //Read batches from MongoDB
             List<Document> batches = DBBatch.find().into(new ArrayList<Document>());
+            ArrayList<Batch> finalList = new ArrayList<>();
 
             for (Document bat : batches) {
                 int batchId = (Integer.parseInt(bat.get("batchId").toString()));
@@ -98,21 +99,18 @@ public class Persistence implements IPersistence {
                     default:
                         throw new IllegalStateException("Unexpected value: " + beerString);
                 }
-
-                beerType.name();
                 
                 int batchSize = (Integer.parseInt(bat.get("batchSize").toString()));
-                float productionSpeed = (Integer.parseInt(bat.get("productionSpeed").toString()));
-                Batch batch = new Batch(batchId, startTime, beerType, batchSize, productionSpeed);
-                System.out.println("Batches: " +
-                        "id " + batch.getBatchId() +
-                        " Start Time " + batch.getStartTime() +
-                        " Beertype " + batch.getBeerType() +
-                        " Batch Size " +  batch.getBatchSize() +
-                        " Production Speed " + batch.getProductionSpeed());
+                int defects = Integer.parseInt(bat.get("defects").toString());
+                double productionSpeed = (double)Float.parseFloat(bat.get("productionSpeed").toString());
+                double temp = (double)Float.parseFloat(bat.get("temp").toString());
+                double humidity = (double)Float.parseFloat(bat.get("humidity").toString());
+                double vib = (double)Float.parseFloat(bat.get("vibration").toString());
+                String objId = bat.get("_id").toString();
+                Batch batch = new Batch(batchId, startTime, beerType, batchSize, defects, productionSpeed, temp, humidity, vib, objId);
+                finalList.add(batch);
             }
-
-
+            return finalList;
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -120,7 +118,7 @@ public class Persistence implements IPersistence {
     }
 
     @Override
-    public void getProductions() {
+    public List<Production> getProductions() {
         //Remove debugger log
         Logger.getLogger("").setLevel(Level.WARNING);
 
@@ -133,15 +131,22 @@ public class Persistence implements IPersistence {
 
             //Read productions from MongoDB
             List<Document> productions = DBProduction.find().into(new ArrayList<Document>());
+            List<Production> finalList = new ArrayList<>();
 
-            for (Document production : productions) {
-                System.out.println("Productions: " + production.toJson());
+            for (Document prod : productions) {
+                int productionId = Integer.parseInt(prod.get("productionId").toString());
+                Production production = new Production(productionId, getBatches());
+                finalList.add(production);
             }
+            return finalList;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
-
+    
     @Override
-    public void getIngredients() {
+    public List<Ingredient> getIngredients() {
         //Remove debugger log
         Logger.getLogger("").setLevel(Level.WARNING);
 
@@ -154,12 +159,40 @@ public class Persistence implements IPersistence {
 
             //Read ingredients from MongoDB
             List<Document> ingredients = DBIngredients.find().into(new ArrayList<Document>());
-
+            List<Ingredient> finalList = new ArrayList<>();
             for (Document ingredient : ingredients) {
-                System.out.println("Ingredients: " + ingredient.toJson());
+                String ingredientTypeString = ingredient.get("name").toString().toUpperCase();
+                IngredientType ingredientType;
+                switch (ingredientTypeString){
+                    case "BARLEY":
+                        ingredientType = IngredientType.BARLEY;
+                        break;
+                    case "HOPS":
+                        ingredientType = IngredientType.HOPS;
+                        break;
+                    case "MALT":
+                        ingredientType = IngredientType.MALT;
+                        break;
+                    case "WHEAT":
+                        ingredientType = IngredientType.WHEAT;
+                        break;
+                    case "YEAST":
+                        ingredientType = IngredientType.YEAST;
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + ingredientTypeString);
+                }
+                int ingredientId = Integer.parseInt(ingredient.get("ingredientId").toString());
+                double stock = (double)Float.parseFloat(ingredient.get("stock").toString());
+                Ingredient ingredient1 = new Ingredient(ingredientId, ingredientType, stock);
+                finalList.add(ingredient1);
             }
+            return finalList;
 
+        } catch (MongoException e){
+            e.printStackTrace(System.err);
         }
+        return null;
     }
 
     @Override
@@ -174,7 +207,21 @@ public class Persistence implements IPersistence {
 
     @Override
     public void deleteBatch() {
+        Logger.getLogger("").setLevel(Level.WARNING);
 
+        //ConnectionString to MongoDB
+        ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
+
+        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> DBIngredients = database.getCollection("batches");
+
+            DBIngredients.deleteOne(Filters.eq("batchId", 1));
+
+        }
+        catch (MongoException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -182,5 +229,9 @@ public class Persistence implements IPersistence {
 
     }
 
+    @Override
+    public void updateIngredients() {
+
+    }
 }
 

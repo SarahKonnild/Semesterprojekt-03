@@ -1,16 +1,19 @@
 package Interfaces;
 
 import Domain.Batch;
+import Domain.Ingredient;
+import Domain.Production;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface IPersistence {
 
-    public List<Batch> getBatches();
+    public ArrayList<Batch> getBatches();
 
-    public void getProductions();
+    public List<Production> getProductions();
 
-    public void getIngredients();
+    public List<Ingredient> getIngredients();
 
     public void createBatch();
 
@@ -19,4 +22,6 @@ public interface IPersistence {
     public void deleteBatch();
 
     public void deleteProductions();
+
+    public void updateIngredients();
 }

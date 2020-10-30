@@ -16,6 +16,46 @@ public class Batch implements IBatch {
     private double avgTemperature;
     private double avgHumidity;
     private double avgVibration;
+    // to find relation in mongoDB
+    private String objId;
+
+    // to use with objId
+    public Batch(int batchId, Date startTime, BeerType beerType, int batchSize, int defectiveBeers,
+                 double productionSpeed, double avgTemperature, double avgHumidity, double avgVibration, String objId) {
+        this.batchId = batchId;
+        this.startTime = startTime;
+        this.beerType = beerType;
+        this.batchSize = batchSize;
+        this.defectiveBeers = defectiveBeers;
+        this.productionSpeed = productionSpeed;
+        this.avgTemperature = avgTemperature;
+        this.avgHumidity = avgHumidity;
+        this.avgVibration = avgVibration;
+        this.objId = objId;
+    }
+
+    // used to test with objId
+    public String getObjId(){
+        return this.objId;
+    }
+
+    // used to test Persistence
+    @Override
+    public String toString() {
+        return "Batch{" +
+                "batchId=" + batchId +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", beerType=" + beerType +
+                ", batchSize=" + batchSize +
+                ", defectiveBeers=" + defectiveBeers +
+                ", productionSpeed=" + productionSpeed +
+                ", avgTemperature=" + avgTemperature +
+                ", avgHumidity=" + avgHumidity +
+                ", avgVibration=" + avgVibration +
+                ", objId='" + objId + '\'' +
+                "}\n";
+    }
 
     public Batch(int batchId, Date startTime, BeerType beerType, int batchSize, double productionSpeed){
         this.batchId = batchId;
@@ -128,5 +168,6 @@ public class Batch implements IBatch {
     public void setVibration(double vibration) {
         this.avgVibration = vibration;
     }
+
 
 }
