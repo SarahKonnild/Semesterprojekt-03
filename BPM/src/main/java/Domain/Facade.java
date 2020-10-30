@@ -2,15 +2,15 @@ package Domain;
 
 import Interfaces.IFacade;
 import Interfaces.IPersistence;
-import Interfaces.IProduction;
-
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Facade implements IFacade {
 
-    private Facade() {
+    IPersistence persistence;
 
+    private Facade(IPersistence persistence) {
+        this.persistence = persistence;
     }
 
     /**
@@ -24,6 +24,7 @@ public class Facade implements IFacade {
         ArrayList<Batch> batchQueue = new ArrayList<>();
         batchQueue.add(batch);
         Production production = new Production((int) Math.random(), batchQueue);
+        //TODO insert code which saves the production and batch to the database
         //TODO insert code which sends the production(batch) to the machine
         //TODO insert code which creates a thread that listens to the machine, seeing if the production is finished. If finished run stopProduction()
         //TODO insert code which runs the detectMaintenanceStatus()
@@ -37,6 +38,7 @@ public class Facade implements IFacade {
         //OUTSIDE IF
         //TODO insert code which sets the new values to fit the second constructor for batch. Do note that it is a VERY good idea to save the values for
         // humidity, temperature and vibration in an ArrayList here, and then calculate their average and plop them into the constructor
+        //TODO insert code which saves the production and batch to the database
         return false;
     }
 
@@ -54,25 +56,25 @@ public class Facade implements IFacade {
     //region
     @Override
     public boolean saveProductionToDatabase(Production production) {
-        //TODO insert code which sends the production to the persistence as a JSON object (reform the domain object to JSON object)
+        //TODO insert code which invokes the similar method in persistence
         return false;
     }
 
     @Override
     public Production fetchProductionFromDatabase(int productionId) {
-        //TODO insert code which retrieves the production from the persistence as a JSON object (reform the JSON object to domain object)
+        //TODO insert code which invokes the similar method in persistence and returns the Production object
         return null;
     }
 
     @Override
     public Batch fetchBatchFromDatabase(int batchId) {
-        //TODO insert code which retrieves a batch from database with the specified ID
+        //TODO insert code which invokes the similar method in persistence and returns the Batch object
         return null;
     }
 
     @Override
     public ArrayList<Batch> fetchBatchesFromDatabase() {
-        //TODO insert code which retrieves all batches from the database
+        //TODO insert code which invokes the similar method in persistence and returns the ArrayList<Batch>
         return null;
     }
     //endregion
