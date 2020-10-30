@@ -44,4 +44,13 @@ public class Ingredient implements IIngredient {
         this.stock = stock;
     }
 
+
+    @Override
+    public String toString() {
+        return "Ingredient{" +
+                "ingredientId=" + ingredientId +
+                ", ingredientName=" + ingredientName +
+                ", stock=" + stock +
+                '}';
+    }
 }

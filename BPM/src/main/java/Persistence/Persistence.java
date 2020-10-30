@@ -145,6 +145,7 @@ public class Persistence implements IPersistence {
         return null;
     }
 
+    // not finished
     @Override
     public List<Ingredient> getIngredients() {
         //Remove debugger log
@@ -164,14 +165,33 @@ public class Persistence implements IPersistence {
                 String ingredientTypeString = ingredient.get("name").toString().toUpperCase();
                 IngredientType ingredientType;
                 switch (ingredientTypeString){
+                    case "BARLEY":
+                        ingredientType = IngredientType.BARLEY;
+                        break;
+                    case "HOPS":
+                        ingredientType = IngredientType.HOPS;
+                        break;
                     case "MALT":
-
+                        ingredientType = IngredientType.MALT;
+                        break;
+                    case "WHEAT":
+                        ingredientType = IngredientType.WHEAT;
+                        break;
+                    case "YEAST":
+                        ingredientType = IngredientType.YEAST;
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + ingredientTypeString);
                 }
                 int ingredientId = Integer.parseInt(ingredient.get("ingredientId").toString());
-                String objId = ingredient.get("_id").toString();
-                //Ingredient ingredient1 = new Ingredient();
+                double stock = (double)Float.parseFloat(ingredient.get("stock").toString());
+                Ingredient ingredient1 = new Ingredient(ingredientId, ingredientType, stock);
+                finalList.add(ingredient1);
             }
+            return finalList;
 
+        } catch (MongoException e){
+            e.printStackTrace(System.err);
         }
         return null;
     }
