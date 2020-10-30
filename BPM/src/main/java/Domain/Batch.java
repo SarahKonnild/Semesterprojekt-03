@@ -25,7 +25,7 @@ public class Batch implements IBatch {
         this.productionSpeed = productionSpeed;
     }
 
-    public Batch(int batchId, Date startTime, Date endTime, BeerType beerType, int batchSize, int productionSpeed, int defectiveBeers,
+    public Batch(int batchId, Date startTime, Date endTime, BeerType beerType, int batchSize, float productionSpeed, int defectiveBeers,
         double avgTemperature, double avgHumidity, double avgVibration){
         this.batchId = batchId;
         this.startTime = startTime;

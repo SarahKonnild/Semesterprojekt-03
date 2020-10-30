@@ -64,16 +64,45 @@ public class Persistence implements IPersistence {
             //Read batches from MongoDB
             List<Document> batches = DBBatch.find().into(new ArrayList<Document>());
 
-            for (Document batch : batches) {
-                int batchId = (Integer.parseInt(batch.get("batchId").toString()));
-                Date startTime = (Date) batch.get("startTime");
-                BeerType beerType = (BeerType) batch.get("beertype");
-                int batchSize = (Integer.parseInt(batch.get("batchSize").toString()));
-                int productionSpeed = (Integer.parseInt(batch.get("productionSpeed").toString()));
-                Batch batch1 = new Batch(batchId, startTime, beerType, batchSize, productionSpeed);
-                System.out.println("Batches: " + "id " + batch1.getBatchId() +
-                        " Batch Size " +  batch1.getBatchSize() +
-                        " Beertype " + batch1.getBeerType());
+            for (Document bat : batches) {
+                int batchId = (Integer.parseInt(bat.get("batchId").toString()));
+                Date startTime = (Date) bat.get("startTime");
+                String beerString = bat.get("beerType").toString().toUpperCase();
+                BeerType beerType;
+                switch (beerString) {
+                    case "PILSNER":
+                        beerType = BeerType.PILSNER;
+                        break;
+                    case "ALE":
+                        beerType = BeerType.ALE;
+                        break;
+                    case "STOUT":
+                        beerType = BeerType.STOUT;
+                        break;
+                    case "NON-ALCOHOLIC":
+                        beerType = BeerType.NON_ALCOHOLIC;
+                        break;
+                    case "WHEAT":
+                        beerType = BeerType.WHEAT;
+                        break;
+                    case "IPA":
+                        beerType = BeerType.IPA;
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + beerString);
+                }
+
+                beerType.name();
+                
+                int batchSize = (Integer.parseInt(bat.get("batchSize").toString()));
+                float productionSpeed = (Integer.parseInt(bat.get("productionSpeed").toString()));
+                Batch batch = new Batch(batchId, startTime, beerType, batchSize, productionSpeed);
+                System.out.println("Batches: " +
+                        "id " + batch.getBatchId() +
+                        " Start Time " + batch.getStartTime() +
+                        " Beertype " + batch.getBeerType() +
+                        " Batch Size " +  batch.getBatchSize() +
+                        " Production Speed " + batch.getProductionSpeed());
             }
 
 
