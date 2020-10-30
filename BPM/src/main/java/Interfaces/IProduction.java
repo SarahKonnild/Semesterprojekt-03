@@ -8,9 +8,9 @@ import java.util.Date;
 
 public interface IProduction {
 
-    public Batch createBatch(int batchId, Date timestamp, BeerType beerType, int batchSize, double productionSpeed);
-
-    public Batch completeBatch(Batch batch, int defectiveBeers, double temperature, double humidity, double vibration);
+//    public Batch createBatch(int batchId, Date timestamp, BeerType beerType, int batchSize, double productionSpeed);
+//
+//    public Batch completeBatch(Batch batch, int defectiveBeers, double temperature, double humidity, double vibration);
 
     public int getProductionId();
 

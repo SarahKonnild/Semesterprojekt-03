@@ -10,9 +10,9 @@ public interface IBatch {
 
     public void setBatchId(int batchId);
 
-    public Date getTimestamp();
+    public Date getStartTime();
 
-    public void setTimestamp(Date timestamp);
+    public void setStartTime(Date startTime);
 
     public BeerType getBeerType();
 

@@ -3,10 +3,11 @@ package Interfaces;
 import Domain.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public interface IFacade {
 
-    public boolean startProduction(Production production, double speed);
+    public boolean startProduction(int batchId, Date timestamp, BeerType beerType, int batchSize, double productionSpeed);
 
     public boolean stopProduction(Production production);
 
@@ -20,7 +21,7 @@ public interface IFacade {
 
     public ArrayList<Batch> fetchBatchesFromDatabase();
 
-    public Production createProduction(int productionId, ArrayList<Batch> batchQueue);
+//    public Production createProduction();
 
     public double calculateErrorMargin(BeerType beerType, double speed);
 
