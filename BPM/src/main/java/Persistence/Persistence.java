@@ -1,14 +1,15 @@
 package Persistence;
 
+import Domain.Batch;
+import Domain.BeerType;
 import Interfaces.IPersistence;
 import com.mongodb.*;
+import com.mongodb.client.*;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,7 +50,7 @@ public class Persistence implements IPersistence {
 
 
     @Override
-    public void getBatches() {
+    public List<Batch> getBatches() {
         //Remove debugger log
         Logger.getLogger("").setLevel(Level.WARNING);
 
@@ -58,13 +59,26 @@ public class Persistence implements IPersistence {
 
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> DBProduction = database.getCollection("batches");
+            MongoCollection<Document> DBBatch = database.getCollection("batches");
 
-            //Read productions from MongoDB
-            Document production = DBProduction.find().first();
-            System.out.println("Production " + production.toJson());
+            //Read batches from MongoDB
+            List<Document> batches = DBBatch.find().into(new ArrayList<Document>());
+
+            for (Document batch : batches) {
+                int batchId = (Integer.parseInt(batch.get("batchId").toString()));
+                Date startTime = (Date) batch.get("startTime");
+                BeerType beerType = (BeerType) batch.get("beertype");
+                int batchSize = (Integer.parseInt(batch.get("batchSize").toString()));
+                int productionSpeed = (Integer.parseInt(batch.get("productionSpeed").toString()));
+                Batch batch1 = new Batch(batchId, startTime, beerType, batchSize, productionSpeed);
+                System.out.println("Batches: " + "id " + batch1.getBatchId() +
+                        " Batch Size " +  batch1.getBatchSize() +
+                        " Beertype " + batch1.getBeerType());
+            }
+
 
         }
+        return null;
     }
 
     @Override
@@ -77,12 +91,14 @@ public class Persistence implements IPersistence {
 
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> DBBatch = database.getCollection("productions");
+            MongoCollection<Document> DBProduction = database.getCollection("productions");
 
-            //Read batches from MongoDB
-            Document batches = DBBatch.find().first();
-            System.out.println("Batches " + batches.toJson());
+            //Read productions from MongoDB
+            List<Document> productions = DBProduction.find().into(new ArrayList<Document>());
 
+            for (Document production : productions) {
+                System.out.println("Productions: " + production.toJson());
+            }
         }
     }
 
@@ -99,16 +115,34 @@ public class Persistence implements IPersistence {
             MongoCollection<Document> DBIngredients = database.getCollection("ingredients");
 
             //Read ingredients from MongoDB
-            Document ingredients = DBIngredients.find().first();
-            System.out.println("Ingredients " + ingredients.toJson());
+            List<Document> ingredients = DBIngredients.find().into(new ArrayList<Document>());
+
+            for (Document ingredient : ingredients) {
+                System.out.println("Ingredients: " + ingredient.toJson());
+            }
 
         }
     }
 
-    public void main(String[] args) {
-        getBatches();
-        getProductions();
-        getIngredients();
+    @Override
+    public void createBatch() {
+
     }
+
+    @Override
+    public void createProduction() {
+
+    }
+
+    @Override
+    public void deleteBatch() {
+
+    }
+
+    @Override
+    public void deleteProductions() {
+
+    }
+
 }
 
