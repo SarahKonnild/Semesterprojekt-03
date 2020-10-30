@@ -1,6 +1,8 @@
 package Domain;
 
-public class Ingredient {
+import Interfaces.IIngredient;
+
+public class Ingredient implements IIngredient {
 
     private int ingredientId;
     private IngredientType ingredientName;
@@ -12,26 +14,32 @@ public class Ingredient {
         this.stock = stock;
     }
 
+    @Override
     public int getIngredientId() {
         return ingredientId;
     }
 
+    @Override
     public void setIngredientId(int ingredientId) {
         this.ingredientId = ingredientId;
     }
 
+    @Override
     public IngredientType getIngredientName() {
         return ingredientName;
     }
 
+    @Override
     public void setIngredientName(IngredientType ingredientName) {
         this.ingredientName = ingredientName;
     }
 
+    @Override
     public double getStock() {
         return stock;
     }
 
+    @Override
     public void setStock(double stock) {
         this.stock = stock;
     }

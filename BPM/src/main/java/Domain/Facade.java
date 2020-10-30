@@ -1,8 +1,10 @@
 package Domain;
 
+import Interfaces.IFacade;
+
 import java.util.ArrayList;
 
-public class Facade {
+public class Facade implements IFacade {
 
     private Facade(){
 
@@ -12,17 +14,20 @@ public class Facade {
      * OPC UA Functions
      */
     //region
-    private boolean startProduction(Production production, double speed){
+    @Override
+    public boolean startProduction(Production production, double speed){
         //TODO insert code which calls the createProduction() function below, and sends the production(batch) to the machine
         return false;
     }
 
-    private boolean stopProduction(Production production){
+    @Override
+    public boolean stopProduction(Production production){
         //TODO insert code which sends the stop production signal via OPC UA to the machine
         return false;
     }
 
-    private int detectMaintenanceStatus(){
+    @Override
+    public int detectMaintenanceStatus(){
         //TODO insert code which on a thread is subscribed to the maintenance status of the machine
         //TODO insert code which checks if the maintenance status is above a certain value/critical point, to send a warning
         return 0;
@@ -33,22 +38,26 @@ public class Facade {
      * Database communication
      */
     //region
-    private boolean saveProductionToDatabase(Production production){
+    @Override
+    public boolean saveProductionToDatabase(Production production){
         //TODO insert code which sends the production to the persistence as a JSON object (reform the domain object to JSON object)
         return false;
     }
 
-    private Production fetchProductionFromDatabase(int productionId){
+    @Override
+    public Production fetchProductionFromDatabase(int productionId){
         //TODO insert code which retrieves the production from the persistence as a JSON object (reform the JSON object to domain object)
         return null;
     }
 
-    private Batch fetchBatchFromDatabase(int batchId){
+    @Override
+    public Batch fetchBatchFromDatabase(int batchId){
         //TODO insert code which retrieves a batch from database with the specified ID
         return null;
     }
 
-    private ArrayList<Batch> fetchBatchesFromDatabase(){
+    @Override
+    public ArrayList<Batch> fetchBatchesFromDatabase(){
         //TODO insert code which retrieves all batches from the database
         return null;
     }
@@ -58,9 +67,10 @@ public class Facade {
      * Other things....
      */
     //region
-    private boolean createProduction(int productionId, ArrayList<Batch> batchQueue){
-        //TODO insert code which sends the creates a production
-        return false;
+    @Override
+    public Production createProduction(int productionId, ArrayList<Batch> batchQueue){
+        Production production = new Production(productionId, batchQueue);
+        return production;
     }
     //endregion
 
@@ -68,17 +78,20 @@ public class Facade {
      * Optimization calculations
      */
     //region
-    private double calculateErrorMargin(BeerType beerType, double speed){
+    @Override
+    public double calculateErrorMargin(BeerType beerType, double speed){
         //TODO insert formula for optimization calculation
         return 0;
     }
 
-    private double calculateErrorMargin(BeerType beerType, int batchSize){
+    @Override
+    public double calculateErrorMargin(BeerType beerType, int batchSize){
         //TODO insert formula for optimization calculation
         return 0;
     }
 
-    private double calculateOptimalSpeed(BeerType beerType, double errorMargin){
+    @Override
+    public double calculateOptimalSpeed(BeerType beerType, double errorMargin){
         //TODO insert formula for optimization calculation
         return 0;
     }
