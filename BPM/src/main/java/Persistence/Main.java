@@ -18,5 +18,9 @@ public class Main {
 
         List<Production> productionList = persistence.getProductions();
         System.out.println(productionList.get(0).toString());
+        persistence.deleteBatch();
+        List<Production> productionList2 = persistence.getProductions();
+        System.out.println(productionList2.get(0).toString());
+
     }
 }

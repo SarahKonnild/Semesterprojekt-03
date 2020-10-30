@@ -1,12 +1,11 @@
 package Persistence;
 
-import Domain.Batch;
-import Domain.BeerType;
-import Domain.Production;
+import Domain.*;
 import Interfaces.IPersistence;
 import com.mongodb.*;
 import com.mongodb.client.*;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 
 import java.text.DateFormat;
@@ -147,7 +146,7 @@ public class Persistence implements IPersistence {
     }
 
     @Override
-    public void getIngredients() {
+    public List<Ingredient> getIngredients() {
         //Remove debugger log
         Logger.getLogger("").setLevel(Level.WARNING);
 
@@ -160,12 +159,21 @@ public class Persistence implements IPersistence {
 
             //Read ingredients from MongoDB
             List<Document> ingredients = DBIngredients.find().into(new ArrayList<Document>());
-
+            List<Ingredient> finalList = new ArrayList<>();
             for (Document ingredient : ingredients) {
-                System.out.println("Ingredients: " + ingredient.toJson());
+                String ingredientTypeString = ingredient.get("name").toString().toUpperCase();
+                IngredientType ingredientType;
+                switch (ingredientTypeString){
+                    case "MALT":
+
+                }
+                int ingredientId = Integer.parseInt(ingredient.get("ingredientId").toString());
+                String objId = ingredient.get("_id").toString();
+                //Ingredient ingredient1 = new Ingredient();
             }
 
         }
+        return null;
     }
 
     @Override
@@ -180,7 +188,21 @@ public class Persistence implements IPersistence {
 
     @Override
     public void deleteBatch() {
+        Logger.getLogger("").setLevel(Level.WARNING);
 
+        //ConnectionString to MongoDB
+        ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
+
+        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> DBIngredients = database.getCollection("batches");
+
+            DBIngredients.deleteOne(Filters.eq("batchId", 1));
+
+        }
+        catch (MongoException e){
+            e.printStackTrace();
+        }
     }
 
     @Override

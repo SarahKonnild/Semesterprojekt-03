@@ -20,8 +20,6 @@ public class Batch implements IBatch {
     private String objId;
 
     // to use with objId
-
-
     public Batch(int batchId, Date startTime, BeerType beerType, int batchSize, int defectiveBeers,
                  double productionSpeed, double avgTemperature, double avgHumidity, double avgVibration, String objId) {
         this.batchId = batchId;
