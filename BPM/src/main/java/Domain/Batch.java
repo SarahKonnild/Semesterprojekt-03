@@ -56,7 +56,7 @@ public class Batch implements IBatch {
                 ", avgHumidity=" + avgHumidity +
                 ", avgVibration=" + avgVibration +
                 ", objId='" + objId + '\'' +
-                '}';
+                "}\n";
     }
 
     public Batch(int batchId, Date startTime, BeerType beerType, int batchSize, double productionSpeed){

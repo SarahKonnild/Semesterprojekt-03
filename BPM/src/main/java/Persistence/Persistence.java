@@ -54,7 +54,7 @@ public class Persistence implements IPersistence {
 
 
     @Override
-    public List<Batch> getBatches() {
+    public ArrayList<Batch> getBatches() {
         //Remove debugger log
         Logger.getLogger("").setLevel(Level.WARNING);
 
@@ -67,7 +67,7 @@ public class Persistence implements IPersistence {
 
             //Read batches from MongoDB
             List<Document> batches = DBBatch.find().into(new ArrayList<Document>());
-            List<Batch> finalList = new ArrayList<>();
+            ArrayList<Batch> finalList = new ArrayList<>();
 
             for (Document bat : batches) {
                 int batchId = (Integer.parseInt(bat.get("batchId").toString()));
@@ -135,8 +135,8 @@ public class Persistence implements IPersistence {
             List<Production> finalList = new ArrayList<>();
 
             for (Document prod : productions) {
-                
-               Production production = new Production();
+                int productionId = Integer.parseInt(prod.get("productionId").toString());
+                Production production = new Production(productionId, getBatches());
                 finalList.add(production);
             }
             return finalList;

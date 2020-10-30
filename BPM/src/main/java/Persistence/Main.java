@@ -13,7 +13,10 @@ public class Main {
         /*System.out.println(batchList.get(0).toString());
         System.out.println(batchList.get(1).toString());
         List<Production> productions = persistence.getProductions();
-        System.out.println(productions.get(0).toString());*/
-        System.out.println(batchList.get(0).toString());
+        System.out.println(productions.get(0).toString());
+        System.out.println(batchList.get(0).toString());*/
+
+        List<Production> productionList = persistence.getProductions();
+        System.out.println(productionList.get(0).toString());
     }
 }
