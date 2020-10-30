@@ -8,6 +8,9 @@ import com.mongodb.client.*;
 import com.mongodb.client.MongoClient;
 import org.bson.Document;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -66,7 +69,11 @@ public class Persistence implements IPersistence {
 
             for (Document bat : batches) {
                 int batchId = (Integer.parseInt(bat.get("batchId").toString()));
-                Date startTime = (Date) bat.get("startTime");
+
+                DateFormat df = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss");
+                String time = (String) bat.get("timestamp");
+                Date startTime = df.parse(time);
+                
                 String beerString = bat.get("beerType").toString().toUpperCase();
                 BeerType beerType;
                 switch (beerString) {
@@ -106,6 +113,8 @@ public class Persistence implements IPersistence {
             }
 
 
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
         return null;
     }
