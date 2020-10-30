@@ -129,4 +129,9 @@ public class Batch implements IBatch {
         this.avgVibration = vibration;
     }
 
+    @Override
+    public String toString(){
+        return "THIS batchId: " + this.batchId;
+    }
+
 }

@@ -66,6 +66,7 @@ public class Persistence implements IPersistence {
 
             //Read batches from MongoDB
             List<Document> batches = DBBatch.find().into(new ArrayList<Document>());
+            List<Batch> finalList = new ArrayList<>();
 
             for (Document bat : batches) {
                 int batchId = (Integer.parseInt(bat.get("batchId").toString()));
@@ -98,21 +99,13 @@ public class Persistence implements IPersistence {
                     default:
                         throw new IllegalStateException("Unexpected value: " + beerString);
                 }
-
-                beerType.name();
                 
                 int batchSize = (Integer.parseInt(bat.get("batchSize").toString()));
                 float productionSpeed = (Integer.parseInt(bat.get("productionSpeed").toString()));
                 Batch batch = new Batch(batchId, startTime, beerType, batchSize, productionSpeed);
-                System.out.println("Batches: " +
-                        "id " + batch.getBatchId() +
-                        " Start Time " + batch.getStartTime() +
-                        " Beertype " + batch.getBeerType() +
-                        " Batch Size " +  batch.getBatchSize() +
-                        " Production Speed " + batch.getProductionSpeed());
+                finalList.add(batch);
             }
-
-
+            return finalList;
         } catch (ParseException e) {
             e.printStackTrace();
         }
