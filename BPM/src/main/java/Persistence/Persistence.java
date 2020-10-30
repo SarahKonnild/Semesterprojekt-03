@@ -2,6 +2,7 @@ package Persistence;
 
 import Domain.Batch;
 import Domain.BeerType;
+import Domain.Production;
 import Interfaces.IPersistence;
 import com.mongodb.*;
 import com.mongodb.client.*;
@@ -101,8 +102,13 @@ public class Persistence implements IPersistence {
                 }
                 
                 int batchSize = (Integer.parseInt(bat.get("batchSize").toString()));
-                float productionSpeed = (Integer.parseInt(bat.get("productionSpeed").toString()));
-                Batch batch = new Batch(batchId, startTime, beerType, batchSize, productionSpeed);
+                int defects = Integer.parseInt(bat.get("defects").toString());
+                double productionSpeed = (double)Float.parseFloat(bat.get("productionSpeed").toString());
+                double temp = (double)Float.parseFloat(bat.get("temp").toString());
+                double humidity = (double)Float.parseFloat(bat.get("humidity").toString());
+                double vib = (double)Float.parseFloat(bat.get("vibration").toString());
+                String objId = bat.get("_id").toString();
+                Batch batch = new Batch(batchId, startTime, beerType, batchSize, defects, productionSpeed, temp, humidity, vib, objId);
                 finalList.add(batch);
             }
             return finalList;
@@ -113,7 +119,7 @@ public class Persistence implements IPersistence {
     }
 
     @Override
-    public void getProductions() {
+    public List<Production> getProductions() {
         //Remove debugger log
         Logger.getLogger("").setLevel(Level.WARNING);
 
@@ -126,11 +132,18 @@ public class Persistence implements IPersistence {
 
             //Read productions from MongoDB
             List<Document> productions = DBProduction.find().into(new ArrayList<Document>());
+            List<Production> finalList = new ArrayList<>();
 
-            for (Document production : productions) {
-                System.out.println("Productions: " + production.toJson());
+            for (Document prod : productions) {
+                
+               Production production = new Production();
+                finalList.add(production);
             }
+            return finalList;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     @Override

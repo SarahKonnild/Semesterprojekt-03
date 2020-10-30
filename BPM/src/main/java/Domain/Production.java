@@ -50,4 +50,9 @@ public class Production implements IProduction {
     public void setBatchQueue(ArrayList<Batch> batchQueue) {
         this.batchQueue = batchQueue;
     }
+
+    @Override
+    public String toString(){
+        return "Production id: " + this.productionId;
+    }
 }

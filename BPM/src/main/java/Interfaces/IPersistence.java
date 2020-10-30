@@ -1,6 +1,7 @@
 package Interfaces;
 
 import Domain.Batch;
+import Domain.Production;
 
 import java.util.List;
 
@@ -8,7 +9,7 @@ public interface IPersistence {
 
     public List<Batch> getBatches();
 
-    public void getProductions();
+    public List<Production> getProductions();
 
     public void getIngredients();
 
