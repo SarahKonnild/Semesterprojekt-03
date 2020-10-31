@@ -15,7 +15,7 @@ public interface IPersistence {
 
     public List<Ingredient> getIngredients();
 
-    public void createBatch();
+    public void createBatch(Batch batch);
 
     public void createProduction();
 

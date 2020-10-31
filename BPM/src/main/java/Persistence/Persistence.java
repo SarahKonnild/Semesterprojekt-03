@@ -7,6 +7,7 @@ import com.mongodb.client.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -197,8 +198,33 @@ public class Persistence implements IPersistence {
     }
 
     @Override
-    public void createBatch() {
+    public void createBatch(Batch batch) {
+        Logger.getLogger("").setLevel(Level.WARNING);
+        ObjectId objId = new ObjectId();
 
+        Document document = new Document();
+        document.append("batchId", batch.getBatchId());
+        document.append("startTime", batch.getStartTime());
+        document.append("beerType", batch.getBeerType().toString());
+        document.append("batchSize", batch.getBatchSize());
+        document.append("defects", batch.getDefectiveBeers());
+        document.append("productionSpeed", batch.getProductionSpeed());
+        document.append("temp", batch.getTemperature());
+        document.append("humidity", batch.getHumidity());
+        document.append("vibration", batch.getVibration());
+        document.append("_id", objId);
+
+        //ConnectionString to MongoDB
+        ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
+
+        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> DBBatches = database.getCollection("batches");
+            DBBatches.insertOne(document);
+        }
+        catch (MongoException e){
+            e.printStackTrace();
+        }
     }
 
     @Override

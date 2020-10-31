@@ -34,6 +34,19 @@ public class Batch implements IBatch {
         this.objId = objId;
     }
 
+    // used to createBatch() in Persistence
+    public Batch(int batchId, Date startTime, BeerType beerType, int batchSize, int defectiveBeers, double productionSpeed, double avgTemperature, double avgHumidity, double avgVibration) {
+        this.batchId = batchId;
+        this.startTime = startTime;
+        this.beerType = beerType;
+        this.batchSize = batchSize;
+        this.defectiveBeers = defectiveBeers;
+        this.productionSpeed = productionSpeed;
+        this.avgTemperature = avgTemperature;
+        this.avgHumidity = avgHumidity;
+        this.avgVibration = avgVibration;
+    }
+
     // used to test with objId
     public String getObjId(){
         return this.objId;
