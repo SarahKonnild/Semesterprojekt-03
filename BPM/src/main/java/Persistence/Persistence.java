@@ -228,8 +228,25 @@ public class Persistence implements IPersistence {
     }
 
     @Override
-    public void createProduction() {
+    public void createProduction(Production production) {
+        Logger.getLogger("").setLevel(Level.WARNING);
+        ObjectId objId = new ObjectId();
+        Document document = new Document();
+        document.append("productionId", production.getProductionId());
+        document.append("batchQueue", 2);
+        document.append("_id", objId);
 
+        //ConnectionString to MongoDB
+        ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
+
+        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> DBBatches = database.getCollection("productions");
+            DBBatches.insertOne(document);
+        }
+        catch (MongoException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -290,12 +307,20 @@ public class Persistence implements IPersistence {
         /*List<Ingredient> ingredients = persistence.getIngredients();
         System.out.println(ingredients);*/
 
-        persistence.deleteBatch(2);
+        /*persistence.deleteBatch(2);
         persistence.deleteProduction(1);
         Batch batch = new Batch(1, new Date(), BeerType.NON_ALCOHOLIC, 340, 30,
                 260.0, 15.1, 10.0, 2.0);
-        persistence.createBatch(batch);
+        persistence.createBatch(batch);*/
 
+        ArrayList<Batch> batches = new ArrayList<>();
+        Batch batch1 = new Batch(4, new Date(), BeerType.ALE, 230, 20, 100, 10, 12, 1, new ObjectId().toString());
+        Batch batch2 = new Batch(3, new Date(), BeerType.STOUT, 220, 10, 300, 2, 2, 2, new ObjectId().toString());
+
+        batches.add(batch1);
+        batches.add(batch2);
+        Production production = new Production(3, batches);
+        persistence.createProduction(production);
     }
 }
 
