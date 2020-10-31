@@ -7,6 +7,7 @@ import com.mongodb.client.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
+import org.bson.io.BsonOutput;
 import org.bson.types.ObjectId;
 
 import java.text.DateFormat;
@@ -72,9 +73,11 @@ public class Persistence implements IPersistence {
             for (Document bat : batches) {
                 int batchId = (Integer.parseInt(bat.get("batchId").toString()));
 
-                DateFormat df = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss");
+                // works but causes error due to not being able to store similar format easily in mongo
+                /*DateFormat df = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss");
                 String time = (String) bat.get("timestamp");
-                Date startTime = df.parse(time);
+                Date startTime = df.parse(time);*/
+                Date startTime = new Date();
                 
                 String beerString = bat.get("beerType").toString().toUpperCase();
                 BeerType beerType;
@@ -88,7 +91,7 @@ public class Persistence implements IPersistence {
                     case "STOUT":
                         beerType = BeerType.STOUT;
                         break;
-                    case "NON-ALCOHOLIC":
+                    case "NON_ALCOHOLIC":
                         beerType = BeerType.NON_ALCOHOLIC;
                         break;
                     case "WHEAT":
@@ -112,7 +115,7 @@ public class Persistence implements IPersistence {
                 finalList.add(batch);
             }
             return finalList;
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -290,37 +293,88 @@ public class Persistence implements IPersistence {
 
     public static void main(String[] args) {
         Persistence persistence = new Persistence();
-        //List<Batch> batchList = persistence.getBatches();
-        /*System.out.println(batchList.get(0).toString());
-        System.out.println(batchList.get(1).toString());
-        List<Production> productions = persistence.getProductions();
-        System.out.println(productions.get(0).toString());
-        System.out.println(batchList.get(0).toString());*/
 
-
-        /*List<Production> productionList = persistence.getProductions();
-        System.out.println(productionList.get(0).toString());
-        persistence.deleteBatch();
-        List<Production> productionList2 = persistence.getProductions();
-        System.out.println(productionList2.get(0).toString());*/
-
-        /*List<Ingredient> ingredients = persistence.getIngredients();
-        System.out.println(ingredients);*/
-
-        /*persistence.deleteBatch(2);
-        persistence.deleteProduction(1);
+        // createBatch()
+        System.out.println("createBatch()");
         Batch batch = new Batch(1, new Date(), BeerType.NON_ALCOHOLIC, 340, 30,
                 260.0, 15.1, 10.0, 2.0);
-        persistence.createBatch(batch);*/
+        System.out.println("batch to be stored: \n" + batch.toString());
+        persistence.createBatch(batch);
+        System.out.println("\n_____________________________________________________________________");
 
+
+        // createProduction()
+        System.out.println("createProduction():");
         ArrayList<Batch> batches = new ArrayList<>();
-        Batch batch1 = new Batch(4, new Date(), BeerType.ALE, 230, 20, 100, 10, 12, 1, new ObjectId().toString());
+        // create batches to be added to "batches" arraylist
+        Batch batch1 = new Batch(2, new Date(), BeerType.ALE, 230, 20, 100, 10, 12, 1, new ObjectId().toString());
         Batch batch2 = new Batch(3, new Date(), BeerType.STOUT, 220, 10, 300, 2, 2, 2, new ObjectId().toString());
-
+        // put batches in arraylist
         batches.add(batch1);
         batches.add(batch2);
-        Production production = new Production(3, batches);
+        Production production = new Production(1, batches);
+        System.out.println("Production to be stored:\n" + production);
         persistence.createProduction(production);
+        System.out.println("\n_______________________________________________________________________________-");
+
+
+        // getBatches()
+        System.out.println("getBatches():\n");
+        try {
+            List<Batch> batchList = persistence.getBatches();
+            System.out.println(batchList);
+        } catch (NullPointerException e){
+            System.out.println("Nothing to print");
+        }
+        System.out.println("\n________________________________________________________________________________");
+
+
+        // getProductions()
+        List<Production> productionList = persistence.getProductions();
+        System.out.println("getProductions():");
+        System.out.println(productionList);
+        System.out.println("\n_________________________________________________________________________________");
+
+        // getIngredients()
+        List<Ingredient> ingredients = persistence.getIngredients();
+        System.out.println("getIngredients():");
+        System.out.println(ingredients);
+        System.out.println("\n_________________________________________________________________________________");
+
+        // deleteBatch()
+        System.out.println("deleteBatch():");
+        persistence.deleteBatch(1);
+        persistence.deleteBatch(2);
+        persistence.deleteBatch(3);
+        System.out.println("\n_____________________________________________________________________________");
+
+        // deleteProduction()
+        System.out.println("deleteProduction():");
+        persistence.deleteProduction(1);
+        System.out.println("\n_________________________________________________________________________");
+
+        // getBatches()
+        System.out.println("getBatches():\n");
+        try {
+            List<Batch> batchList2 = persistence.getBatches();
+            System.out.println(batchList2);
+        } catch (NullPointerException e){
+            System.out.println("Nothing to print");
+        }
+
+        System.out.println("\n________________________________________________________________________________");
+
+
+        // getProductions()
+        System.out.println("getProductions():");
+        try {
+            List<Production> productionList2 = persistence.getProductions();
+            System.out.println(productionList2);
+        } catch (NullPointerException e){
+            System.out.println("Nothing to print");
+        }
+        System.out.println("\n_________________________________________________________________________________");
+        System.out.println("Finished");
     }
 }
 
