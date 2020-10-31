@@ -207,7 +207,7 @@ public class Persistence implements IPersistence {
     }
 
     @Override
-    public void deleteBatch() {
+    public void deleteBatch(int batchId) {
         Logger.getLogger("").setLevel(Level.WARNING);
 
         //ConnectionString to MongoDB
@@ -215,9 +215,9 @@ public class Persistence implements IPersistence {
 
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> DBIngredients = database.getCollection("batches");
+            MongoCollection<Document> DBBatches = database.getCollection("batches");
 
-            DBIngredients.deleteOne(Filters.eq("batchId", 1));
+            DBBatches.deleteOne(Filters.eq("batchId", batchId));
 
         }
         catch (MongoException e){
@@ -226,9 +226,23 @@ public class Persistence implements IPersistence {
     }
 
     @Override
-    public void deleteProductions() {
+    public void deleteProduction(int productionId) {
+        Logger.getLogger("").setLevel(Level.WARNING);
 
+        //ConnectionString to MongoDB
+        ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
+
+        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> DBProductions = database.getCollection("productions");
+
+            DBProductions.deleteOne(Filters.eq("productionId", productionId));
+
+
+        }
+        catch (MongoException e){
+            e.printStackTrace();
+        }
     }
-
 }
 

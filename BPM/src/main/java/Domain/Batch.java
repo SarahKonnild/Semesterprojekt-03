@@ -39,23 +39,6 @@ public class Batch implements IBatch {
         return this.objId;
     }
 
-    // used to test Persistence
-    @Override
-    public String toString() {
-        return "Batch{" +
-                "batchId=" + batchId +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", beerType=" + beerType +
-                ", batchSize=" + batchSize +
-                ", defectiveBeers=" + defectiveBeers +
-                ", productionSpeed=" + productionSpeed +
-                ", avgTemperature=" + avgTemperature +
-                ", avgHumidity=" + avgHumidity +
-                ", avgVibration=" + avgVibration +
-                ", objId='" + objId + '\'' +
-                "}\n";
-    }
 
     public Batch(int batchId, Date startTime, BeerType beerType, int batchSize, double productionSpeed){
         this.batchId = batchId;
@@ -169,5 +152,22 @@ public class Batch implements IBatch {
         this.avgVibration = vibration;
     }
 
+
+    @Override
+    public String toString() {
+        return "Batch{" +
+                "batchId=" + batchId +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", beerType=" + beerType +
+                ", batchSize=" + batchSize +
+                ", defectiveBeers=" + defectiveBeers +
+                ", productionSpeed=" + productionSpeed +
+                ", avgTemperature=" + avgTemperature +
+                ", avgHumidity=" + avgHumidity +
+                ", avgVibration=" + avgVibration +
+                ", objId='" + objId + '\'' +
+                "}\n";
+    }
 
 }

@@ -19,7 +19,9 @@ public interface IPersistence {
 
     public void createProduction();
 
-    public void deleteBatch();
+    public void deleteBatch(int batchId);
 
-    public void deleteProductions();
+    public void deleteProduction(int productionId);
+
+    //
 }
