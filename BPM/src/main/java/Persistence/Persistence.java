@@ -270,5 +270,32 @@ public class Persistence implements IPersistence {
             e.printStackTrace();
         }
     }
+
+    public static void main(String[] args) {
+        Persistence persistence = new Persistence();
+        //List<Batch> batchList = persistence.getBatches();
+        /*System.out.println(batchList.get(0).toString());
+        System.out.println(batchList.get(1).toString());
+        List<Production> productions = persistence.getProductions();
+        System.out.println(productions.get(0).toString());
+        System.out.println(batchList.get(0).toString());*/
+
+
+        /*List<Production> productionList = persistence.getProductions();
+        System.out.println(productionList.get(0).toString());
+        persistence.deleteBatch();
+        List<Production> productionList2 = persistence.getProductions();
+        System.out.println(productionList2.get(0).toString());*/
+
+        /*List<Ingredient> ingredients = persistence.getIngredients();
+        System.out.println(ingredients);*/
+
+        persistence.deleteBatch(2);
+        persistence.deleteProduction(1);
+        Batch batch = new Batch(1, new Date(), BeerType.NON_ALCOHOLIC, 340, 30,
+                260.0, 15.1, 10.0, 2.0);
+        persistence.createBatch(batch);
+
+    }
 }
 
