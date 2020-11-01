@@ -6,15 +6,11 @@ import com.mongodb.*;
 import com.mongodb.client.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
-import com.mongodb.util.JSON;
 import org.bson.Document;
-import org.bson.io.BsonOutput;
-import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -22,10 +18,9 @@ import java.util.logging.Logger;
 
 public class Persistence implements IPersistence {
     private static Persistence instance;
+    private ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
 
-    public Persistence() {
-        DBConnect();
-    }
+    public Persistence() {}
 
     public static Persistence getInstance() {
         if (instance == null) {
@@ -34,13 +29,14 @@ public class Persistence implements IPersistence {
         return instance;
     }
 
-    public void DBConnect() {
+    // Ask Kasper if this was only for very first test. If not, add DBConnect(); to constructor of this class.
+    /*public void DBConnect() {
         try {
             //Remove debugger log
             Logger.getLogger("").setLevel(Level.WARNING);
 
             //Connection to MongoDB
-            ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
+            // ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
 
             MongoClientSettings settings = MongoClientSettings.builder().applyConnectionString(connectionString).retryWrites(true).build();
 
@@ -52,7 +48,7 @@ public class Persistence implements IPersistence {
         } catch (MongoException exception) {
             exception.printStackTrace(System.err);
         }
-    }
+    }*/
 
 
     // see getProductions for detailed comments on the steps in the method. All steps from this method is also in that one.
@@ -61,15 +57,12 @@ public class Persistence implements IPersistence {
         //Remove debugger log
         Logger.getLogger("").setLevel(Level.WARNING);
 
-        //ConnectionString to MongoDB
-        ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
-
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> DBBatch = database.getCollection("batches");
+            MongoCollection<Document> dBBatch = database.getCollection("batches");
 
             //Read batches from MongoDB
-            List<Document> batches = DBBatch.find().into(new ArrayList<Document>());
+            List<Document> batches = dBBatch.find().into(new ArrayList<Document>());
             ArrayList<Batch> finalList = new ArrayList<>();
 
             for (Document bat : batches) {
@@ -132,16 +125,13 @@ public class Persistence implements IPersistence {
         //Remove debugger log
         Logger.getLogger("").setLevel(Level.WARNING);
 
-        //ConnectionString to MongoDB
-        ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
-
         // read db and collection
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> DBProduction = database.getCollection("productions");
+            MongoCollection<Document> dBProduction = database.getCollection("productions");
 
             // List the collection documents
-            List<Document> productions = DBProduction.find().into(new ArrayList<Document>());
+            List<Document> productions = dBProduction.find().into(new ArrayList<Document>());
             // create list to store the final list to be returned, filled with productions.
             List<Production> finalList = new ArrayList<>();
 
@@ -180,6 +170,7 @@ public class Persistence implements IPersistence {
                     String time2 = jsonObject2.get("endTime").toString();
                     Date endTime = df.parse(time2);
 
+                    // beerType attribute
                     String beerString = jsonObject2.get("beerType").toString().toUpperCase();
                     BeerType beerType;
                     switch (beerString) {
@@ -230,15 +221,12 @@ public class Persistence implements IPersistence {
         //Remove debugger log
         Logger.getLogger("").setLevel(Level.WARNING);
 
-        //ConnectionString to MongoDB
-        ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
-
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> DBIngredients = database.getCollection("ingredients");
+            MongoCollection<Document> dBIngredients = database.getCollection("ingredients");
 
             //Read ingredients from MongoDB
-            List<Document> ingredients = DBIngredients.find().into(new ArrayList<Document>());
+            List<Document> ingredients = dBIngredients.find().into(new ArrayList<Document>());
             List<Ingredient> finalList = new ArrayList<>();
             for (Document ingredient : ingredients) {
                 String ingredientTypeString = ingredient.get("name").toString().toUpperCase();
@@ -290,13 +278,10 @@ public class Persistence implements IPersistence {
                 .append("humidity", batch.getHumidity())
                 .append("vibration", batch.getVibration());
 
-        //ConnectionString to MongoDB
-        ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
-
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> DBBatches = database.getCollection("batches");
-            DBBatches.insertOne(document);
+            MongoCollection<Document> dBBatches = database.getCollection("batches");
+            dBBatches.insertOne(document);
         } catch (MongoException e) {
             e.printStackTrace();
         }
@@ -335,15 +320,12 @@ public class Persistence implements IPersistence {
         finalDoc.append("batchQueue", batDocList);
 
         //ConnectionString to MongoDB cluster
-        ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
-
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            // get the db
             MongoDatabase database = mongoClient.getDatabase("test");
-            // get the collection
-            MongoCollection<Document> DBBatches = database.getCollection("productions");
-            // insert document to the collection
-            DBBatches.insertOne(finalDoc);
+            MongoCollection<Document> dBBatches = database.getCollection("productions");
+
+            // insert document into the collection
+            dBBatches.insertOne(finalDoc);
         } catch (MongoException e) {
             e.printStackTrace();
         }
@@ -354,13 +336,11 @@ public class Persistence implements IPersistence {
         Logger.getLogger("").setLevel(Level.WARNING);
 
         //ConnectionString to MongoDB
-        ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
-
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> DBBatches = database.getCollection("batches");
+            MongoCollection<Document> dBBatches = database.getCollection("batches");
 
-            DBBatches.deleteOne(Filters.eq("batchId", batchId));
+            dBBatches.deleteOne(Filters.eq("batchId", batchId));
 
         } catch (MongoException e) {
             e.printStackTrace();
@@ -371,25 +351,22 @@ public class Persistence implements IPersistence {
     public void deleteProduction(int productionId) {
         Logger.getLogger("").setLevel(Level.WARNING);
 
-        //ConnectionString to MongoDB
-        ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
-
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> DBProductions = database.getCollection("productions");
-            MongoCollection<Document> DBBatches = database.getCollection("batches");
+            MongoCollection<Document> dBProductions = database.getCollection("productions");
+            MongoCollection<Document> dBBatches = database.getCollection("batches");
             List<Production> productions = getProductions();
 
             for (Production prod : productions){
                 if (prod.getProductionId() == productionId) {
                     List<Batch> batches = prod.getBatchQueue();
                     for (Batch batch : batches){
-                        DBBatches.deleteOne(Filters.eq("_id", batch.getBatchId()));
+                        dBBatches.deleteOne(Filters.eq("_id", batch.getBatchId()));
                     }
                 }
 
             }
-            DBProductions.deleteOne(Filters.eq("_id", productionId));
+            dBProductions.deleteOne(Filters.eq("_id", productionId));
         } catch (MongoException e) {
             e.printStackTrace();
         }
@@ -410,18 +387,18 @@ public class Persistence implements IPersistence {
 
 
         // createProduction()
-        /*System.out.println("createProduction():");
+        System.out.println("createProduction():");
         ArrayList<Batch> batches = new ArrayList<>();
         // create batches to be added to "batches" arraylist
-        Batch batch1 = new Batch(3, new Date(), new Date(), BeerType.IPA, 400, 30, 400, 20, 10, 2);
-        Batch batch2 = new Batch(4, new Date(), new Date(), BeerType.STOUT, 500, 200, 90, 15, 1, 0.5);
+        Batch batch1 = new Batch(5, new Date(), new Date(), BeerType.IPA, 400, 30, 400, 20, 10, 2);
+        Batch batch2 = new Batch(6, new Date(), new Date(), BeerType.STOUT, 500, 200, 90, 15, 1, 0.5);
         // put batches in arraylist
         batches.add(batch1);
         batches.add(batch2);
-        Production production = new Production(2, batches);
+        Production production = new Production(3, batches);
         System.out.println("Production to be stored:\n" + production);
         persistence.createProduction(production);
-        System.out.println("\n_______________________________________________________________________________-");*/
+        System.out.println("\n_______________________________________________________________________________-");
 
 
         // getBatches()
@@ -453,9 +430,9 @@ public class Persistence implements IPersistence {
         System.out.println("\n_____________________________________________________________________________");*/
 
         // deleteProduction()
-        System.out.println("deleteProduction():");
+        /*System.out.println("deleteProduction():");
         persistence.deleteProduction(2);
-        System.out.println("\n_________________________________________________________________________");
+        System.out.println("\n_________________________________________________________________________");*/
 
         // getBatches()
         /*System.out.println("getBatches():\n");
