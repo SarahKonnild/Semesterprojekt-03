@@ -17,21 +17,6 @@ public class Batch implements IBatch {
     private double avgHumidity;
     private double avgVibration;
 
-
-    // used to createBatch() in Persistence
-    public Batch(int batchId, Date startTime, BeerType beerType, int batchSize, int defectiveBeers, double productionSpeed, double avgTemperature, double avgHumidity, double avgVibration) {
-        this.batchId = batchId;
-        this.startTime = startTime;
-        this.beerType = beerType;
-        this.batchSize = batchSize;
-        this.defectiveBeers = defectiveBeers;
-        this.productionSpeed = productionSpeed;
-        this.avgTemperature = avgTemperature;
-        this.avgHumidity = avgHumidity;
-        this.avgVibration = avgVibration;
-    }
-
-
     public Batch(int batchId, Date startTime, BeerType beerType, int batchSize, double productionSpeed){
         this.batchId = batchId;
         this.startTime = startTime;
@@ -40,7 +25,7 @@ public class Batch implements IBatch {
         this.productionSpeed = productionSpeed;
     }
 
-    public Batch(int batchId, Date startTime, Date endTime, BeerType beerType, int batchSize, float productionSpeed, int defectiveBeers,
+    public Batch(int batchId, Date startTime, Date endTime, BeerType beerType, int batchSize, double productionSpeed, int defectiveBeers,
         double avgTemperature, double avgHumidity, double avgVibration){
         this.batchId = batchId;
         this.startTime = startTime;
@@ -77,6 +62,14 @@ public class Batch implements IBatch {
     @Override
     public BeerType getBeerType() {
         return beerType;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     @Override

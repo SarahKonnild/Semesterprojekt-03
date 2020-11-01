@@ -16,10 +16,7 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -78,12 +75,17 @@ public class Persistence implements IPersistence {
             for (Document bat : batches) {
                 int batchId = (Integer.parseInt(bat.get("_id").toString()));
 
-                // works but causes error due to not being able to store similar format easily in mongo
-                /*DateFormat df = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss");
-                String time = (String) bat.get("timestamp");
-                Date startTime = df.parse(time);*/
-                Date startTime = new Date();
-                
+                // creates Dateformatter to handle format from mongoDb
+                DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+
+                // startTime attribute
+                String time = (String) bat.get("startTime");
+                Date startTime = df.parse(time);
+
+                // endTime attribute
+                String time2 = bat.get("endTime").toString();
+                Date endTime = df.parse(time2);
+
                 String beerString = bat.get("beerType").toString().toUpperCase();
                 BeerType beerType;
                 switch (beerString) {
@@ -108,14 +110,14 @@ public class Persistence implements IPersistence {
                     default:
                         throw new IllegalStateException("Unexpected value: " + beerString);
                 }
-                
+
                 int batchSize = (Integer.parseInt(bat.get("batchSize").toString()));
                 int defects = Integer.parseInt(bat.get("defects").toString());
-                double productionSpeed = (double)Float.parseFloat(bat.get("productionSpeed").toString());
-                double temp = (double)Float.parseFloat(bat.get("temp").toString());
-                double humidity = (double)Float.parseFloat(bat.get("humidity").toString());
-                double vib = (double)Float.parseFloat(bat.get("vibration").toString());
-                Batch batch = new Batch(batchId, startTime, beerType, batchSize, defects, productionSpeed, temp, humidity, vib);
+                double productionSpeed = (double) Float.parseFloat(bat.get("productionSpeed").toString());
+                double temp = (double) Float.parseFloat(bat.get("temp").toString());
+                double humidity = (double) Float.parseFloat(bat.get("humidity").toString());
+                double vib = (double) Float.parseFloat(bat.get("vibration").toString());
+                Batch batch = new Batch(batchId, startTime, endTime, beerType, batchSize, productionSpeed, defects, temp, humidity, vib);
                 finalList.add(batch);
             }
             return finalList;
@@ -155,7 +157,7 @@ public class Persistence implements IPersistence {
                 ArrayList<JSONObject> bqList = new ArrayList<>();
 
                 // creates the JSONObjects to be stored in bqList
-                for (int i = 0; i<jsonArray.length(); i++){
+                for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                     bqList.add(jsonObject1);
                 }
@@ -164,15 +166,19 @@ public class Persistence implements IPersistence {
                 ArrayList<Batch> batchList = new ArrayList<>();
 
                 // creates the Batch objects to be put in batchList by reading every attribute from mongo, and assigning them to java attributes.
-                for (JSONObject jsonObject2 : bqList){
+                for (JSONObject jsonObject2 : bqList) {
                     int batchId = (Integer.parseInt(jsonObject2.get("_id").toString()));
 
-                    // works but causes error due to not being able to store similar format easily in mongo
-                    /*DateFormat df = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss");
-                    String time = (String) jsonObject2.get("timestamp");
-                    Date startTime = df.parse(time);*/
-                    Date startTime = new Date();
+                    // creates Dateformatter to handle format from mongoDb
+                    DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
 
+                    // startTime attribute
+                    String time = (String) jsonObject2.get("startTime");
+                    Date startTime = df.parse(time);
+
+                    // endTime attribute
+                    String time2 = jsonObject2.get("endTime").toString();
+                    Date endTime = df.parse(time2);
 
                     String beerString = jsonObject2.get("beerType").toString().toUpperCase();
                     BeerType beerType;
@@ -201,11 +207,11 @@ public class Persistence implements IPersistence {
 
                     int batchSize = (Integer.parseInt(jsonObject2.get("batchSize").toString()));
                     int defects = Integer.parseInt(jsonObject2.get("defects").toString());
-                    double productionSpeed = (double)Float.parseFloat(jsonObject2.get("productionSpeed").toString());
-                    double temp = (double)Float.parseFloat(jsonObject2.get("temp").toString());
-                    double humidity = (double)Float.parseFloat(jsonObject2.get("humidity").toString());
-                    double vib = (double)Float.parseFloat(jsonObject2.get("vibration").toString());
-                    Batch batch = new Batch(batchId, startTime, beerType, batchSize, defects, productionSpeed, temp, humidity, vib);
+                    double productionSpeed = (double) Float.parseFloat(jsonObject2.get("productionSpeed").toString());
+                    double temp = (double) Float.parseFloat(jsonObject2.get("temp").toString());
+                    double humidity = (double) Float.parseFloat(jsonObject2.get("humidity").toString());
+                    double vib = (double) Float.parseFloat(jsonObject2.get("vibration").toString());
+                    Batch batch = new Batch(batchId, startTime, endTime, beerType, batchSize, productionSpeed, defects, temp, humidity, vib);
                     batchList.add(batch);
                 }
                 Production production = new Production(productionId, batchList);
@@ -237,7 +243,7 @@ public class Persistence implements IPersistence {
             for (Document ingredient : ingredients) {
                 String ingredientTypeString = ingredient.get("name").toString().toUpperCase();
                 IngredientType ingredientType;
-                switch (ingredientTypeString){
+                switch (ingredientTypeString) {
                     case "BARLEY":
                         ingredientType = IngredientType.BARLEY;
                         break;
@@ -257,13 +263,13 @@ public class Persistence implements IPersistence {
                         throw new IllegalStateException("Unexpected value: " + ingredientTypeString);
                 }
                 int ingredientId = Integer.parseInt(ingredient.get("ingredientId").toString());
-                double stock = (double)Float.parseFloat(ingredient.get("stock").toString());
+                double stock = (double) Float.parseFloat(ingredient.get("stock").toString());
                 Ingredient ingredient1 = new Ingredient(ingredientId, ingredientType, stock);
                 finalList.add(ingredient1);
             }
             return finalList;
 
-        } catch (MongoException e){
+        } catch (MongoException e) {
             e.printStackTrace(System.err);
         }
         return null;
@@ -273,15 +279,16 @@ public class Persistence implements IPersistence {
     public void createBatch(Batch batch) {
         Logger.getLogger("").setLevel(Level.WARNING);
         Document document = new Document();
-        document.append("_id", batch.getBatchId());
-        document.append("startTime", batch.getStartTime());
-        document.append("beerType", batch.getBeerType().toString());
-        document.append("batchSize", batch.getBatchSize());
-        document.append("defects", batch.getDefectiveBeers());
-        document.append("productionSpeed", batch.getProductionSpeed());
-        document.append("temp", batch.getTemperature());
-        document.append("humidity", batch.getHumidity());
-        document.append("vibration", batch.getVibration());
+        document.append("_id", batch.getBatchId())
+                .append("startTime", batch.getStartTime())
+                .append("endTime", batch.getEndTime())
+                .append("beerType", batch.getBeerType().toString())
+                .append("batchSize", batch.getBatchSize())
+                .append("defects", batch.getDefectiveBeers())
+                .append("productionSpeed", batch.getProductionSpeed())
+                .append("temp", batch.getTemperature())
+                .append("humidity", batch.getHumidity())
+                .append("vibration", batch.getVibration());
 
         //ConnectionString to MongoDB
         ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
@@ -290,8 +297,7 @@ public class Persistence implements IPersistence {
             MongoDatabase database = mongoClient.getDatabase("test");
             MongoCollection<Document> DBBatches = database.getCollection("batches");
             DBBatches.insertOne(document);
-        }
-        catch (MongoException e){
+        } catch (MongoException e) {
             e.printStackTrace();
         }
     }
@@ -299,32 +305,41 @@ public class Persistence implements IPersistence {
     @Override
     public void createProduction(Production production) {
         Logger.getLogger("").setLevel(Level.WARNING);
-        ObjectId objId = new ObjectId();
+        // creates document to store
         Document finalDoc = new Document();
+
+        // creates List of Documents to embed in finalDoc as batchQueue
         ArrayList<Document> batDocList = new ArrayList<>();
-        for (Batch batch : production.getBatchQueue()){
+
+        // creates the embedded documents and adds them to batDocList
+        for (Batch batch : production.getBatchQueue()) {
             batDocList.add(new Document().append("_id", batch.getBatchId())
                     .append("startTime", batch.getStartTime().toString())
-            .append("beerType", batch.getBeerType().toString())
-            .append("batchSize", batch.getBatchSize())
-            .append("defects", batch.getDefectiveBeers())
-            .append("productionSpeed", batch.getProductionSpeed())
-            .append("temp", batch.getTemperature())
-            .append("humidity", batch.getHumidity())
-            .append("vibration", batch.getVibration()));
+                    .append("endTime", batch.getEndTime())
+                    .append("beerType", batch.getBeerType().toString())
+                    .append("batchSize", batch.getBatchSize())
+                    .append("defects", batch.getDefectiveBeers())
+                    .append("productionSpeed", batch.getProductionSpeed())
+                    .append("temp", batch.getTemperature())
+                    .append("humidity", batch.getHumidity())
+                    .append("vibration", batch.getVibration()));
         }
+        // append productionId to finalDoc
         finalDoc.append("_id", production.getProductionId());
+        // append batchQueue to finalDoc
         finalDoc.append("batchQueue", batDocList);
 
-        //ConnectionString to MongoDB
+        //ConnectionString to MongoDB cluster
         ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
 
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
+            // get the db
             MongoDatabase database = mongoClient.getDatabase("test");
+            // get the collection
             MongoCollection<Document> DBBatches = database.getCollection("productions");
+            // insert document to the collection
             DBBatches.insertOne(finalDoc);
-        }
-        catch (MongoException e){
+        } catch (MongoException e) {
             e.printStackTrace();
         }
     }
@@ -342,8 +357,7 @@ public class Persistence implements IPersistence {
 
             DBBatches.deleteOne(Filters.eq("batchId", batchId));
 
-        }
-        catch (MongoException e){
+        } catch (MongoException e) {
             e.printStackTrace();
         }
     }
@@ -362,8 +376,7 @@ public class Persistence implements IPersistence {
             DBProductions.deleteOne(Filters.eq("productionId", productionId));
 
 
-        }
-        catch (MongoException e){
+        } catch (MongoException e) {
             e.printStackTrace();
         }
     }
@@ -383,18 +396,18 @@ public class Persistence implements IPersistence {
 
 
         // createProduction()
-        /*System.out.println("createProduction():");
+        System.out.println("createProduction():");
         ArrayList<Batch> batches = new ArrayList<>();
         // create batches to be added to "batches" arraylist
-        Batch batch1 = new Batch(8, new Date(), BeerType.PILSNER, 1000, 200, 400, 18, 10, 3);
-        Batch batch2 = new Batch(6, new Date(), BeerType.WHEAT, 500, 0, 90, 15, 1, 0.5);
+        Batch batch1 = new Batch(1, new Date(), new Date(), BeerType.PILSNER, 400, 30, 400, 20, 10, 2);
+        Batch batch2 = new Batch(2, new Date(), new Date(), BeerType.NON_ALCOHOLIC, 500, 0, 90, 15, 1, 0.5);
         // put batches in arraylist
         batches.add(batch1);
         batches.add(batch2);
-        Production production = new Production(3, batches);
+        Production production = new Production(1, batches);
         System.out.println("Production to be stored:\n" + production);
         persistence.createProduction(production);
-        System.out.println("\n_______________________________________________________________________________-");*/
+        System.out.println("\n_______________________________________________________________________________-");
 
 
         // getBatches()
@@ -411,9 +424,7 @@ public class Persistence implements IPersistence {
         // getProductions()
         List<Production> productionList = persistence.getProductions();
         System.out.println("getProductions():");
-        Production production = productionList.get(0);
-        System.out.println(production);
-        // System.out.println(productionList);
+        System.out.println(productionList);
         System.out.println("\n_________________________________________________________________________________");
 
         // getIngredients()
