@@ -311,6 +311,11 @@ public class Persistence implements IPersistence {
         // creates List of Documents to embed in finalDoc as batchQueue
         ArrayList<Document> batDocList = new ArrayList<>();
 
+        // stores a document for each batch in "batches" collection, if need to be able to search through batches.
+        for (Batch batch : production.getBatchQueue()){
+            createBatch(batch);
+        }
+
         // creates the embedded documents and adds them to batDocList
         for (Batch batch : production.getBatchQueue()) {
             batDocList.add(new Document().append("_id", batch.getBatchId())
