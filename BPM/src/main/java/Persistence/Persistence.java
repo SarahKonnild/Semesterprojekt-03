@@ -377,10 +377,19 @@ public class Persistence implements IPersistence {
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
             MongoCollection<Document> DBProductions = database.getCollection("productions");
+            MongoCollection<Document> DBBatches = database.getCollection("batches");
+            List<Production> productions = getProductions();
 
-            DBProductions.deleteOne(Filters.eq("productionId", productionId));
+            for (Production prod : productions){
+                if (prod.getProductionId() == productionId) {
+                    List<Batch> batches = prod.getBatchQueue();
+                    for (Batch batch : batches){
+                        DBBatches.deleteOne(Filters.eq("_id", batch.getBatchId()));
+                    }
+                }
 
-
+            }
+            DBProductions.deleteOne(Filters.eq("_id", productionId));
         } catch (MongoException e) {
             e.printStackTrace();
         }
@@ -401,18 +410,18 @@ public class Persistence implements IPersistence {
 
 
         // createProduction()
-        System.out.println("createProduction():");
+        /*System.out.println("createProduction():");
         ArrayList<Batch> batches = new ArrayList<>();
         // create batches to be added to "batches" arraylist
-        Batch batch1 = new Batch(1, new Date(), new Date(), BeerType.PILSNER, 400, 30, 400, 20, 10, 2);
-        Batch batch2 = new Batch(2, new Date(), new Date(), BeerType.NON_ALCOHOLIC, 500, 0, 90, 15, 1, 0.5);
+        Batch batch1 = new Batch(3, new Date(), new Date(), BeerType.IPA, 400, 30, 400, 20, 10, 2);
+        Batch batch2 = new Batch(4, new Date(), new Date(), BeerType.STOUT, 500, 200, 90, 15, 1, 0.5);
         // put batches in arraylist
         batches.add(batch1);
         batches.add(batch2);
-        Production production = new Production(1, batches);
+        Production production = new Production(2, batches);
         System.out.println("Production to be stored:\n" + production);
         persistence.createProduction(production);
-        System.out.println("\n_______________________________________________________________________________-");
+        System.out.println("\n_______________________________________________________________________________-");*/
 
 
         // getBatches()
@@ -427,10 +436,10 @@ public class Persistence implements IPersistence {
 
 
         // getProductions()
-        List<Production> productionList = persistence.getProductions();
+        /*List<Production> productionList = persistence.getProductions();
         System.out.println("getProductions():");
         System.out.println(productionList);
-        System.out.println("\n_________________________________________________________________________________");
+        System.out.println("\n_________________________________________________________________________________");*/
 
         // getIngredients()
         /*List<Ingredient> ingredients = persistence.getIngredients();
@@ -441,15 +450,15 @@ public class Persistence implements IPersistence {
         // deleteBatch()
         /*System.out.println("deleteBatch():");
         persistence.deleteBatch(1);
-        System.out.println("\n_____________________________________________________________________________");
+        System.out.println("\n_____________________________________________________________________________");*/
 
         // deleteProduction()
         System.out.println("deleteProduction():");
-        persistence.deleteProduction(1);
+        persistence.deleteProduction(2);
         System.out.println("\n_________________________________________________________________________");
 
         // getBatches()
-        System.out.println("getBatches():\n");
+        /*System.out.println("getBatches():\n");
         try {
             List<Batch> batchList2 = persistence.getBatches();
             System.out.println(batchList2);
@@ -457,19 +466,19 @@ public class Persistence implements IPersistence {
             System.out.println("Nothing to print");
         }
 
-        System.out.println("\n________________________________________________________________________________");
+        System.out.println("\n________________________________________________________________________________");*/
 
 
         // getProductions()
-        System.out.println("getProductions():");
+        /*System.out.println("getProductions():");
         try {
             List<Production> productionList2 = persistence.getProductions();
             System.out.println(productionList2);
         } catch (NullPointerException e){
             System.out.println("Nothing to print");
         }
-        System.out.println("\n_________________________________________________________________________________");*/
-        System.out.println("Finished");
+        System.out.println("\n_________________________________________________________________________________");
+        System.out.println("Finished");*/
     }
 }
 
