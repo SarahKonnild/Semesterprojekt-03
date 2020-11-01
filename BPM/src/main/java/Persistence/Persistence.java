@@ -280,8 +280,8 @@ public class Persistence implements IPersistence {
         Logger.getLogger("").setLevel(Level.WARNING);
         Document document = new Document();
         document.append("_id", batch.getBatchId())
-                .append("startTime", batch.getStartTime())
-                .append("endTime", batch.getEndTime())
+                .append("startTime", batch.getStartTime().toString())
+                .append("endTime", batch.getEndTime().toString())
                 .append("beerType", batch.getBeerType().toString())
                 .append("batchSize", batch.getBatchSize())
                 .append("defects", batch.getDefectiveBeers())
@@ -315,7 +315,7 @@ public class Persistence implements IPersistence {
         for (Batch batch : production.getBatchQueue()) {
             batDocList.add(new Document().append("_id", batch.getBatchId())
                     .append("startTime", batch.getStartTime().toString())
-                    .append("endTime", batch.getEndTime())
+                    .append("endTime", batch.getEndTime().toString())
                     .append("beerType", batch.getBeerType().toString())
                     .append("batchSize", batch.getBatchSize())
                     .append("defects", batch.getDefectiveBeers())
