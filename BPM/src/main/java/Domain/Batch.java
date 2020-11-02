@@ -17,6 +17,18 @@ public class Batch implements IBatch {
     private double avgHumidity;
     private double avgVibration;
 
+    public Batch(Date startTime, Date endTime, BeerType beerType, int batchSize, int defectiveBeers, double productionSpeed, double avgTemperature, double avgHumidity, double avgVibration) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.beerType = beerType;
+        this.batchSize = batchSize;
+        this.defectiveBeers = defectiveBeers;
+        this.productionSpeed = productionSpeed;
+        this.avgTemperature = avgTemperature;
+        this.avgHumidity = avgHumidity;
+        this.avgVibration = avgVibration;
+    }
+
     public Batch(int batchId, Date startTime, BeerType beerType, int batchSize, double productionSpeed){
         this.batchId = batchId;
         this.startTime = startTime;
@@ -62,6 +74,14 @@ public class Batch implements IBatch {
     @Override
     public BeerType getBeerType() {
         return beerType;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     @Override
@@ -127,6 +147,23 @@ public class Batch implements IBatch {
     @Override
     public void setVibration(double vibration) {
         this.avgVibration = vibration;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Batch{" +
+                "batchId=" + batchId +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", beerType=" + beerType +
+                ", batchSize=" + batchSize +
+                ", defectiveBeers=" + defectiveBeers +
+                ", productionSpeed=" + productionSpeed +
+                ", avgTemperature=" + avgTemperature +
+                ", avgHumidity=" + avgHumidity +
+                ", avgVibration=" + avgVibration +
+                "}\n";
     }
 
 }

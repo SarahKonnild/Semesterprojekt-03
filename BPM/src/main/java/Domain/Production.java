@@ -4,6 +4,7 @@ import Interfaces.IProduction;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Production implements IProduction {
 
@@ -19,7 +20,11 @@ public class Production implements IProduction {
         this.batchQueue = batchQueue;
     }
 
-//    @Override
+    public Production(ArrayList<Batch> batchQueue) {
+        this.batchQueue = batchQueue;
+    }
+
+    //    @Override
 //    public Batch createBatch(int batchId, Date timestamp, BeerType beerType, int batchSize, double productionSpeed){
 //        Batch batch = new Batch(batchId, timestamp, beerType, batchSize, productionSpeed);
 //        return batch;
@@ -49,5 +54,15 @@ public class Production implements IProduction {
     @Override
     public void setBatchQueue(ArrayList<Batch> batchQueue) {
         this.batchQueue = batchQueue;
+    }
+
+
+
+    @Override
+    public String toString() {
+        return "Production{\n" +
+                "productionId=" + productionId +
+                ",\nbatchQueue=\n" + batchQueue +
+                "\n}";
     }
 }
