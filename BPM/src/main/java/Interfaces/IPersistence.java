@@ -3,14 +3,6 @@ package Interfaces;
 import Domain.Batch;
 import Domain.Ingredient;
 import Domain.Production;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import Domain.Batch;
-import Domain.Ingredient;
-import Domain.Production;
-
 import java.util.ArrayList;
 
 public interface IPersistence {
