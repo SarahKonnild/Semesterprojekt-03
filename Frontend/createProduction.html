@@ -10,6 +10,84 @@
     <p>This page demonstrates using React with no build tooling.</p>
     <p>React is loaded as a script tag.</p>
 
+    <script> function computeResult(){
+      console.log(beerType.value);
+    }
+
+    let speed = 0;
+    let batchSize = 0;
+    let errorMargin = 0;
+  </script>
+
+    <form action="">
+    <label for="beerType">Beer type:</label>
+
+    <select name="Beer Type" id="beerType">
+      <option value="Pilsner">Pilsner</option>
+      <option value="Ale">Ale</option>
+      <option value="Stout">Stout</option>
+      <option value="Non Alchohol">Non Alcohol</option>
+      <option value="Wheat">Wheat</option>
+      <option value="IPA">IPA</option>
+    </select>
+
+<br/>
+<label for="speed">Production speed:</label>    
+<input type="text" value="0" onchange="speed=parseInt(this.value);"/>
+
+<br/>
+<label for="batchSize">Batch size:</label>    
+<input type="text" value="0" onchange="batchSize=parseInt(this.value);"/>
+
+<br/>
+<label for="errorMargin">Error margin:</label>    
+<input type="text" value="0" onchange="errorMargin=parseInt(this.value);"/>
+    
+<br/>
+<input type="button" value="Simulate"onclick="computeResult();"/>    
+</form>
+  
+
+    <canvas id="myChart"></canvas>
+
+    <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
+
+    <script>
+      var ctx = document.getElementById('myChart').getContext('2d');
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        labels: ['100', '200', '300', '400', '500', '600', '700'],
+        datasets: [{
+            label: 'BPM Optimization',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: [0, 10, 400, 2, 20, 30, 45],
+            
+
+        }]
+    },
+
+    // Configuration options go here
+    options: {
+      scales:
+      {
+        yAxes: [{
+          scaleLabel:{display:true, labelString:'Defective'}
+        }],
+        xAxes: [{
+          scaleLabel:{display:true, labelString:'Speed'}
+        }]
+      }
+    }
+}); 
+
+    </script>
+
+
     <!-- We will put our React component inside this div. -->
     <div id="like_button_container"></div>
         
