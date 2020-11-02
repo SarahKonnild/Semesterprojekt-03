@@ -7,11 +7,8 @@ import com.mongodb.client.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import javax.print.Doc;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,8 +16,11 @@ import java.util.logging.Logger;
 public class Persistence implements IPersistence {
     private static Persistence instance;
     private ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
+    MongoDatabase database;
+    MongoCollection<Document> collection;
 
-    public Persistence() {}
+    public Persistence() {
+    }
 
     public static Persistence getInstance() {
         if (instance == null) {
@@ -29,7 +29,7 @@ public class Persistence implements IPersistence {
         return instance;
     }
 
-    // Ask Kasper if this was only for very first test. If not, add DBConnect(); to constructor of this class.
+    // Used for first test of connection to db.
     /*public void DBConnect() {
         try {
             //Remove debugger log
@@ -50,69 +50,31 @@ public class Persistence implements IPersistence {
         }
     }*/
 
+    @Override
+    public Batch getBatch(int bId) {
+        Logger.getLogger("").setLevel(Level.WARNING);
+        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
+            database = mongoClient.getDatabase("test");
+            collection = database.getCollection("batches");
+            ArrayList<Document> batches = collection.find(Filters.eq("_id", bId)).into(new ArrayList<Document>());
+            ArrayList<Batch> finalList = JsonToBatchesConverter.docsToBatches(batches);
+            return finalList.get(0);
+        } catch (MongoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     // see getProductions for detailed comments on the steps in the method. All steps from this method is also in that one.
     @Override
     public ArrayList<Batch> getBatches() {
-        //Remove debugger log
         Logger.getLogger("").setLevel(Level.WARNING);
-
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> dBBatch = database.getCollection("batches");
-
-            //Read batches from MongoDB
-            List<Document> batches = dBBatch.find().into(new ArrayList<Document>());
-            ArrayList<Batch> finalList = new ArrayList<>();
-
-            for (Document bat : batches) {
-                int batchId = (Integer.parseInt(bat.get("_id").toString()));
-
-                // creates Dateformatter to handle format from mongoDb
-                DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
-
-                // startTime attribute
-                String time = (String) bat.get("startTime");
-                Date startTime = df.parse(time);
-
-                // endTime attribute
-                String time2 = bat.get("endTime").toString();
-                Date endTime = df.parse(time2);
-
-                String beerString = bat.get("beerType").toString().toUpperCase();
-                BeerType beerType;
-                switch (beerString) {
-                    case "PILSNER":
-                        beerType = BeerType.PILSNER;
-                        break;
-                    case "ALE":
-                        beerType = BeerType.ALE;
-                        break;
-                    case "STOUT":
-                        beerType = BeerType.STOUT;
-                        break;
-                    case "NON_ALCOHOLIC":
-                        beerType = BeerType.NON_ALCOHOLIC;
-                        break;
-                    case "WHEAT":
-                        beerType = BeerType.WHEAT;
-                        break;
-                    case "IPA":
-                        beerType = BeerType.IPA;
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + beerString);
-                }
-
-                int batchSize = (Integer.parseInt(bat.get("batchSize").toString()));
-                int defects = Integer.parseInt(bat.get("defects").toString());
-                double productionSpeed = (double) Float.parseFloat(bat.get("productionSpeed").toString());
-                double temp = (double) Float.parseFloat(bat.get("temp").toString());
-                double humidity = (double) Float.parseFloat(bat.get("humidity").toString());
-                double vib = (double) Float.parseFloat(bat.get("vibration").toString());
-                Batch batch = new Batch(batchId, startTime, endTime, beerType, batchSize, productionSpeed, defects, temp, humidity, vib);
-                finalList.add(batch);
-            }
+            database = mongoClient.getDatabase("test");
+            collection = database.getCollection("batches");
+            ArrayList<Document> batches = collection.find().into(new ArrayList<Document>());
+            ArrayList<Batch> finalList = JsonToBatchesConverter.docsToBatches(batches);
             return finalList;
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,93 +83,33 @@ public class Persistence implements IPersistence {
     }
 
     @Override
-    public List<Production> getProductions() {
-        //Remove debugger log
+    public Production getProduction(int productionId){
         Logger.getLogger("").setLevel(Level.WARNING);
+        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
+            database = mongoClient.getDatabase("test");
+            collection = database.getCollection("productions");
+            ArrayList<Document> productionDocs = collection.find(Filters.eq("_id", productionId)).into(new ArrayList<Document>());
+            ArrayList<Production> productions = JsonToProductionsConverter.docsToProductions(productionDocs);
+            return productions.get(0);
 
+        } catch (MongoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public ArrayList<Production> getProductions() {
+        Logger.getLogger("").setLevel(Level.WARNING);
         // read db and collection
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> dBProduction = database.getCollection("productions");
+            database = mongoClient.getDatabase("test");
+            collection = database.getCollection("productions");
 
             // List the collection documents
-            List<Document> productions = dBProduction.find().into(new ArrayList<Document>());
+            ArrayList<Document> productions = collection.find().into(new ArrayList<Document>());
             // create list to store the final list to be returned, filled with productions.
-            List<Production> finalList = new ArrayList<>();
-
-            // go through all documents to create a production for each document, to be inserted to finalList
-            for (Document prod : productions) {
-                int productionId = Integer.parseInt(prod.get("_id").toString());
-
-                // gets the batchQueue as JSONArray. Added org.json to dependency to solve this problem.
-                JSONObject jsonObject = new JSONObject(prod);
-                JSONArray jsonArray = jsonObject.getJSONArray("batchQueue");
-
-                // creates list with JSONObjects from the JSONArray to be made into batch objects.
-                ArrayList<JSONObject> bqList = new ArrayList<>();
-
-                // creates the JSONObjects to be stored in bqList
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                    bqList.add(jsonObject1);
-                }
-
-                // creates a List of batch to store Batch objects, to be inserted into batchQueue for Production constructor.
-                ArrayList<Batch> batchList = new ArrayList<>();
-
-                // creates the Batch objects to be put in batchList by reading every attribute from mongo, and assigning them to java attributes.
-                for (JSONObject jsonObject2 : bqList) {
-                    int batchId = (Integer.parseInt(jsonObject2.get("_id").toString()));
-
-                    // creates Dateformatter to handle format from mongoDb
-                    DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
-
-                    // startTime attribute
-                    String time = (String) jsonObject2.get("startTime");
-                    Date startTime = df.parse(time);
-
-                    // endTime attribute
-                    String time2 = jsonObject2.get("endTime").toString();
-                    Date endTime = df.parse(time2);
-
-                    // beerType attribute
-                    String beerString = jsonObject2.get("beerType").toString().toUpperCase();
-                    BeerType beerType;
-                    switch (beerString) {
-                        case "PILSNER":
-                            beerType = BeerType.PILSNER;
-                            break;
-                        case "ALE":
-                            beerType = BeerType.ALE;
-                            break;
-                        case "STOUT":
-                            beerType = BeerType.STOUT;
-                            break;
-                        case "NON_ALCOHOLIC":
-                            beerType = BeerType.NON_ALCOHOLIC;
-                            break;
-                        case "WHEAT":
-                            beerType = BeerType.WHEAT;
-                            break;
-                        case "IPA":
-                            beerType = BeerType.IPA;
-                            break;
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + beerString);
-                    }
-
-                    int batchSize = (Integer.parseInt(jsonObject2.get("batchSize").toString()));
-                    int defects = Integer.parseInt(jsonObject2.get("defects").toString());
-                    double productionSpeed = (double) Float.parseFloat(jsonObject2.get("productionSpeed").toString());
-                    double temp = (double) Float.parseFloat(jsonObject2.get("temp").toString());
-                    double humidity = (double) Float.parseFloat(jsonObject2.get("humidity").toString());
-                    double vib = (double) Float.parseFloat(jsonObject2.get("vibration").toString());
-                    Batch batch = new Batch(batchId, startTime, endTime, beerType, batchSize, productionSpeed, defects, temp, humidity, vib);
-                    batchList.add(batch);
-                }
-                Production production = new Production(productionId, batchList);
-                finalList.add(production);
-            }
+            ArrayList<Production> finalList = JsonToProductionsConverter.docsToProductions(productions);
             return finalList;
         } catch (Exception e) {
             e.printStackTrace();
@@ -215,19 +117,16 @@ public class Persistence implements IPersistence {
         return null;
     }
 
-
     @Override
-    public List<Ingredient> getIngredients() {
-        //Remove debugger log
+    public ArrayList<Ingredient> getIngredients() {
         Logger.getLogger("").setLevel(Level.WARNING);
-
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> dBIngredients = database.getCollection("ingredients");
+            database = mongoClient.getDatabase("test");
+            collection = database.getCollection("ingredients");
 
             //Read ingredients from MongoDB
-            List<Document> ingredients = dBIngredients.find().into(new ArrayList<Document>());
-            List<Ingredient> finalList = new ArrayList<>();
+            ArrayList<Document> ingredients = collection.find().into(new ArrayList<Document>());
+            ArrayList<Ingredient> finalList = new ArrayList<>();
             for (Document ingredient : ingredients) {
                 String ingredientTypeString = ingredient.get("name").toString().toUpperCase();
                 IngredientType ingredientType;
@@ -266,8 +165,9 @@ public class Persistence implements IPersistence {
     @Override
     public void createBatch(Batch batch) {
         Logger.getLogger("").setLevel(Level.WARNING);
+        Logger.getLogger("").setLevel(Level.WARNING);
         Document document = new Document();
-        document.append("_id", batch.getBatchId())
+        document.append("_id", getNextBatchId())
                 .append("startTime", batch.getStartTime().toString())
                 .append("endTime", batch.getEndTime().toString())
                 .append("beerType", batch.getBeerType().toString())
@@ -279,9 +179,10 @@ public class Persistence implements IPersistence {
                 .append("vibration", batch.getVibration());
 
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> dBBatches = database.getCollection("batches");
-            dBBatches.insertOne(document);
+            database = mongoClient.getDatabase("test");
+            collection = database.getCollection("batches");
+            collection.insertOne(document);
+            updateBatchIdCounter();
         } catch (MongoException e) {
             e.printStackTrace();
         }
@@ -296,14 +197,11 @@ public class Persistence implements IPersistence {
         // creates List of Documents to embed in finalDoc as batchQueue
         ArrayList<Document> batDocList = new ArrayList<>();
 
-        // stores a document for each batch in "batches" collection, if need to be able to search through batches.
-        for (Batch batch : production.getBatchQueue()){
-            createBatch(batch);
-        }
-
-        // creates the embedded documents and adds them to batDocList
+        // stores the batch separately to db.batches and inserts Batches into batDocList as key/value pairs
         for (Batch batch : production.getBatchQueue()) {
-            batDocList.add(new Document().append("_id", batch.getBatchId())
+            int thisBatchId = getNextBatchId();
+            createBatch(batch);
+            batDocList.add(new Document().append("_id", thisBatchId)
                     .append("startTime", batch.getStartTime().toString())
                     .append("endTime", batch.getEndTime().toString())
                     .append("beerType", batch.getBeerType().toString())
@@ -314,18 +212,20 @@ public class Persistence implements IPersistence {
                     .append("humidity", batch.getHumidity())
                     .append("vibration", batch.getVibration()));
         }
+
         // append productionId to finalDoc
-        finalDoc.append("_id", production.getProductionId());
+        finalDoc.append("_id", getNextProductionId());
         // append batchQueue to finalDoc
         finalDoc.append("batchQueue", batDocList);
 
         //ConnectionString to MongoDB cluster
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> dBBatches = database.getCollection("productions");
+            database = mongoClient.getDatabase("test");
+            collection = database.getCollection("productions");
 
             // insert document into the collection
-            dBBatches.insertOne(finalDoc);
+            collection.insertOne(finalDoc);
+            updateProductionIdCounter();
         } catch (MongoException e) {
             e.printStackTrace();
         }
@@ -334,13 +234,11 @@ public class Persistence implements IPersistence {
     @Override
     public void deleteBatch(int batchId) {
         Logger.getLogger("").setLevel(Level.WARNING);
-
-        //ConnectionString to MongoDB
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> dBBatches = database.getCollection("batches");
+            database = mongoClient.getDatabase("test");
+            collection = database.getCollection("batches");
 
-            dBBatches.deleteOne(Filters.eq("batchId", batchId));
+            collection.deleteOne(Filters.eq("batchId", batchId));
 
         } catch (MongoException e) {
             e.printStackTrace();
@@ -350,24 +248,93 @@ public class Persistence implements IPersistence {
     @Override
     public void deleteProduction(int productionId) {
         Logger.getLogger("").setLevel(Level.WARNING);
-
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            MongoDatabase database = mongoClient.getDatabase("test");
-            MongoCollection<Document> dBProductions = database.getCollection("productions");
-            MongoCollection<Document> dBBatches = database.getCollection("batches");
+            database = mongoClient.getDatabase("test");
+            collection = database.getCollection("productions");
+            MongoCollection<Document> colBatches = database.getCollection("batches");
             List<Production> productions = getProductions();
-
-            for (Production prod : productions){
+            for (Production prod : productions) {
                 if (prod.getProductionId() == productionId) {
                     List<Batch> batches = prod.getBatchQueue();
-                    for (Batch batch : batches){
-                        dBBatches.deleteOne(Filters.eq("_id", batch.getBatchId()));
+                    for (Batch batch : batches) {
+                        colBatches.deleteOne(Filters.eq("_id", batch.getBatchId()));
                     }
                 }
 
             }
-            dBProductions.deleteOne(Filters.eq("_id", productionId));
+            collection.deleteOne(Filters.eq("_id", productionId));
         } catch (MongoException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int getNextProductionId(){
+        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
+            database = mongoClient.getDatabase("test");
+            collection = database.getCollection("counters");
+            ArrayList<Document> counterDoc = collection.find().into(new ArrayList<>());
+            int productionId = Integer.parseInt(counterDoc.get(0).get("productionId").toString())+1;
+            return productionId;
+        } catch (MongoException e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private void updateProductionIdCounter(){
+        try (MongoClient mongoClient = MongoClients.create(connectionString)){
+            database = mongoClient.getDatabase("test");
+            collection = database.getCollection("counters");
+            ArrayList<Document> counterDoc = collection.find().into(new ArrayList<>());
+            int productionId = Integer.parseInt(counterDoc.get(0).get("productionId").toString());
+            BasicDBObject query = new BasicDBObject();
+            query.put("productionId", productionId);
+            productionId++;
+
+            BasicDBObject newCounterDoc = new BasicDBObject();
+            newCounterDoc.put("productionId", productionId);
+
+            BasicDBObject updateObject = new BasicDBObject();
+            updateObject.put("$set", newCounterDoc);
+
+            collection.updateOne(query, updateObject);
+        } catch (MongoException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    private int getNextBatchId(){
+        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
+            database = mongoClient.getDatabase("test");
+            collection = database.getCollection("counters");
+            ArrayList<Document> counterDoc = collection.find().into(new ArrayList<>());
+            int batchId = Integer.parseInt(counterDoc.get(0).get("batchId").toString())+1;
+            return batchId;
+        } catch (MongoException e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private void updateBatchIdCounter(){
+        try (MongoClient mongoClient = MongoClients.create(connectionString)){
+            database = mongoClient.getDatabase("test");
+            collection = database.getCollection("counters");
+            ArrayList<Document> counterDoc = collection.find().into(new ArrayList<>());
+            int batchId = Integer.parseInt(counterDoc.get(0).get("batchId").toString());
+            BasicDBObject query = new BasicDBObject();
+            query.put("batchId", batchId);
+            batchId++;
+
+            BasicDBObject newCounterDoc = new BasicDBObject();
+            newCounterDoc.put("batchId", batchId);
+
+            BasicDBObject updateObject = new BasicDBObject();
+            updateObject.put("$set", newCounterDoc);
+
+            collection.updateOne(query, updateObject);
+        } catch (MongoException e){
             e.printStackTrace();
         }
     }
@@ -379,26 +346,25 @@ public class Persistence implements IPersistence {
 
         // createBatch()
         /*System.out.println("createBatch()");
-        Batch batch = new Batch(1, new Date(), BeerType.NON_ALCOHOLIC, 340, 30,
-                260.0, 15.1, 10.0, 2.0);
+        Batch batch = new Batch(new Date(), new Date(), BeerType.PILSNER, 300, 30, 250, 18.3, 3.1, 0.1);
         System.out.println("batch to be stored: \n" + batch.toString());
         persistence.createBatch(batch);
         System.out.println("\n_____________________________________________________________________");*/
 
 
         // createProduction()
-        System.out.println("createProduction():");
+        /*System.out.println("createProduction():");
         ArrayList<Batch> batches = new ArrayList<>();
         // create batches to be added to "batches" arraylist
-        Batch batch1 = new Batch(5, new Date(), new Date(), BeerType.IPA, 400, 30, 400, 20, 10, 2);
-        Batch batch2 = new Batch(6, new Date(), new Date(), BeerType.STOUT, 500, 200, 90, 15, 1, 0.5);
+        Batch batch1 = new Batch(new Date(), new Date(), BeerType.IPA, 400, 30, 400, 20, 10, 2);
+        Batch batch2 = new Batch(new Date(), new Date(), BeerType.STOUT, 500, 200, 90, 15, 1, 0.5);
         // put batches in arraylist
         batches.add(batch1);
         batches.add(batch2);
-        Production production = new Production(3, batches);
+        Production production = new Production(batches);
         System.out.println("Production to be stored:\n" + production);
         persistence.createProduction(production);
-        System.out.println("\n_______________________________________________________________________________-");
+        System.out.println("\n_______________________________________________________________________________-");*/
 
 
         // getBatches()
@@ -411,12 +377,21 @@ public class Persistence implements IPersistence {
         }
         System.out.println("\n________________________________________________________________________________");*/
 
+        // getBatch(batchId)
+        /*System.out.println("getBatch(2)\n");
+        System.out.println(persistence.getBatch(2));*/
+
 
         // getProductions()
         /*List<Production> productionList = persistence.getProductions();
         System.out.println("getProductions():");
         System.out.println(productionList);
-        System.out.println("\n_________________________________________________________________________________");*/
+        System.out.println("\n_________________________________________________________________________________");
+
+        // getProduction(int ProductionId)
+        System.out.println("getProductions():");
+        System.out.println(persistence.getProduction(2));*/
+
 
         // getIngredients()
         /*List<Ingredient> ingredients = persistence.getIngredients();

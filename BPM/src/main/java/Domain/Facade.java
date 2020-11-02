@@ -13,6 +13,8 @@ public class Facade implements IFacade {
         this.persistence = persistence;
     }
 
+
+    // NOTE FROM CHMAD. save production and batch should be last, so that endTime on Batch can be initialized properly
     /**
      * OPC UA Functions
      */

@@ -20,7 +20,11 @@ public class Production implements IProduction {
         this.batchQueue = batchQueue;
     }
 
-//    @Override
+    public Production(ArrayList<Batch> batchQueue) {
+        this.batchQueue = batchQueue;
+    }
+
+    //    @Override
 //    public Batch createBatch(int batchId, Date timestamp, BeerType beerType, int batchSize, double productionSpeed){
 //        Batch batch = new Batch(batchId, timestamp, beerType, batchSize, productionSpeed);
 //        return batch;

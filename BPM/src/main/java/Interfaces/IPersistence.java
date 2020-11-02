@@ -8,12 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface IPersistence {
+    
+    public Batch getBatch(int batchId);
+
+    public Production getProduction(int productionId);
 
     public ArrayList<Batch> getBatches();
 
-    public List<Production> getProductions();
+    public ArrayList<Production> getProductions();
 
-    public List<Ingredient> getIngredients();
+    public ArrayList<Ingredient> getIngredients();
 
     public void createBatch(Batch batch);
 
@@ -23,5 +27,4 @@ public interface IPersistence {
 
     public void deleteProduction(int productionId);
 
-    //
 }
