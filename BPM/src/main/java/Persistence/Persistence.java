@@ -8,7 +8,6 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 
-import javax.print.Doc;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,8 +15,6 @@ import java.util.logging.Logger;
 public class Persistence implements IPersistence {
     private static Persistence instance;
     private ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
-    MongoDatabase database;
-    MongoCollection<Document> collection;
 
     public Persistence() {
     }
@@ -54,8 +51,8 @@ public class Persistence implements IPersistence {
     public Batch getBatch(int bId) {
         Logger.getLogger("").setLevel(Level.WARNING);
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            database = mongoClient.getDatabase("test");
-            collection = database.getCollection("batches");
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> collection = database.getCollection("batches");
             ArrayList<Document> batches = collection.find(Filters.eq("_id", bId)).into(new ArrayList<Document>());
             ArrayList<Batch> finalList = JsonToBatchesConverter.docsToBatches(batches);
             return finalList.get(0);
@@ -71,8 +68,8 @@ public class Persistence implements IPersistence {
     public ArrayList<Batch> getBatches() {
         Logger.getLogger("").setLevel(Level.WARNING);
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            database = mongoClient.getDatabase("test");
-            collection = database.getCollection("batches");
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> collection = database.getCollection("batches");
             ArrayList<Document> batches = collection.find().into(new ArrayList<Document>());
             ArrayList<Batch> finalList = JsonToBatchesConverter.docsToBatches(batches);
             return finalList;
@@ -86,8 +83,8 @@ public class Persistence implements IPersistence {
     public Production getProduction(int productionId){
         Logger.getLogger("").setLevel(Level.WARNING);
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            database = mongoClient.getDatabase("test");
-            collection = database.getCollection("productions");
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> collection = database.getCollection("productions");
             ArrayList<Document> productionDocs = collection.find(Filters.eq("_id", productionId)).into(new ArrayList<Document>());
             ArrayList<Production> productions = JsonToProductionsConverter.docsToProductions(productionDocs);
             return productions.get(0);
@@ -103,8 +100,8 @@ public class Persistence implements IPersistence {
         Logger.getLogger("").setLevel(Level.WARNING);
         // read db and collection
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            database = mongoClient.getDatabase("test");
-            collection = database.getCollection("productions");
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> collection = database.getCollection("productions");
 
             // List the collection documents
             ArrayList<Document> productions = collection.find().into(new ArrayList<Document>());
@@ -121,8 +118,8 @@ public class Persistence implements IPersistence {
     public ArrayList<Ingredient> getIngredients() {
         Logger.getLogger("").setLevel(Level.WARNING);
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            database = mongoClient.getDatabase("test");
-            collection = database.getCollection("ingredients");
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> collection = database.getCollection("ingredients");
 
             //Read ingredients from MongoDB
             ArrayList<Document> ingredients = collection.find().into(new ArrayList<Document>());
@@ -179,8 +176,8 @@ public class Persistence implements IPersistence {
                 .append("vibration", batch.getVibration());
 
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            database = mongoClient.getDatabase("test");
-            collection = database.getCollection("batches");
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> collection = database.getCollection("batches");
             collection.insertOne(document);
             updateBatchIdCounter();
             return true;
@@ -222,8 +219,8 @@ public class Persistence implements IPersistence {
 
         //ConnectionString to MongoDB cluster
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            database = mongoClient.getDatabase("test");
-            collection = database.getCollection("productions");
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> collection = database.getCollection("productions");
 
             // insert document into the collection
             collection.insertOne(finalDoc);
@@ -239,8 +236,8 @@ public class Persistence implements IPersistence {
     public boolean deleteBatch(int batchId) {
         Logger.getLogger("").setLevel(Level.WARNING);
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            database = mongoClient.getDatabase("test");
-            collection = database.getCollection("batches");
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> collection = database.getCollection("batches");
 
             collection.deleteOne(Filters.eq("batchId", batchId));
             return true;
@@ -254,8 +251,8 @@ public class Persistence implements IPersistence {
     public boolean deleteProduction(int productionId) {
         Logger.getLogger("").setLevel(Level.WARNING);
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            database = mongoClient.getDatabase("test");
-            collection = database.getCollection("productions");
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> collection = database.getCollection("productions");
             MongoCollection<Document> colBatches = database.getCollection("batches");
             List<Production> productions = getProductions();
             for (Production prod : productions) {
@@ -277,8 +274,8 @@ public class Persistence implements IPersistence {
 
     private int getNextProductionId(){
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            database = mongoClient.getDatabase("test");
-            collection = database.getCollection("counters");
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> collection = database.getCollection("counters");
             ArrayList<Document> counterDoc = collection.find().into(new ArrayList<>());
             int productionId = Integer.parseInt(counterDoc.get(0).get("productionId").toString())+1;
             return productionId;
@@ -290,8 +287,8 @@ public class Persistence implements IPersistence {
 
     private void updateProductionIdCounter(){
         try (MongoClient mongoClient = MongoClients.create(connectionString)){
-            database = mongoClient.getDatabase("test");
-            collection = database.getCollection("counters");
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> collection = database.getCollection("counters");
             ArrayList<Document> counterDoc = collection.find().into(new ArrayList<>());
             int productionId = Integer.parseInt(counterDoc.get(0).get("productionId").toString());
             BasicDBObject query = new BasicDBObject();
@@ -313,8 +310,8 @@ public class Persistence implements IPersistence {
 
     private int getNextBatchId(){
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            database = mongoClient.getDatabase("test");
-            collection = database.getCollection("counters");
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> collection = database.getCollection("counters");
             ArrayList<Document> counterDoc = collection.find().into(new ArrayList<>());
             int batchId = Integer.parseInt(counterDoc.get(0).get("batchId").toString())+1;
             return batchId;
@@ -326,8 +323,8 @@ public class Persistence implements IPersistence {
 
     private void updateBatchIdCounter(){
         try (MongoClient mongoClient = MongoClients.create(connectionString)){
-            database = mongoClient.getDatabase("test");
-            collection = database.getCollection("counters");
+            MongoDatabase database = mongoClient.getDatabase("test");
+            MongoCollection<Document> collection = database.getCollection("counters");
             ArrayList<Document> counterDoc = collection.find().into(new ArrayList<>());
             int batchId = Integer.parseInt(counterDoc.get(0).get("batchId").toString());
             BasicDBObject query = new BasicDBObject();
