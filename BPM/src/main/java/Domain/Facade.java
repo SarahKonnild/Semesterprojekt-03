@@ -2,19 +2,51 @@ package Domain;
 
 import Interfaces.IFacade;
 import Interfaces.IPersistence;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Facade implements IFacade {
 
     IPersistence persistence;
+    public static final int port = 8000;
 
     private Facade(IPersistence persistence) {
         this.persistence = persistence;
+        listen();
     }
 
 
     // NOTE FROM CHMAD. save production and batch should be last, so that endTime on Batch can be initialized properly
+    /**
+     * Socket related things
+     */
+    //region
+    private ServerSocket serverSocket;
+    //Sauce: https://gist.github.com/mpj/a979ded460dd52eb536a
+    public void listen(){
+        try{
+            serverSocket = new ServerSocket(8000);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        while(true){
+            try{
+                final Socket socket = serverSocket.accept();
+                final InputStream inputStream = socket.getInputStream();
+                final InputStreamReader streamReader = new InputStreamReader(inputStream);
+                BufferedReader br = new BufferedReader(streamReader);
+
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+    //endregion
+
+
     /**
      * OPC UA Functions
      */
@@ -26,7 +58,11 @@ public class Facade implements IFacade {
         ArrayList<Batch> batchQueue = new ArrayList<>();
         batchQueue.add(batch);
         Production production = new Production((int) Math.random(), batchQueue);
+
         //TODO insert code which saves the production and batch to the database
+        persistence.createProduction(production);
+        persistence.createBatch(batchQueue.get(0));
+
         //TODO insert code which sends the production(batch) to the machine
         //TODO insert code which creates a thread that listens to the machine, seeing if the production is finished. If finished run stopProduction()
         //TODO insert code which runs the detectMaintenanceStatus()
@@ -59,25 +95,31 @@ public class Facade implements IFacade {
     @Override
     public boolean saveProductionToDatabase(Production production) {
         //TODO insert code which invokes the similar method in persistence
-        return false;
+        //TODO remove comments when merged with persistence on master again
+//        if(persistence.createProduction(production)){
+//            return true;
+//        }else{
+            return false;
+//        }
+
     }
 
     @Override
     public Production fetchProductionFromDatabase(int productionId) {
         //TODO insert code which invokes the similar method in persistence and returns the Production object
-        return null;
-    }
+        return persistence.getProduction(productionId);
+}
 
     @Override
     public Batch fetchBatchFromDatabase(int batchId) {
         //TODO insert code which invokes the similar method in persistence and returns the Batch object
-        return null;
+        return persistence.getBatch(batchId);
     }
 
     @Override
     public ArrayList<Batch> fetchBatchesFromDatabase() {
         //TODO insert code which invokes the similar method in persistence and returns the ArrayList<Batch>
-        return null;
+        return persistence.getBatches();
     }
     //endregion
 
