@@ -61,8 +61,8 @@ public class Persistence implements IPersistence {
             return finalList.get(0);
         } catch (MongoException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
 
@@ -78,8 +78,8 @@ public class Persistence implements IPersistence {
             return finalList;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -94,8 +94,8 @@ public class Persistence implements IPersistence {
 
         } catch (MongoException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -113,8 +113,8 @@ public class Persistence implements IPersistence {
             return finalList;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -158,8 +158,8 @@ public class Persistence implements IPersistence {
 
         } catch (MongoException e) {
             e.printStackTrace(System.err);
+            return null;
         }
-        return null;
     }
 
     @Override
