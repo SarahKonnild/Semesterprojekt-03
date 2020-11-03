@@ -2,19 +2,51 @@ package Domain;
 
 import Interfaces.IFacade;
 import Interfaces.IPersistence;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Facade implements IFacade {
 
     IPersistence persistence;
+    public static final int port = 8000;
 
     private Facade(IPersistence persistence) {
         this.persistence = persistence;
+        listen();
     }
 
 
     // NOTE FROM CHMAD. save production and batch should be last, so that endTime on Batch can be initialized properly
+    /**
+     * Socket related things
+     */
+    //region
+    private ServerSocket serverSocket;
+    //Sauce: https://gist.github.com/mpj/a979ded460dd52eb536a
+    public void listen(){
+        try{
+            serverSocket = new ServerSocket(8000);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        while(true){
+            try{
+                final Socket socket = serverSocket.accept();
+                final InputStream inputStream = socket.getInputStream();
+                final InputStreamReader streamReader = new InputStreamReader(inputStream);
+                BufferedReader br = new BufferedReader(streamReader);
+
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+    //endregion
+
+
     /**
      * OPC UA Functions
      */
@@ -64,6 +96,7 @@ public class Facade implements IFacade {
 
     @Override
     public Production fetchProductionFromDatabase(int productionId) {
+        persistence.getProduction(productionId);
         //TODO insert code which invokes the similar method in persistence and returns the Production object
         return null;
     }
