@@ -57,8 +57,8 @@ public class Persistence implements IPersistence {
             return finalList.get(0);
         } catch (MongoException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
 
