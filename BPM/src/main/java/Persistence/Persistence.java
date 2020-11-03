@@ -7,7 +7,6 @@ import com.mongodb.client.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
-
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,8 +57,8 @@ public class Persistence implements IPersistence {
             return finalList.get(0);
         } catch (MongoException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
 
@@ -75,12 +74,12 @@ public class Persistence implements IPersistence {
             return finalList;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
-    public Production getProduction(int productionId){
+    public Production getProduction(int productionId) {
         Logger.getLogger("").setLevel(Level.WARNING);
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
@@ -91,8 +90,8 @@ public class Persistence implements IPersistence {
 
         } catch (MongoException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -110,8 +109,8 @@ public class Persistence implements IPersistence {
             return finalList;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -155,8 +154,8 @@ public class Persistence implements IPersistence {
 
         } catch (MongoException e) {
             e.printStackTrace(System.err);
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -239,7 +238,7 @@ public class Persistence implements IPersistence {
             MongoDatabase database = mongoClient.getDatabase("test");
             MongoCollection<Document> collection = database.getCollection("batches");
 
-            collection.deleteOne(Filters.eq("batchId", batchId));
+            collection.deleteOne(Filters.eq("_id", batchId));
             return true;
         } catch (MongoException e) {
             e.printStackTrace();
@@ -249,17 +248,16 @@ public class Persistence implements IPersistence {
 
     @Override
     public boolean deleteProduction(int productionId) {
-        Logger.getLogger("").setLevel(Level.WARNING);
+        // Logger.getLogger("").setLevel(Level.WARNING);
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
             MongoCollection<Document> collection = database.getCollection("productions");
-            MongoCollection<Document> colBatches = database.getCollection("batches");
             List<Production> productions = getProductions();
             for (Production prod : productions) {
                 if (prod.getProductionId() == productionId) {
                     List<Batch> batches = prod.getBatchQueue();
                     for (Batch batch : batches) {
-                        colBatches.deleteOne(Filters.eq("_id", batch.getBatchId()));
+                        deleteBatch(batch.getBatchId());
                     }
                 }
 
@@ -272,21 +270,21 @@ public class Persistence implements IPersistence {
         }
     }
 
-    private int getNextProductionId(){
+    private int getNextProductionId() {
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
             MongoCollection<Document> collection = database.getCollection("counters");
             ArrayList<Document> counterDoc = collection.find().into(new ArrayList<>());
-            int productionId = Integer.parseInt(counterDoc.get(0).get("productionId").toString())+1;
+            int productionId = Integer.parseInt(counterDoc.get(0).get("productionId").toString()) + 1;
             return productionId;
-        } catch (MongoException e){
+        } catch (MongoException e) {
             e.printStackTrace();
         }
         return 0;
     }
 
-    private void updateProductionIdCounter(){
-        try (MongoClient mongoClient = MongoClients.create(connectionString)){
+    private void updateProductionIdCounter() {
+        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
             MongoCollection<Document> collection = database.getCollection("counters");
             ArrayList<Document> counterDoc = collection.find().into(new ArrayList<>());
@@ -302,27 +300,27 @@ public class Persistence implements IPersistence {
             updateObject.put("$set", newCounterDoc);
 
             collection.updateOne(query, updateObject);
-        } catch (MongoException e){
+        } catch (MongoException e) {
             e.printStackTrace();
         }
     }
 
 
-    private int getNextBatchId(){
+    private int getNextBatchId() {
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
             MongoCollection<Document> collection = database.getCollection("counters");
             ArrayList<Document> counterDoc = collection.find().into(new ArrayList<>());
-            int batchId = Integer.parseInt(counterDoc.get(0).get("batchId").toString())+1;
+            int batchId = Integer.parseInt(counterDoc.get(0).get("batchId").toString()) + 1;
             return batchId;
-        } catch (MongoException e){
+        } catch (MongoException e) {
             e.printStackTrace();
+            return 0;
         }
-        return 0;
     }
 
-    private void updateBatchIdCounter(){
-        try (MongoClient mongoClient = MongoClients.create(connectionString)){
+    private void updateBatchIdCounter() {
+        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
             MongoCollection<Document> collection = database.getCollection("counters");
             ArrayList<Document> counterDoc = collection.find().into(new ArrayList<>());
@@ -338,7 +336,7 @@ public class Persistence implements IPersistence {
             updateObject.put("$set", newCounterDoc);
 
             collection.updateOne(query, updateObject);
-        } catch (MongoException e){
+        } catch (MongoException e) {
             e.printStackTrace();
         }
     }
@@ -390,10 +388,10 @@ public class Persistence implements IPersistence {
         /*List<Production> productionList = persistence.getProductions();
         System.out.println("getProductions():");
         System.out.println(productionList);
-        System.out.println("\n_________________________________________________________________________________");
+        System.out.println("\n_________________________________________________________________________________");*/
 
         // getProduction(int ProductionId)
-        System.out.println("getProductions():");
+        /*System.out.println("getProductions():");
         System.out.println(persistence.getProduction(2));*/
 
 
@@ -415,26 +413,17 @@ public class Persistence implements IPersistence {
 
         // getBatches()
         /*System.out.println("getBatches():\n");
-        try {
-            List<Batch> batchList2 = persistence.getBatches();
-            System.out.println(batchList2);
-        } catch (NullPointerException e){
-            System.out.println("Nothing to print");
-        }
-
+        List<Batch> batchList2 = persistence.getBatches();
+        System.out.println(batchList2);
         System.out.println("\n________________________________________________________________________________");*/
 
 
         // getProductions()
-        /*System.out.println("getProductions():");
-        try {
-            List<Production> productionList2 = persistence.getProductions();
-            System.out.println(productionList2);
-        } catch (NullPointerException e){
-            System.out.println("Nothing to print");
-        }
+        System.out.println("getProductions():");
+        List<Production> productionList2 = persistence.getProductions();
+        System.out.println(productionList2);
         System.out.println("\n_________________________________________________________________________________");
-        System.out.println("Finished");*/
+        System.out.println("Finished");
     }
 }
 

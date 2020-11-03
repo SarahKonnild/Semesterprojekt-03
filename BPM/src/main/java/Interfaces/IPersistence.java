@@ -3,8 +3,6 @@ package Interfaces;
 import Domain.Batch;
 import Domain.Ingredient;
 import Domain.Production;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import java.util.ArrayList;
 import java.util.List;
 
