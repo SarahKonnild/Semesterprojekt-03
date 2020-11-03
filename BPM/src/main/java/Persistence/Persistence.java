@@ -7,8 +7,6 @@ import com.mongodb.client.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
-
-import javax.print.Doc;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,8 +14,6 @@ import java.util.logging.Logger;
 public class Persistence implements IPersistence {
     private static Persistence instance;
     private ConnectionString connectionString = new ConnectionString("mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority");
-    // MongoDatabase database;
-    // MongoCollection<Document> collection;
 
     public Persistence() {
     }
@@ -78,8 +74,8 @@ public class Persistence implements IPersistence {
             return finalList;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -94,8 +90,8 @@ public class Persistence implements IPersistence {
 
         } catch (MongoException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -113,8 +109,8 @@ public class Persistence implements IPersistence {
             return finalList;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -158,12 +154,12 @@ public class Persistence implements IPersistence {
 
         } catch (MongoException e) {
             e.printStackTrace(System.err);
+            return null;
         }
-        return null;
     }
 
     @Override
-    public void createBatch(Batch batch) {
+    public boolean createBatch(Batch batch) {
         Logger.getLogger("").setLevel(Level.WARNING);
         Logger.getLogger("").setLevel(Level.WARNING);
         Document document = new Document();
@@ -183,13 +179,15 @@ public class Persistence implements IPersistence {
             MongoCollection<Document> collection = database.getCollection("batches");
             collection.insertOne(document);
             updateBatchIdCounter();
+            return true;
         } catch (MongoException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
     @Override
-    public void createProduction(Production production) {
+    public boolean createProduction(Production production) {
         Logger.getLogger("").setLevel(Level.WARNING);
         // creates document to store
         Document finalDoc = new Document();
@@ -226,27 +224,30 @@ public class Persistence implements IPersistence {
             // insert document into the collection
             collection.insertOne(finalDoc);
             updateProductionIdCounter();
+            return true;
         } catch (MongoException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
     @Override
-    public void deleteBatch(int batchId) {
+    public boolean deleteBatch(int batchId) {
         Logger.getLogger("").setLevel(Level.WARNING);
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
             MongoCollection<Document> collection = database.getCollection("batches");
 
             collection.deleteOne(Filters.eq("_id", batchId));
-
+            return true;
         } catch (MongoException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
     @Override
-    public void deleteProduction(int productionId) {
+    public boolean deleteProduction(int productionId) {
         // Logger.getLogger("").setLevel(Level.WARNING);
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             MongoDatabase database = mongoClient.getDatabase("test");
@@ -262,8 +263,10 @@ public class Persistence implements IPersistence {
 
             }
             collection.deleteOne(Filters.eq("_id", productionId));
+            return true;
         } catch (MongoException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -312,8 +315,8 @@ public class Persistence implements IPersistence {
             return batchId;
         } catch (MongoException e) {
             e.printStackTrace();
+            return 0;
         }
-        return 0;
     }
 
     private void updateBatchIdCounter() {
