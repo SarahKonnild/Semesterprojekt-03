@@ -3,6 +3,7 @@ package Interfaces;
 import Domain.Batch;
 import Domain.Ingredient;
 import Domain.Production;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +20,12 @@ public interface IPersistence {
 
     public ArrayList<Ingredient> getIngredients();
 
-    public void createBatch(Batch batch);
+    public boolean createBatch(Batch batch);
 
-    public void createProduction(Production production);
+    public boolean createProduction(Production production);
 
-    public void deleteBatch(int batchId);
+    public boolean deleteBatch(int batchId);
 
-    public void deleteProduction(int productionId);
+    public boolean deleteProduction(int productionId);
 
 }

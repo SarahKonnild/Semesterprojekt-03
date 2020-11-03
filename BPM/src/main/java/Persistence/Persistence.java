@@ -163,7 +163,7 @@ public class Persistence implements IPersistence {
     }
 
     @Override
-    public void createBatch(Batch batch) {
+    public boolean createBatch(Batch batch) {
         Logger.getLogger("").setLevel(Level.WARNING);
         Logger.getLogger("").setLevel(Level.WARNING);
         Document document = new Document();
@@ -183,13 +183,15 @@ public class Persistence implements IPersistence {
             collection = database.getCollection("batches");
             collection.insertOne(document);
             updateBatchIdCounter();
+            return true;
         } catch (MongoException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
     @Override
-    public void createProduction(Production production) {
+    public boolean createProduction(Production production) {
         Logger.getLogger("").setLevel(Level.WARNING);
         // creates document to store
         Document finalDoc = new Document();
@@ -226,27 +228,30 @@ public class Persistence implements IPersistence {
             // insert document into the collection
             collection.insertOne(finalDoc);
             updateProductionIdCounter();
+            return true;
         } catch (MongoException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
     @Override
-    public void deleteBatch(int batchId) {
+    public boolean deleteBatch(int batchId) {
         Logger.getLogger("").setLevel(Level.WARNING);
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             database = mongoClient.getDatabase("test");
             collection = database.getCollection("batches");
 
             collection.deleteOne(Filters.eq("batchId", batchId));
-
+            return true;
         } catch (MongoException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
     @Override
-    public void deleteProduction(int productionId) {
+    public boolean deleteProduction(int productionId) {
         Logger.getLogger("").setLevel(Level.WARNING);
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {
             database = mongoClient.getDatabase("test");
@@ -263,8 +268,10 @@ public class Persistence implements IPersistence {
 
             }
             collection.deleteOne(Filters.eq("_id", productionId));
+            return true;
         } catch (MongoException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
