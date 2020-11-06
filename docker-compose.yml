@@ -1,9 +1,10 @@
 version: "3.7"
 services:
   mongo:
+    container_name: Database
     image: mongo:latest
-  backend:
-    container_name: backend
+  server:
+    container_name: Server
     build: backend
     ports:
       - "5000:5000"
@@ -15,8 +16,8 @@ services:
       - /usr/src/app/node_modules
     depends_on:
       - mongo
-  frontend:
-    container_name: frontend
+  react:
+    container_name: React
     build: frontend
     ports:
       - "3000:3000"
@@ -26,4 +27,4 @@ services:
       - ./frontend:/usr/src/app
       - /usr/src/app/node_modules
     depends_on:
-      - backend
+      - server
