@@ -16,8 +16,9 @@ public class Batch implements IBatch {
     private double avgTemperature;
     private double avgHumidity;
     private double avgVibration;
+    private int productionId;
 
-    public Batch(Date startTime, Date endTime, BeerType beerType, int batchSize, int defectiveBeers, double productionSpeed, double avgTemperature, double avgHumidity, double avgVibration) {
+    public Batch(Date startTime, Date endTime, BeerType beerType, int batchSize, int defectiveBeers, double productionSpeed, double avgTemperature, double avgHumidity, double avgVibration, int productionId) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.beerType = beerType;
@@ -27,18 +28,20 @@ public class Batch implements IBatch {
         this.avgTemperature = avgTemperature;
         this.avgHumidity = avgHumidity;
         this.avgVibration = avgVibration;
+        this.productionId = productionId;
     }
 
-    public Batch(int batchId, Date startTime, BeerType beerType, int batchSize, double productionSpeed){
+    public Batch(int batchId, Date startTime, BeerType beerType, int batchSize, double productionSpeed, int productionId){
         this.batchId = batchId;
         this.startTime = startTime;
         this.beerType = beerType;
         this.batchSize = batchSize;
         this.productionSpeed = productionSpeed;
+        this.productionId = productionId;
     }
 
     public Batch(int batchId, Date startTime, Date endTime, BeerType beerType, int batchSize, double productionSpeed, int defectiveBeers,
-        double avgTemperature, double avgHumidity, double avgVibration){
+        double avgTemperature, double avgHumidity, double avgVibration, int productionId){
         this.batchId = batchId;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -49,6 +52,7 @@ public class Batch implements IBatch {
         this.avgTemperature = avgTemperature;
         this.avgHumidity = avgHumidity;
         this.avgVibration = avgVibration;
+        this.productionId = productionId;
     }
 
     @Override
