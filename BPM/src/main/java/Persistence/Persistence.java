@@ -347,11 +347,11 @@ public class Persistence implements IPersistence {
         Persistence persistence = new Persistence();
 
         // createBatch()
-        /*System.out.println("createBatch()");
+        System.out.println("createBatch()");
         Batch batch = new Batch(new Date(), new Date(), BeerType.PILSNER, 300, 30, 250, 18.3, 3.1, 0.1);
         System.out.println("batch to be stored: \n" + batch.toString());
         persistence.createBatch(batch);
-        System.out.println("\n_____________________________________________________________________");*/
+        System.out.println("\n_____________________________________________________________________");
 
 
         // createProduction()
