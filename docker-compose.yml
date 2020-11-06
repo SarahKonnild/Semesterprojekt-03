@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  mongo:
+    image: mongo:latest
+  backend:
+    container_name: backend
+    build: backend
+    ports:
+      - "5000:5000"
+    environment:
+      - "DB=mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test"
+      - NODE_ENV=development
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+  frontend:
+    container_name: frontend
+    build: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - backend
