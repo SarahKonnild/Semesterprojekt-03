@@ -7,7 +7,7 @@ import java.util.Date;
 
 public interface IFacade {
 
-    public boolean startProduction(int batchId, Date timestamp, BeerType beerType, int batchSize, double productionSpeed);
+    public boolean startProduction(int batchId, Date timestamp, BeerType beerType, int batchSize, double productionSpeed, int productionId);
 
     public boolean stopProduction(Production production);
 

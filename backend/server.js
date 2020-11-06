@@ -20,6 +20,20 @@ db.once('open', () => {
     console.log("MongoDB database connection established succesfully");
 })
 
+//Connection to Java 
+var net = require('net');
+var client = net.connect(8000, 'localhost');
+client.setEncoding('utf8');
+setInterval(function() {
+console.log("Writing....")
+var ret = client.write('Hello from node.js\n');
+console.log("Wrote", ret)
+}, 1000);
+
+//Java to Server API
+var routes = require('./api/routes/brewsterRoutes.js'); //importing route
+routes(app); //register the route
+
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });

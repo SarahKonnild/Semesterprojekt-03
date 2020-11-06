@@ -10,58 +10,31 @@ import java.util.Date;
 
 public class Facade implements IFacade {
 
-    IPersistence persistence;
     public static final int port = 8000;
 
-    private Facade(IPersistence persistence) {
-        this.persistence = persistence;
-        listen();
+    private Facade() {
+
     }
 
 
     // NOTE FROM CHMAD. save production and batch should be last, so that endTime on Batch can be initialized properly
-    /**
-     * Socket related things
-     */
-    //region
-    private ServerSocket serverSocket;
-    //Sauce: https://gist.github.com/mpj/a979ded460dd52eb536a
-    public void listen(){
-        try{
-            serverSocket = new ServerSocket(8000);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-        while(true){
-            try{
-                final Socket socket = serverSocket.accept();
-                final InputStream inputStream = socket.getInputStream();
-                final InputStreamReader streamReader = new InputStreamReader(inputStream);
-                BufferedReader br = new BufferedReader(streamReader);
-
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-        }
-    }
-    //endregion
-
 
     /**
      * OPC UA Functions
      */
     //region
     @Override
-    public boolean startProduction(int batchId, Date timestamp, BeerType beerType, int batchSize, double productionSpeed) {
+    public boolean startProduction(int batchId, Date timestamp, BeerType beerType, int batchSize, double productionSpeed, int productionId) {
         //TODO adapt to take in a JSON object/document that can then be separated into the relevant data that is written above
-        Batch batch = new Batch(batchId, timestamp, beerType, batchSize, productionSpeed);
-        ArrayList<Batch> batchQueue = new ArrayList<>();
-        batchQueue.add(batch);
-        Production production = new Production((int) Math.random(), batchQueue);
+        System.out.println("YOLO BITCHES ITS FRIDAY");
+//        Batch batch = new Batch(batchId, timestamp, beerType, batchSize, productionSpeed, productionId);
+//        ArrayList<Batch> batchQueue = new ArrayList<>();
+//        batchQueue.add(batch);
+//        Production production = new Production((int) Math.random(), batchQueue);
 
         //TODO insert code which saves the production and batch to the database
-        persistence.createProduction(production);
-        persistence.createBatch(batchQueue.get(0));
+//        persistence.createProduction(production);
+//        persistence.createBatch(batchQueue.get(0));
 
         //TODO insert code which sends the production(batch) to the machine
         //TODO insert code which creates a thread that listens to the machine, seeing if the production is finished. If finished run stopProduction()
@@ -107,19 +80,19 @@ public class Facade implements IFacade {
     @Override
     public Production fetchProductionFromDatabase(int productionId) {
         //TODO insert code which invokes the similar method in persistence and returns the Production object
-        return persistence.getProduction(productionId);
+        return  null; //persistence.getProduction(productionId);
 }
 
     @Override
     public Batch fetchBatchFromDatabase(int batchId) {
         //TODO insert code which invokes the similar method in persistence and returns the Batch object
-        return persistence.getBatch(batchId);
+        return null;// persistence.getBatch(batchId);
     }
 
     @Override
     public ArrayList<Batch> fetchBatchesFromDatabase() {
         //TODO insert code which invokes the similar method in persistence and returns the ArrayList<Batch>
-        return persistence.getBatches();
+        return null; //persistence.getBatches();
     }
     //endregion
 
