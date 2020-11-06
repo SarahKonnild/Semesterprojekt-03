@@ -4,9 +4,10 @@ import Domain.Batch;
 import Domain.Ingredient;
 import Domain.Production;
 import java.util.ArrayList;
+import java.util.List;
 
 public interface IPersistence {
-
+    
     public Batch getBatch(int batchId);
 
     public Production getProduction(int productionId);
