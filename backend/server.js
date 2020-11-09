@@ -1,9 +1,12 @@
+//Importing dependencies
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+//Connection to DB Configuration
 const config = require('./config/db');
 
+//Connection to Express for API and Setting Port for 5000
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -26,13 +29,19 @@ db.once('open', () => {
 //API Connection
 const batchesRouter = require('./api/routes/batches');
 const IngredientsRouter = require('./api/routes/ingredients');
+const productionsRouter = require('./api/routes/productions');
+const countersRouter = require('./api/routes/counters');
 
 app.use('/batches', batchesRouter);
 app.use('/ingredients', IngredientsRouter);
+app.use('/productions', productionsRouter);
+app.use('/counters', countersRouter);
 
-//Welcome Message
+//Welcome Message for API
 app.get('/', (req, res) => res.send('Welcome to Group 2 API frontpage'));
 
+
+//Setting server to listen to Port 5000
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });

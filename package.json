@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@mongoosejs/double": "^0.2.0",
+    "mongoose-int32": "^0.4.1"
+  }
+}
