@@ -1,19 +1,11 @@
-import React from 'react';
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-
-import Navbar from "./components/navbar.component";
-import BatchesList from "./components/batches-list.component";
+//import logo from './logo.svg';
+//import './App.css';
+import React from "react";
+import Navigation from './components/Navigation'
 
 function App() {
   return (
-    <Router>
-      <div className="container">
-        <Navbar />
-        <br/>
-        <Route path="/" exact component={BatchesList} />
-        </div>
-    </Router>
+    <Navigation />
   );
 }
 
