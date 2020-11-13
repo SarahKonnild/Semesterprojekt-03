@@ -8,7 +8,7 @@ const Schema = mongoose.Schema;
 
 const ProductionsSchema = new Schema ({
     _id: {type: Int32, required: true},
-    batchQueue: {type: [{
+    batch: {type: [{
         _id: {type: Int32, required: true},
         startTime: {type: String, required:true},
         endTime: {type: String, required:true},

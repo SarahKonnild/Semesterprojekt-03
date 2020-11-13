@@ -18,7 +18,7 @@ router.route('/:id').get((req, res) => {
 //Create Production
 router.route('/add').post((req, res) => {
         const _id = req.body._id;
-        const batchQueue = req.body.batchQueue
+        const batch = req.body.batch
         const startTime = req.body.startTime;
         const endTime = req.body.endTime;
         const beerType = req.body.beerType;
@@ -32,7 +32,7 @@ router.route('/add').post((req, res) => {
 
         const newProduction = new Productions({
         _id,
-        batchQueue, 
+        batch, 
             _id,
             startTime,
             endTime,
@@ -56,7 +56,7 @@ router.route('/update/:id').post((req, res) => {
     Productions.findById(req.params.id)
     .then(production => {
         production._id = req.body._id;
-        production.batchQueue = req.body.batchQueue
+        production.batch = req.body.batch
         production._id = req.body._id;
         production.startTime = req.body.startTime;
         production.endTime = req.body.endTime;
