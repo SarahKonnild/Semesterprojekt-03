@@ -40,7 +40,7 @@ public class SocketServer {
                     lineArray = line.split(",");
                     for(int i = 1; i < lineArray.length; i++){
                         //TODO fix the regex so that it doesn't split the time into smaller unusable pieces of garbage
-                        String[] newArray = lineArray[i].split(":");
+                        String[] newArray = lineArray[i].split(":",1);
                         System.out.println(lineArray[i]);
                         lineArray[i] = newArray[1];
                     }
