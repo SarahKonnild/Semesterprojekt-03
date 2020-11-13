@@ -69,8 +69,8 @@ public class JsonToProductionsConverter {
                     double temp = (double) Float.parseFloat(jsonObject2.get("temp").toString());
                     double humidity = (double) Float.parseFloat(jsonObject2.get("humidity").toString());
                     double vib = (double) Float.parseFloat(jsonObject2.get("vibration").toString());
-                    Batch batch = new Batch(batchId, startTime, endTime, beerType, batchSize, productionSpeed, defects, temp, humidity, vib);
-                    batchList.add(batch);
+//                    Batch batch = new Batch(batchId, startTime, endTime, beerType, batchSize, productionSpeed, defects, temp, humidity, vib);
+//                    batchList.add(batch);
                 }
                 Production production = new Production(productionId, batchList);
                 finalList.add(production);
