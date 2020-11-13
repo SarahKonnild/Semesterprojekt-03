@@ -11,14 +11,13 @@ import java.util.Date;
 public class Facade implements IFacade {
 
     public static final int port = 8000;
+    private static Facade facade = new Facade();
 
     private Facade() {
 
     }
 
-
     // NOTE FROM CHMAD. save production and batch should be last, so that endTime on Batch can be initialized properly
-
     /**
      * OPC UA Functions
      */
@@ -43,14 +42,14 @@ public class Facade implements IFacade {
     }
 
     @Override
-    public boolean stopProduction(Production production) {
+    public Production stopProduction(Production production) {
         //IF RUNNING:
         //TODO insert code which sends the stop production signal via OPC UA to the machine
         //OUTSIDE IF
         //TODO insert code which sets the new values to fit the second constructor for batch. Do note that it is a VERY good idea to save the values for
         // humidity, temperature and vibration in an ArrayList here, and then calculate their average and plop them into the constructor
-        //TODO insert code which saves the production and batch to the database
-        return false;
+        //TODO insert code which returns the production with the updated batch to the GUI/forward to database?
+        return null;
     }
 
     @Override
@@ -62,59 +61,11 @@ public class Facade implements IFacade {
     //endregion
 
     /**
-     * Database communication
-     */
-    //region
-    @Override
-    public boolean saveProductionToDatabase(Production production) {
-        //TODO insert code which invokes the similar method in persistence
-        //TODO remove comments when merged with persistence on master again
-//        if(persistence.createProduction(production)){
-//            return true;
-//        }else{
-            return false;
-//        }
-
-    }
-
-    @Override
-    public Production fetchProductionFromDatabase(int productionId) {
-        //TODO insert code which invokes the similar method in persistence and returns the Production object
-        return  null; //persistence.getProduction(productionId);
-}
-
-    @Override
-    public Batch fetchBatchFromDatabase(int batchId) {
-        //TODO insert code which invokes the similar method in persistence and returns the Batch object
-        return null;// persistence.getBatch(batchId);
-    }
-
-    @Override
-    public ArrayList<Batch> fetchBatchesFromDatabase() {
-        //TODO insert code which invokes the similar method in persistence and returns the ArrayList<Batch>
-        return null; //persistence.getBatches();
-    }
-    //endregion
-
-//      COMMENTED OUT BECAUSE RELEVANCE?
-//    /**
-//     * Other things....
-//     */
-//    //region
-//    @Override
-//    public Production createProduction() {
-//        //TODO Randomly generate a productionId, create a batch and add it to the arraylist
-//        Production production = new Production();
-//        return production;
-//    }
-//    //endregion
-
-    /**
      * Optimization calculations
      */
     //region
     @Override
-    public double calculateErrorMargin(BeerType beerType, double speed) {
+    public double calculateErrorSpeed(BeerType beerType, double speed) {
         //TODO insert formula for optimization calculation
         return 0;
     }
@@ -131,4 +82,11 @@ public class Facade implements IFacade {
         return 0;
     }
     //endregion
+
+    public static Facade getFacade() {
+//        if(facade == null) {
+//            facade = new Facade();
+//        }
+        return facade;
+    }
 }

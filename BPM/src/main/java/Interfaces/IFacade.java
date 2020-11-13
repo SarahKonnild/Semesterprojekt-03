@@ -7,23 +7,16 @@ import java.util.Date;
 
 public interface IFacade {
 
+    /**
+     * OPC UA Functions
+     */
     public boolean startProduction(int batchId, Date timestamp, BeerType beerType, int batchSize, double productionSpeed, int productionId);
 
-    public boolean stopProduction(Production production);
+    public Production stopProduction(Production production);
 
     public int detectMaintenanceStatus();
 
-    public boolean saveProductionToDatabase(Production production);
-
-    public Production fetchProductionFromDatabase(int productionId);
-
-    public Batch fetchBatchFromDatabase(int batchId);
-
-    public ArrayList<Batch> fetchBatchesFromDatabase();
-
-//    public Production createProduction();
-
-    public double calculateErrorMargin(BeerType beerType, double speed);
+    public double calculateErrorSpeed(BeerType beerType, double speed);
 
     public double calculateErrorMargin(BeerType beerType, int batchSize);
 

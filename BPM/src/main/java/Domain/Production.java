@@ -9,19 +9,16 @@ import java.util.List;
 public class Production implements IProduction {
 
     private int productionId;
+    private Batch batch;
     private ArrayList<Batch> batchQueue;
 
     public Production(){
 
     }
 
-    public Production(int productionId, ArrayList<Batch> batchQueue){
+    public Production(int productionId, Batch batch){
         this.productionId = productionId;
-        this.batchQueue = batchQueue;
-    }
-
-    public Production(ArrayList<Batch> batchQueue) {
-        this.batchQueue = batchQueue;
+        this.batch = batch;
     }
 
     //    @Override
@@ -47,16 +44,14 @@ public class Production implements IProduction {
     }
 
     @Override
-    public ArrayList<Batch> getBatchQueue() {
-        return batchQueue;
+    public Batch getBatch() {
+        return batch;
     }
 
     @Override
-    public void setBatchQueue(ArrayList<Batch> batchQueue) {
-        this.batchQueue = batchQueue;
+    public void setBatch(Batch batch) {
+        this.batch = batch;
     }
-
-
 
     @Override
     public String toString() {

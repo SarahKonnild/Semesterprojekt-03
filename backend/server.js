@@ -12,13 +12,13 @@ app.use(cors());
 app.use(express.json());
 
 //Connection to MongoDB
-mongoose.Promise = global.Promise;
-mongoose.connect(config.db, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true});
-
-let db = mongoose.connection;
-db.once('open', () => {
-    console.log("MongoDB database connection established succesfully");
-})
+// mongoose.Promise = global.Promise;
+// mongoose.connect(config.db, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true});
+//
+// let db = mongoose.connection;
+// db.once('open', () => {
+//     console.log("MongoDB database connection established succesfully");
+// })
 
 //Connection to Java 
 let net = require('net');
