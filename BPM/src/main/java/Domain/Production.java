@@ -9,7 +9,6 @@ public class Production implements IProduction {
 
     private int productionId;
     private Batch batch;
-    private ArrayList<Batch> batchQueue;
 
     public Production(){
 
@@ -44,7 +43,7 @@ public class Production implements IProduction {
     public String toString() {
         return "Production{\n" +
                 "productionId=" + productionId +
-                ",\nbatchQueue=\n" + batchQueue +
+                ",\nbatchQueue=\n" +
                 "\n}";
     }
 }
