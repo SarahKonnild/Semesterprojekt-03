@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const io = require('socket.io');
 
 const app = express();
 
@@ -19,14 +20,7 @@ app.use(bodyParser.json());
 // })
 
 //Til Java
-//let net = require('net');
 app.listen(3000);
-//let client = net.connect(8000, 'localhost');
 let routes = require('../api/routes/brewsterRoutes'); //importing route
 routes(app); //register the route
-//client.setEncoding('utf8');
-// setInterval(function() {
-//   console.log("Writing....");
-//   let ret = client.write('Hello from node.js\n');
-//   console.log("Wrote", ret)
-// }, 1000);
+

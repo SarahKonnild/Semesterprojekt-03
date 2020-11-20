@@ -56,7 +56,7 @@ public class Facade implements IFacade {
     public int detectMaintenanceStatus() {
         //TODO insert code which on a thread is subscribed to the maintenance status of the machine
         //TODO insert code which checks if the maintenance status is above a certain value/critical point, to send a warning
-        return 0;
+        return 123456789;
     }
     //endregion
 

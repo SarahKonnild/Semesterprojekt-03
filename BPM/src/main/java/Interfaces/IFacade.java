@@ -21,5 +21,5 @@ public interface IFacade {
     public double calculateErrorMargin(BeerType beerType, int batchSize);
 
     public double calculateOptimalSpeed(BeerType beerType, double errorMargin);
-
 }
+

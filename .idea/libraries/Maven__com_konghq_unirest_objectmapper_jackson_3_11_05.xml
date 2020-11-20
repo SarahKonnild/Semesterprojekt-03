@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.konghq:unirest-objectmapper-jackson:3.11.05">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/konghq/unirest-objectmapper-Jackson/3.11.05/unirest-objectmapper-jackson-3.11.05.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/konghq/unirest-objectmapper-jackson/3.11.05/unirest-objectmapper-jackson-3.11.05-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/konghq/unirest-objectmapper-jackson/3.11.05/unirest-objectmapper-jackson-3.11.05-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
