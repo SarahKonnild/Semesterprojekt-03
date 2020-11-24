@@ -18,7 +18,7 @@ class SimulationGraph extends Component {
 			axisX: {
         
         xValueFormatInt: 0,
-        title: 'Something',
+        title: 'Speed',
         minimum: -30,
         maximum: 1000
 			},

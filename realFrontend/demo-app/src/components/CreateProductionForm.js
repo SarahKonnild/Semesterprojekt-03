@@ -9,11 +9,17 @@ const { default: SetBeerType } = require("./SetBeerType");
 class CreateProductionForm extends Component {
     constructor(props) {
       super(props);
-      this.state = {value: 'coconut'};
+      this.state = {value: 'coconut', beerType: 'error'};
   
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
     }
+
+    handleBeerType = (childData) =>{
+      this.setState({beerType: childData})
+      //console.log(this.state.beerType)
+    }
+  
   
 
     handleChange(event) {
@@ -31,7 +37,7 @@ class CreateProductionForm extends Component {
 
           <form>
             <label>
-                <SetBeerType />
+                <SetBeerType handleBeerType = {this.handleBeerType} />
                 <SetProductionSpeed />
                 <SetBatchSize />
                 <SetErrorMargin />
