@@ -1,22 +1,36 @@
-import NumericInput from 'react-numeric-input';
 import React, {Component} from 'react'
+import NumericInput from 'react-numeric-input';
 
 class SetProductionSpeed extends Component {
-    
-    render() {
-
-        return (
-            <div>
-                Production speed:
-
-                <NumericInput step={10} precision={0} value={0} min={0} max={200} snap/>
-                Optimal speed for Pilsner is 150 unit
-
-            </div>
-        
-        )
-        
+    constructor(props) {
+      super(props);
+      this.state = {
+          productionSpeed: 0
+        };
+  
+      this.handleChange = this.handleChange.bind(this);
+      
     }
-}
+  
+    async handleChange(event) {
+      await this.setState({productionSpeed: document.getElementById("productionSpeedID").value});
+      this.props.handleProductionSpeed(this.state.productionSpeed)
+    }
+  
+    render() {
+      return (
+        <div>
+        Production speed:
+
+        <NumericInput id="productionSpeedID" step={10} precision={0} value={this.state.productionSpeed} min={0} max={200} onChange={this.handleChange}
+         snap/>
+        
+
+    </div>
+
+        
+      );
+    }
+  }
 
 export default SetProductionSpeed

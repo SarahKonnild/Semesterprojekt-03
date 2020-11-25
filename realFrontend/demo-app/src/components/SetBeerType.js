@@ -11,14 +11,14 @@ class SetBeerType extends Component {
   
     handleChange(event) {
       this.setState({value: event.target.value});
-      this.props.handleBeerType(document.getElementById("beerTypeSelector").value);
+      this.props.handleBeerType(event.target.value);
       
       event.preventDefault();
+      
     }
   
     handleSubmit(event) {
-      alert('Beer Type: ' + this.state.value);
-      console.log(this.state.value)
+      alert('Beer Type: ' + this.state.value)
       event.preventDefault();
     }
   
@@ -29,9 +29,9 @@ class SetBeerType extends Component {
             Beer type:
             <select value={this.state.value} onChange={this.handleChange}>
         
-            <option value="" id="beerTypeSelector"></option>
+           
               <option value="pilsner">Pilsner</option>
-              <option value="ipa">Ale</option>
+              <option value="ale">Ale</option>
               <option value="stout">Stout</option>
               <option value="nonalcoholic">Non Alcoholic</option>
               <option value="wheat">Wheat</option>

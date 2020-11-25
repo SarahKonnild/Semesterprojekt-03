@@ -1,9 +1,8 @@
 import React, {Component} from 'react'
 
-import SetBeerType from '../components/SetBeerType';
-
 
 import CanvasJSReact from '../canvasjs.react'
+import CreateProductionForm from './CreateProductionForm';
 //var CanvasJSReact = require('./canvasjs.react');
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -13,14 +12,43 @@ class SimulationGraph extends Component {
 		const options = {
 			animationEnabled: true,
 			title:{
-				text: <div>herllo</div>
+				text: <div>{}</div>
 			},
 			axisX: {
         
         xValueFormatInt: 0,
         title: 'Speed',
         minimum: -30,
-        maximum: 1000
+		maximum: 1000,
+		stripLines:[
+            {
+                
+                startValue:550,
+                endValue:555,                
+                color:"#d8d8d8",
+                label : "Optimal production speed",
+                labelFontColor: "red"
+			},
+			{
+                
+                startValue:100,
+                endValue:105,                
+                color:"#d8d8d8",
+                label : "Optimal production speed",
+                labelFontColor: "blue"
+			},
+			{
+                
+                startValue:300,
+                endValue:305,                
+                color:"#d8d8d8",
+                label : "Optimal production speed",
+                labelFontColor: "green"
+			}
+			]
+			
+		
+		
 			},
 			axisY: {
 				title: "Defective",
