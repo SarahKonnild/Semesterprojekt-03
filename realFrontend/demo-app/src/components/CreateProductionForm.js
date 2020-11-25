@@ -10,7 +10,7 @@ class CreateProductionForm extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        beerType: 'Pilsner',
+        beerType: 'pils',
         productionSpeed: 0,
         batchSize: 0,
         errorMargin: 0

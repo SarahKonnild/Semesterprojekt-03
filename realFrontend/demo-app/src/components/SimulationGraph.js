@@ -2,17 +2,26 @@ import React, {Component} from 'react'
 
 
 import CanvasJSReact from '../canvasjs.react'
-import CreateProductionForm from './CreateProductionForm';
+
 //var CanvasJSReact = require('./canvasjs.react');
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 class SimulationGraph extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			beerType: this.props.beerTypeFromCreateProductionForm
+		}
+	}
+
+
+
 	render() {
 		const options = {
 			animationEnabled: true,
 			title:{
-				text: <div>{}</div>
+				text: "Optimal speed for " + this.props.beerTypeFromCreateProductionForm
 			},
 			axisX: {
         
@@ -31,10 +40,10 @@ class SimulationGraph extends Component {
 			},
 			{
                 
-                startValue:100,
-                endValue:105,                
+                startValue:695,
+                endValue:700,                
                 color:"#d8d8d8",
-                label : "Optimal production speed",
+                label : "Fastest speed",
                 labelFontColor: "blue"
 			},
 			{
@@ -42,7 +51,7 @@ class SimulationGraph extends Component {
                 startValue:300,
                 endValue:305,                
                 color:"#d8d8d8",
-                label : "Optimal production speed",
+                label : "Current production speed",
                 labelFontColor: "green"
 			}
 			]
@@ -61,7 +70,7 @@ class SimulationGraph extends Component {
 				type: "spline",
 				dataPoints: [
 					{ x: 0, y: 5 },
-					{ x: 600, y: 80 },
+					{ x: 900, y: 80 },
 				]
 			}]
 		}

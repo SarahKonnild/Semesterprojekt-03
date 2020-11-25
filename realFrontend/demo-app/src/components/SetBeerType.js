@@ -30,12 +30,12 @@ class SetBeerType extends Component {
             <select value={this.state.value} onChange={this.handleChange}>
         
            
-              <option value="pilsner">Pilsner</option>
-              <option value="ale">Ale</option>
-              <option value="stout">Stout</option>
-              <option value="nonalcoholic">Non Alcoholic</option>
-              <option value="wheat">Wheat</option>
-              <option value="ipa">IPA</option>
+              <option value="Pilsner">Pilsner</option>
+              <option value="Ale">Ale</option>
+              <option value="Stout">Stout</option>
+              <option value="Non Alcoholic">Non Alcoholic</option>
+              <option value="Wheat">Wheat</option>
+              <option value="IPA">IPA</option>
             </select>
           </label>
         </form>

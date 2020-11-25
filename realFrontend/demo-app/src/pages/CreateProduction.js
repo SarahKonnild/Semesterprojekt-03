@@ -8,7 +8,9 @@ class CreateProduction extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {beerType: 'Pilsner'};
+    this.state = {
+      beerType: "Pilsner",
+    };
 
   }
 
@@ -22,7 +24,7 @@ class CreateProduction extends Component {
     return (
       <div>
         <CreateProductionForm handleBeerTypeAtCreateProductionPage ={this.handleBeerTypeAtCreateProductionPage}/>
-        <SimulationGraph />
+        <SimulationGraph beerTypeFromCreateProductionForm = {this.state.beerType}/>
       </div>
     );
   }
