@@ -1,31 +1,24 @@
 'use strict';
 module.exports = function(app) {
-  let brewster = require('../controllers/brewsterController');
+  const opcua = require('../controllers/opcuaController');
+  const optimization = require('../controllers/optimizationController')
 
-  // brewster Routes
+  // All them http routes
   app.route('/startProduction')
-    .get(brewster.startProduction);
+    .get(opcua.startProduction);
 
   app.route('/stopProduction')
-    .post(brewster.stopProduction);
+    .post(opcua.stopProduction);
 
   app.route('/detectMaintenanceStatus')
-    .get(brewster.detectMaintenanceStatus);
+    .get(opcua.detectMaintenanceStatus);
 
   app.route('/calculateErrorSpeed')
-    .get(brewster.calculateErrorSpeed);
+    .get(optimization.calculateErrorSpeed);
 
   app.route('/cacluateErrorMargin')
-    .get(brewster.cacluateErrorMargin);
+    .get(optimization.cacluateErrorMargin);
 
   app.route('/calculateOptimalSpeed')
-    .get(brewster.calculateOptimalSpeed);
-
-  app.route('/detectedStatus')
-      .get(brewster.detectedStatus);
-
-  // app.route('/tasks/:taskId')
-  //   .get(brewster.read_a_task)
-  //   .put(brewster.update_a_task)
-  //   .delete(brewster.delete_a_task);
+    .get(optimization.calculateOptimalSpeed);
 };

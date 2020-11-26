@@ -146,7 +146,7 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
     session.write(beerTypeToWrite);
 
     //Change state on machine
-    let state = 2;
+    let state = startProductionCommand;
 
     const stateToWrite = [{
         nodeID: stateNodeID,
@@ -229,4 +229,19 @@ export async function stopProduction(){
     }
 
     closeOPCUAConnection(session);
+};
+
+export async function getMaintenanceStatus(){
+    const maintenanceStatusNodeID = "ns=6;s=::Program:Maintenance.State"
+
+    session = openOPCUAConnection;
+    
+    // read the state of maintenance and returning it
+    const stateStatus = await session.read({
+        nodeID: maintenanceStatusNodeID,
+        attributeId: opcua.AttributeIds.Value,
+    });
+    closeOPCUAConnection(session);
+
+    return stateStatus;
 };
