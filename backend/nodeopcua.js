@@ -15,7 +15,7 @@ import {
 
 // Globale constants for use to OPCUA connections
 const opcua = require("node-opcua");
-const endpointURL = "opc.tcp://127.0.0.1:4840"
+const endpointURL = "opc.tcp://" + require("os").hostname() + "127.0.0.1:4840"
 const stateNodeID = "ns=6;s=::Program:Cube.Command.CntrlCmd"; //Takes an int32
 const requestChangeCommandNodeID = "ns=6;s=::Program:Cube.Command.CmdChangeRequest"; //Takes a boolean
 
@@ -34,7 +34,7 @@ const clientOPCUA = OPCUAClient.create({
     endpoint_must_exist: false
 });
 
-async function openOPCUAConnection(){
+ async function openOPCUAConnection(){
     try{
         await clientOPCUA.connect(endpointURL);
         console.log("Connected ");
@@ -63,11 +63,129 @@ async function closeOPCUAConnection(session){
 }
 
 
-async function StartProduction(){
+export async function startProduction(beers, productionSpeed, batchnumber, beerType){
     const beerTypeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[1]";
     const productionSpeedNodeID = "ns=6;s=::Program:Cube.Command.MarchSpeed";
     const batchSizeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[2]" ;
     const batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0]";
+
+    session = openOPCUAConnection;
+
+    // figure out something about produtionID and timestamp
+    
+    // Set amount of beer to produce
+    let beers = 1500.0;
+    
+    const beerAmountToWrite = [{
+        nodeID: batchSizeNodeID,
+        attributeId: opcua.AttributeIds.Value,
+        indexRange: null,
+        value: {
+            value: {
+                dataType: opcua.DataType.Float,
+                value: beers
+            }
+        }
+    }];
+
+    session.write(beerAmountToWrite);
+
+    // Set production speed
+    let productionSpeed = 300.0;
+
+    const productionSpeedToWrite = [{
+        nodeID: productionSpeedNodeID,
+        attributeId: opcua.AttributeIds.Value,
+        indexRange: null,
+        value: {
+            value: {
+                dataType: opcua.DataType.Float,
+                value: productionSpeed
+            }
+        }
+    }];
+
+    session.write(productionSpeedToWrite);
+
+    // Set batchnumber
+    let batchnumber = 300.0;
+
+    const batchnumberToWrite = [{
+        nodeID: batchNumberNodeID,
+        attributeId: opcua.AttributeIds.Value,
+        indexRange: null,
+        value: {
+            value: {
+                dataType: opcua.DataType.Float,
+                value: batchnumber
+            }
+        }
+    }];
+
+    session.write(batchnumberToWrite);
+
+    // Set beertype
+    let beerType = 1;
+
+    const beerTypeToWrite = [{
+        nodeID: beerTypeNodeID,
+        attributeId: opcua.AttributeIds.Value,
+        indexRange: null,
+        value: {
+            value: {
+                dataType: opcua.DataType.Float,
+                value: beerType
+            }
+        }
+    }];
+
+    session.write(beerTypeToWrite);
+
+    //Change state on machine
+    let state = 2;
+
+    const stateToWrite = [{
+        nodeID: stateNodeID,
+        attributeId: opcua.AttributeIds.Value,
+        indexRange: null,
+        value: {
+            value: {
+                dataType: opcua.DataType.Int,
+                value: state
+            }
+        }
+    }];
+
+    session.write(stateToWrite);
+
+    //Send request to change state
+    let changeStateRequest = true;
+
+    const changeStateRequestToWrite = [{
+        nodeID: requestChangeCommandNodeID,
+        attributeId: opcua.AttributeIds.Value,
+        indexRange: null,
+        value: {
+            value: {
+                dataType: opcua.DataType.Boolean,
+                value: changeStateRequest
+            }
+        }
+    }];
+
+    session.write(changeStateRequestToWrite);
+
+
+    closeOPCUAConnection(session);
+};
+
+export async function stopProduction(){
+    const beerTypeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[1]";
+    const productionSpeedNodeID = "ns=6;s=::Program:Cube.Command.MarchSpeed";
+    const batchSizeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[2]" ;
+    const batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0]";
+
+    // check if a production is going on then kill it
 
     session = openOPCUAConnection;
 

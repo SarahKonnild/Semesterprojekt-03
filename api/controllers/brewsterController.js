@@ -3,15 +3,14 @@ let client = net.connect(8000, 'localhost');
 
 
 client.setEncoding('utf8');
-
-let opcuaServer = require('./Semesterprojekt-03/backend/nodeopcua');
+import * as nodeOPCUA from "./Semesterprojekt-03/backend/nodeopcua.js";
 
 exports.startProduction = function(req,res){
     res.send("Ah yes Daddy Svane, I work");
     let data = JSON.stringify(req.body);
     console.log(data);
 
-    opcuaServer.StartProduction();
+    nodeOPCUA.startProduction(1500.0, 200.0, 10, 1);
 }
 
 exports.stopProduction = function(req,res){
