@@ -1,16 +1,18 @@
 package Domain;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mashape.unirest.http.ObjectMapper;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+
+import java.io.*;
+import java.net.*;
 import java.sql.Date;
 
 public class SocketServer {
 
     public static ServerSocket serverSocket;
+    public static Socket apiSocket;
 
     public static void main(String[] args) {
         listen();
@@ -36,13 +38,12 @@ public class SocketServer {
                 String[] lineArray = null;
                 String line = null;
                 while ((line = br.readLine()) != null) {
-                    System.out.println(line);
                     lineArray = line.split(",");
                     for (int i = 1; i < lineArray.length; i++) {
                         //TODO fix the regex so that it doesn't split the time into smaller unusable pieces of garbage
-                        String[] newArray = lineArray[i].split(":", 1);
-                        System.out.println(lineArray[i]);
-                        lineArray[i] = newArray[1];
+                        String[] newArray = lineArray[i-1].split(":", 1);
+                        System.out.println(lineArray[i-1] + " " + i);
+                        lineArray[i-1] = newArray[i-1];
                     }
                     switch (lineArray[0]) {
                         case "/startProduction": {
@@ -72,7 +73,65 @@ public class SocketServer {
                             break;
                         }
                         case "/detectMaintenanceStatus": {
-                            Facade.getFacade().detectMaintenanceStatus();
+                            apiSocket = new Socket();
+                            String string = String.valueOf(Facade.getFacade().detectMaintenanceStatus());
+                            URL url = new URL("http://localhost:3000/detectedStatus");
+                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                            conn.setRequestMethod("POST");
+                            conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+                            conn.setRequestProperty("Content-length", Integer.toString(string.length()));
+                            conn.setRequestProperty("Content-Language", "en-GB");
+                            conn.setRequestProperty("charset", "utf-8");
+                            conn.setUseCaches(false);
+                            conn.setDoOutput(true);
+                            DataOutputStream dout = new DataOutputStream(conn.getOutputStream());
+                            dout.writeBytes(string);
+                            dout.close();
+                            conn.disconnect();
+
+////                            PrintWriter pw = new PrintWriter(output, true);
+////                            pw.println(Facade.getFacade().detectMaintenanceStatus());
+//                            output = new DataOutputStream(apiSocket.getOutputStream());
+//                            output.write(Facade.getFacade().detectMaintenanceStatus());
+//                            Unirest.setObjectMapper(new ObjectMapper() {
+//                                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+//
+//                                @Override
+//                                public <T> T readValue(String s, Class<T> aClass) {
+//                                    try {
+//                                        return mapper.readValue(s, aClass);
+//                                    } catch (JsonProcessingException e) {
+//                                        e.printStackTrace();
+//                                        return null;
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public String writeValue(Object o) {
+//                                    try {
+//                                        return mapper.writeValueAsString(o);
+//                                    } catch (JsonProcessingException e) {
+//                                        e.printStackTrace();
+//                                        return null;
+//                                    }
+//                                }
+//                            });
+//
+//                            String string = "[\"statusCode\":" + Facade.getFacade().detectMaintenanceStatus() + " ]";
+//
+//                            class SomeClass{
+//                                int someValue;
+//
+//                                public SomeClass(int someValue){
+//                                    this.someValue = someValue;
+//                                }
+//                            }
+//
+//                            Unirest.post("http://localhost:3000/detectedStatus").header("Content-Type", "application/json").body(new SomeClass(Facade.getFacade().detectMaintenanceStatus())).asJson();
+//                            BufferedOutputStream bout = new BufferedOutputStream(socket.getOutputStream());
+//                            DataOutputStream dout = new DataOutputStream(bout);
+//                            dout.write(Facade.getFacade().detectMaintenanceStatus());
+//                            System.out.println(Facade.getFacade().detectMaintenanceStatus());
                             break;
                         }
                         case "/calculateErrorSpeed": {
@@ -101,7 +160,6 @@ public class SocketServer {
                             System.out.println("OH YES, DADDY SVANE BAMBOOZLED YOU <3");
                         }
                     }
-                    System.out.println(line);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
