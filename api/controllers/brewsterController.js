@@ -4,11 +4,14 @@ let client = net.connect(8000, 'localhost');
 
 client.setEncoding('utf8');
 
+let opcuaServer = require('./Semesterprojekt-03/backend/nodeopcua');
+
 exports.startProduction = function(req,res){
     res.send("Ah yes Daddy Svane, I work");
     let data = JSON.stringify(req.body);
     console.log(data);
-    client.write(req.url + ", " + data + "\n");
+
+    opcuaServer.StartProduction();
 }
 
 exports.stopProduction = function(req,res){
