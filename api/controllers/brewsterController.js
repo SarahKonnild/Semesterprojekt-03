@@ -14,7 +14,7 @@ exports.startProduction = function(req,res){
 }
 
 exports.stopProduction = function(req,res){
-    client.write(req.url + "\n");
+    nodeOPCUA.stopProduction();
 }
 
 exports.detectMaintenanceStatus = function(req,res){
