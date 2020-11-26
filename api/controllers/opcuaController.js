@@ -1,13 +1,15 @@
-import * as nodeOPCUA from "./Semesterprojekt-03/backend/nodeopcua.js";
+
+let nodeOPCUA = require ('../../backend/nodeopcua.ts');
 
 exports.startProduction = function(req,res){
-    res.send("Ah yes Daddy Svane, I work");
-    let data = JSON.stringify(req.body);
-    console.log(data);
-    nodeOPCUA.startProduction(1500.0, 200.0, 10, 1);
-}
+    // TODO Add some way of getting the data from the req to the function call
+    let someValue = nodeOPCUA.somefunction();
+    console.log(someValue);
+    res.send(someValue);
+};
 
 exports.stopProduction = function(req,res){
+    // TODO Add some form of return message
     nodeOPCUA.stopProduction();
 }
 

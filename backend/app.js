@@ -1,7 +1,8 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const cors = require('cors');
+let express = require('express');
+//import mongose from 'mongose';
+let cors = require('cors');
+//import bodyParser from 'bodyParser';
+require('typescript-require');
 
 const app = express();
 
@@ -11,7 +12,7 @@ const app = express();
 app.use(cors());
 
 //BodyParser Middleware
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
 
 //Connection to MongoDB
 // mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@sem03pg2.0eybl.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`).then(() => {
@@ -24,7 +25,7 @@ app.use(bodyParser.json());
 //let net = require('net');
 app.listen(3000);
 //let client = net.connect(8000, 'localhost');
-let routes = require('../api/routes/brewsterRoutes'); //importing route
+let routes = require( '../api/routes/brewsterRoutes.js'); //importing route
 routes(app); //register the route
 //client.setEncoding('utf8');
 // setInterval(function() {
@@ -32,3 +33,5 @@ routes(app); //register the route
 //   let ret = client.write('Hello from node.js\n');
 //   console.log("Wrote", ret)
 // }, 1000);
+
+console.log("I have done it");

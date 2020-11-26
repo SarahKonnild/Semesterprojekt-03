@@ -1,6 +1,6 @@
-'use strict';
+
 module.exports = function(app) {
-  const opcua = require('../controllers/opcuaController');
+  const opcua = require('../controllers/opcuaController.js');
   const optimization = require('../controllers/optimizationController')
 
   // All them http routes
