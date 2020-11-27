@@ -26,22 +26,25 @@ class CreateProductionForm extends Component {
       await this.setState({beerType: childData})
       //communicates with CreateProduction.js 
       this.props.handleBeerTypeAtCreateProductionPage(this.state.beerType);
-      console.log(this.state.beerType)
+      //console.log(this.state.beerType)
     }
 
     handleProductionSpeed = async (childData) =>{
       await this.setState({productionSpeed: childData})
-      console.log(this.state.productionSpeed)
+      this.props.handleProductionSpeedAtCreateProductionPage(this.state.productionSpeed)
+      //console.log(this.state.productionSpeed)
     }
 
     handleBatchSize = async (childData) =>{
       await this.setState({batchSize: childData})
-      console.log(this.state.batchSize)
+      this.props.handleBatchSizeAtCreateProductionPage(this.state.batchSize)
+      //console.log(this.state.batchSize)
     }
 
     handleErrorMargin = async (childData) =>{
       await this.setState({errorMargin: childData})
-      console.log(this.state.errorMargin)
+      this.props.handleErrorMarginAtCreateProductionPage(this.state.errorMargin)
+      //console.log(this.state.errorMargin)
     }
 
 

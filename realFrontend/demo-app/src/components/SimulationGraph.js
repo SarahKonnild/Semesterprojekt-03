@@ -7,17 +7,46 @@ import CanvasJSReact from '../canvasjs.react'
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
+/*
+productionSpeed: this.props.productionSpeedFromCreateProductionForm,
+batchSize: this.props.batchSizeFromCreateProductionForm,
+errorMargin: this.props.errorMarginFromCreateProductionForm */
+
 class SimulationGraph extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			beerType: this.props.beerTypeFromCreateProductionForm
+			beerType: this.props.beerTypeFromCreateProductionForm,
+			updatedDataPoints: []
 		}
 	}
 
+	updateDataPoints() {
+		this.state.updatedDataPoints = []
+		var x = 0;
+		var numberOfDataPoints = 10
+		var interval = 100
 
+		for (x; x < numberOfDataPoints * interval; x = x + interval) {
+			console.log("x is: " + x + " y is: " + this.equations(x))
+			this.state.updatedDataPoints.push({x: x, y: this.equations(x)})
+			
+		}
+		
+	}
+
+	equations(x) {
+		if (this.props.beerTypeFromCreateProductionForm === "Pilsner") {
+			return x * 1/10
+		} else if (this.props.beerTypeFromCreateProductionForm === "Ale") {
+			return x * 1/20
+		}
+	}
+
+	
 
 	render() {
+		this.updateDataPoints() //Should only calculate when beerType changes. If statement?
 		const options = {
 			animationEnabled: true,
 			title:{
@@ -47,9 +76,9 @@ class SimulationGraph extends Component {
                 labelFontColor: "blue"
 			},
 			{
-                
-                startValue:300,
-                endValue:305,                
+                //parseInt because they at some point the integer turned into an object... Maybe
+                startValue: parseInt(this.props.productionSpeedFromCreateProductionForm, 10),
+                endValue: parseInt(this.props.productionSpeedFromCreateProductionForm, 10) + 5,                
                 color:"#d8d8d8",
                 label : "Current production speed",
                 labelFontColor: "green"
@@ -68,10 +97,7 @@ class SimulationGraph extends Component {
 				//yValueFormatInt: 0,
 				//xValueFormatInt: 0,
 				type: "spline",
-				dataPoints: [
-					{ x: 0, y: 5 },
-					{ x: 900, y: 80 },
-				]
+				dataPoints: this.state.updatedDataPoints
 			}]
 		}
 		return (
