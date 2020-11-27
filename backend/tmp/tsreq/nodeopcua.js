@@ -123,7 +123,7 @@ function startProduction(beers, productionSpeed, batchnumber, beerType) {
                     batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0]";
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 7, , 8]);
+                    _a.trys.push([1, 6, 7, 8]);
                     return [4 /*yield*/, clientOPCUA.connect(endpointURL)];
                 case 2:
                     _a.sent();
@@ -226,12 +226,14 @@ function startProduction(beers, productionSpeed, batchnumber, beerType) {
                     // Do not forget to also close down the connection 
                     _a.sent();
                     thisValue = 'Sone value';
-                    return [4 /*yield*/, thisValue];
-                case 6: return [2 /*return*/, _a.sent()];
-                case 7:
+                    return [2 /*return*/, thisValue];
+                case 6:
                     err_3 = _a.sent();
                     console.log("Ohh no something went wrong when opening connection ", err_3);
                     return [3 /*break*/, 8];
+                case 7:
+                    console.log("I dids it");
+                    return [2 /*return*/, ('Something went wrong')];
                 case 8: return [2 /*return*/];
             }
         });
@@ -240,10 +242,18 @@ function startProduction(beers, productionSpeed, batchnumber, beerType) {
 exports.startProduction = startProduction;
 ;
 function somefunction() {
-    var value = startProduction(1500.0, 200.0, 10, 1).then(function (x) {
-        return (x);
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, startProduction(1500.0, 200.0, 10, 1)];
+                case 1: 
+                // let value = startProduction(1500.0, 200.0, 10, 1).then(x => {
+                //     return (x);
+                // });
+                return [2 /*return*/, _a.sent()];
+            }
+        });
     });
-    return value;
 }
 exports.somefunction = somefunction;
 ;

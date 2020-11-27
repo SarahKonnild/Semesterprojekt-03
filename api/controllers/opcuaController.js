@@ -1,20 +1,20 @@
 
 let nodeOPCUA = require ('../../backend/nodeopcua.ts');
 
-exports.startProduction = function(req,res){
+exports.startProduction = async function(req,res){
     // TODO Add some way of getting the data from the req to the function call
-    let someValue = nodeOPCUA.somefunction();
+    let someValue = await nodeOPCUA.somefunction();
     console.log(someValue);
     res.send(someValue);
 };
 
-exports.stopProduction = function(req,res){
+exports.stopProduction = async function(req,res){
     // TODO Add some form of return message
-    nodeOPCUA.stopProduction();
+    await nodeOPCUA.stopProduction();
 }
 
-exports.detectMaintenanceStatus = function(req,res){
-    returnValue = nodeOPCUA.getMaintenanceStatus();
+exports.detectMaintenanceStatus = async function(req,res){
+    returnValue = await nodeOPCUA.getMaintenanceStatus();
     res.send("Ah yes Daddy Svane, I work " + returnValue);
     res.end();
 }

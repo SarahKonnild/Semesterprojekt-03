@@ -175,18 +175,21 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
         // Do not forget to also close down the connection 
         await clientOPCUA.disconnect();
         let thisValue = 'Sone value';
-        return await thisValue;
+        return thisValue;
     }
     catch (err) {
         console.log("Ohh no something went wrong when opening connection ", err);
+    } finally {
+        console.log("I dids it");
+        return ('Something went wrong');
     }
 };
 
-export function somefunction() {
-    let value = startProduction(1500.0, 200.0, 10, 1).then(x => {
-        return (x);
-    });
-    return value;
+export async function somefunction() {
+    // let value = startProduction(1500.0, 200.0, 10, 1).then(x => {
+    //     return (x);
+    // });
+    return await startProduction(1500.0, 200.0, 10, 1);
 };
 export async function stopProduction() {
     const currentStateNodeID = "ns=6;s=::Program:Cube.Command.Parameter[1]"
