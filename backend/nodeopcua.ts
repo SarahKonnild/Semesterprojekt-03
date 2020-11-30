@@ -212,6 +212,7 @@ export async function resetProduction() {
         };
         
         const stateStatus = await session.read(nodeToRead);
+        
             const stateToWrite = [{
                 nodeId: stateNodeID,
                 attributeId: AttributeIds.Value,

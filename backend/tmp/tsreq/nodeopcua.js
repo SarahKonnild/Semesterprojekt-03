@@ -248,7 +248,7 @@ function resetProduction() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 9, , 10]);
+                    _a.trys.push([0, 8, , 9]);
                     return [4 /*yield*/, clientOPCUA.connect(endpointURL)];
                 case 1:
                     _a.sent();
@@ -264,7 +264,18 @@ function resetProduction() {
                     return [4 /*yield*/, session.read(nodeToRead)];
                 case 3:
                     stateStatus = _a.sent();
-                    return [2 /*return*/, (stateStatus)];
+                    stateToWrite = [{
+                            nodeId: stateNodeID,
+                            attributeId: node_opcua_1.AttributeIds.Value,
+                            indexRange: null,
+                            value: {
+                                value: {
+                                    dataType: node_opcua_1.DataType.Int32,
+                                    value: resetProductionCommand
+                                }
+                            }
+                        }];
+                    return [4 /*yield*/, session.write(stateToWrite)];
                 case 4:
                     _a.sent();
                     changeStateRequest = true;
@@ -282,25 +293,23 @@ function resetProduction() {
                     return [4 /*yield*/, session.write(changeStateRequestToWrite)];
                 case 5:
                     _a.sent();
-                    _a.label = 6;
-                case 6: 
-                //Close the sesssion sheesh
-                return [4 /*yield*/, session.close()];
-                case 7:
+                    //Close the sesssion sheesh
+                    return [4 /*yield*/, session.close()];
+                case 6:
                     //Close the sesssion sheesh
                     _a.sent();
                     // Do not forget to also close down the connection 
                     return [4 /*yield*/, clientOPCUA.disconnect()];
-                case 8:
+                case 7:
                     // Do not forget to also close down the connection 
                     _a.sent();
                     console.log("Disssssconnected");
-                    return [3 /*break*/, 10];
-                case 9:
+                    return [3 /*break*/, 9];
+                case 8:
                     err_4 = _a.sent();
                     console.log("Ohh no something went wrong when opening connection ", err_4);
-                    return [3 /*break*/, 10];
-                case 10: return [2 /*return*/];
+                    return [3 /*break*/, 9];
+                case 9: return [2 /*return*/];
             }
         });
     });
