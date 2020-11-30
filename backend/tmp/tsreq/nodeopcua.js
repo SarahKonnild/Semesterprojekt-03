@@ -248,7 +248,7 @@ function resetProduction() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 6, , 7]);
+                    _a.trys.push([0, 9, , 10]);
                     return [4 /*yield*/, clientOPCUA.connect(endpointURL)];
                 case 1:
                     _a.sent();
@@ -264,50 +264,43 @@ function resetProduction() {
                     return [4 /*yield*/, session.read(nodeToRead)];
                 case 3:
                     stateStatus = _a.sent();
-                    if (stateStatus.value.dataType == 2) {
-                        stateToWrite = [{
-                                nodeId: stateNodeID,
-                                attributeId: node_opcua_1.AttributeIds.Value,
-                                indexRange: null,
-                                value: {
-                                    value: {
-                                        dataType: node_opcua_1.DataType.Int32,
-                                        value: resetProductionCommand
-                                    }
-                                }
-                            }];
-                        session.write(stateToWrite);
-                        changeStateRequest = true;
-                        changeStateRequestToWrite = [{
-                                nodeId: requestChangeCommandNodeID,
-                                attributeId: node_opcua_1.AttributeIds.Value,
-                                indexRange: null,
-                                value: {
-                                    value: {
-                                        dataType: node_opcua_1.DataType.Boolean,
-                                        value: changeStateRequest
-                                    }
-                                }
-                            }];
-                        session.write(changeStateRequestToWrite);
-                    }
-                    //Close the sesssion sheesh
-                    return [4 /*yield*/, session.close()];
+                    return [2 /*return*/, (stateStatus)];
                 case 4:
+                    _a.sent();
+                    changeStateRequest = true;
+                    changeStateRequestToWrite = [{
+                            nodeId: requestChangeCommandNodeID,
+                            attributeId: node_opcua_1.AttributeIds.Value,
+                            indexRange: null,
+                            value: {
+                                value: {
+                                    dataType: node_opcua_1.DataType.Boolean,
+                                    value: changeStateRequest
+                                }
+                            }
+                        }];
+                    return [4 /*yield*/, session.write(changeStateRequestToWrite)];
+                case 5:
+                    _a.sent();
+                    _a.label = 6;
+                case 6: 
+                //Close the sesssion sheesh
+                return [4 /*yield*/, session.close()];
+                case 7:
                     //Close the sesssion sheesh
                     _a.sent();
                     // Do not forget to also close down the connection 
                     return [4 /*yield*/, clientOPCUA.disconnect()];
-                case 5:
+                case 8:
                     // Do not forget to also close down the connection 
                     _a.sent();
                     console.log("Disssssconnected");
-                    return [3 /*break*/, 7];
-                case 6:
+                    return [3 /*break*/, 10];
+                case 9:
                     err_4 = _a.sent();
                     console.log("Ohh no something went wrong when opening connection ", err_4);
-                    return [3 /*break*/, 7];
-                case 7: return [2 /*return*/];
+                    return [3 /*break*/, 10];
+                case 10: return [2 /*return*/];
             }
         });
     });
@@ -316,7 +309,7 @@ exports.resetProduction = resetProduction;
 ;
 function stopProduction() {
     return __awaiter(this, void 0, void 0, function () {
-        var session, nodeToRead, stateStatus, stateToWrite, changeStateRequest, changeStateRequestToWrite, err_5;
+        var session, nodeToRead, stateStatus2, stateToWrite, changeStateRequest, changeStateRequestToWrite, err_5;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -335,8 +328,8 @@ function stopProduction() {
                     };
                     return [4 /*yield*/, session.read(nodeToRead)];
                 case 3:
-                    stateStatus = _a.sent();
-                    if (stateStatus.value.dataType == 6) {
+                    stateStatus2 = _a.sent();
+                    if (stateStatus2.value.dataType === 6) {
                         stateToWrite = [{
                                 nodeId: stateNodeID,
                                 attributeId: node_opcua_1.AttributeIds.Value,

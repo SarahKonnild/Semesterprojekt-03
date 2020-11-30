@@ -74,6 +74,7 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
     const batchSizeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[2].Value";
     const batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0].Value";
     console.log('We are in the endgame now');
+
     try {
         console.log("We did done do it");
         await clientOPCUA.connect(endpointURL);
@@ -204,16 +205,13 @@ export async function resetProduction() {
 
         const session = await clientOPCUA.createSession();
         console.log("Session created");
-
         // check if a production is going on then kill it
         const nodeToRead = {
             nodeId: currentStateNodeID,
             attributeId: AttributeIds.Value,
         };
-        const stateStatus = await session.read(nodeToRead);
         
-        if (stateStatus.value.dataType == 2) {
-            //Change state on machine
+        const stateStatus = await session.read(nodeToRead);
             const stateToWrite = [{
                 nodeId: stateNodeID,
                 attributeId: AttributeIds.Value,
@@ -226,7 +224,7 @@ export async function resetProduction() {
                 }
             }];
 
-            session.write(stateToWrite);
+            await session.write(stateToWrite);
 
             //Send request to change state
             let changeStateRequest = true;
@@ -243,16 +241,14 @@ export async function resetProduction() {
                 }
             }];
 
-            session.write(changeStateRequestToWrite);
-        }
-
+            await session.write(changeStateRequestToWrite);
+        
         //Close the sesssion sheesh
         await session.close();
 
         // Do not forget to also close down the connection 
         await clientOPCUA.disconnect();
         console.log("Disssssconnected");
-
     }
     catch (err) {
         console.log("Ohh no something went wrong when opening connection ", err);
@@ -273,9 +269,9 @@ export async function stopProduction(){
             nodeId: currentStateNodeID,
             attributeId: AttributeIds.Value,
         };
-        const stateStatus = await session.read(nodeToRead);
+        const stateStatus2 = await session.read(nodeToRead);
         
-        if (stateStatus.value.dataType == 6) {
+        if (stateStatus2.value.dataType === 6) {
             //Change state on machine
             const stateToWrite = [{
                 nodeId: stateNodeID,
