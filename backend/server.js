@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('typescript-require');
 
 //Connection to DB Configuration
 const config = require('./config/db');
@@ -31,11 +32,13 @@ const batchesRouter = require('./api/routes/batches');
 const IngredientsRouter = require('./api/routes/ingredients');
 const productionsRouter = require('./api/routes/productions');
 const countersRouter = require('./api/routes/counters');
+const brewsterRouter = require('./api/routes/brewster');
 
 app.use('/batches', batchesRouter);
 app.use('/ingredients', IngredientsRouter);
 app.use('/productions', productionsRouter);
 app.use('/counters', countersRouter);
+app.use('/brewster', brewsterRouter);
 
 //Welcome Message for API
 app.get('/', (req, res) => res.send('Welcome to Group 2 API frontpage'));

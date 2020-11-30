@@ -16,7 +16,10 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongoose": "^5.10.12",
-    "mongoose-int32": "^0.4.1"
+    "mongoose-int32": "^0.4.1",
+    "node-opcua": "^2.28.0",
+    "node-opcua-client": "^2.28.0",
+    "typescript-require": "^0.3.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"

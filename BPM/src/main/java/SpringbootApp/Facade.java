@@ -1,14 +1,8 @@
-package Domain;
+package SpringbootApp;
 
-import Interfaces.IFacade;
-import Interfaces.IPersistence;
-import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Date;
 
-public class Facade implements IFacade {
+public class Facade{
 
     public static final int port = 8000;
     private static Facade facade = new Facade();
@@ -22,7 +16,6 @@ public class Facade implements IFacade {
      * OPC UA Functions
      */
     //region
-    @Override
     public boolean startProduction(int batchId, Date timestamp, BeerType beerType, int batchSize, double productionSpeed, int productionId) {
         //TODO adapt to take in a JSON object/document that can then be separated into the relevant data that is written above
         System.out.println("YOLO BITCHES ITS FRIDAY");
@@ -41,7 +34,6 @@ public class Facade implements IFacade {
         return false;
     }
 
-    @Override
     public Production stopProduction(Production production) {
         //IF RUNNING:
         //TODO insert code which sends the stop production signal via OPC UA to the machine
@@ -52,7 +44,6 @@ public class Facade implements IFacade {
         return null;
     }
 
-    @Override
     public int detectMaintenanceStatus() {
         //TODO insert code which on a thread is subscribed to the maintenance status of the machine
         //TODO insert code which checks if the maintenance status is above a certain value/critical point, to send a warning
@@ -64,19 +55,16 @@ public class Facade implements IFacade {
      * Optimization calculations
      */
     //region
-    @Override
     public double calculateErrorSpeed(BeerType beerType, double speed) {
         //TODO insert formula for optimization calculation
         return 0;
     }
 
-    @Override
     public double calculateErrorMargin(BeerType beerType, int batchSize) {
         //TODO insert formula for optimization calculation
         return 0;
     }
 
-    @Override
     public double calculateOptimalSpeed(BeerType beerType, double errorMargin) {
         //TODO insert formula for optimization calculation
         return 0;
