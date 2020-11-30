@@ -1,5 +1,4 @@
 "use strict";
-// declarationer til node OPC UA
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -37,25 +36,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMaintenanceStatus = exports.stopProduction = exports.somefunction = exports.startProduction = void 0;
+exports.getMaintenanceStatus = exports.stopProduction = exports.startProduction = void 0;
+// declarationer til node OPC UA
+var node_opcua_1 = require("node-opcua");
 // Globale constants for use to OPCUA connections
-var opcua = require("node-opcua");
-var endpointURL = "opc.tcp://" + require("os").hostname() + "127.0.0.1:4840";
+//"opc.tcp://127.0.0.1:4840"
+var endpointURL = "opc.tcp://192.168.0.122:4840";
 var stateNodeID = "ns=6;s=::Program:Cube.Command.CntrlCmd"; //Takes an int32
 var requestChangeCommandNodeID = "ns=6;s=::Program:Cube.Command.CmdChangeRequest"; //Takes a boolean
 var stopProductionCommand = 3;
-var resetProductionCommand = 2;
-var startProductionCommand = 1;
+var resetProductionCommand = 1;
+var startProductionCommand = 2;
 // connect to the OPCUA server 
 var connectionStrategy = {
     initialDelay: 1000,
     maxRetry: 1
 };
-var clientOPCUA = opcua.OPCUAClient.create({
+var clientOPCUA = node_opcua_1.OPCUAClient.create({
     applicationName: "MyClient",
     connectionStrategy: connectionStrategy,
-    securityMode: opcua.MessageSecurityMode.None,
-    SecurityPolicy: opcua.SecurityPolicy.None,
+    securityMode: node_opcua_1.MessageSecurityMode.None,
+    securityPolicy: node_opcua_1.SecurityPolicy.None,
     endpoint_must_exist: false
 });
 function openOPCUAConnection() {
@@ -113,7 +114,7 @@ function closeOPCUAConnection(session) {
 }
 function startProduction(beers, productionSpeed, batchnumber, beerType) {
     return __awaiter(this, void 0, void 0, function () {
-        var beerTypeNodeID, productionSpeedNodeID, batchSizeNodeID, batchNumberNodeID, session, beerAmountToWrite, productionSpeedToWrite, batchnumberToWrite, beerTypeToWrite, state, stateToWrite, changeStateRequest, changeStateRequestToWrite, thisValue, err_3;
+        var beerTypeNodeID, productionSpeedNodeID, batchSizeNodeID, batchNumberNodeID, session, stateToWrite2, changeStateRequestToWrite2, err_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -121,9 +122,11 @@ function startProduction(beers, productionSpeed, batchnumber, beerType) {
                     productionSpeedNodeID = "ns=6;s=::Program:Cube.Command.MarchSpeed";
                     batchSizeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[2]";
                     batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0]";
+                    console.log('We are in the endgame now');
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 6, 7, 8]);
+                    _a.trys.push([1, 4, , 5]);
+                    console.log("We did done do it");
                     return [4 /*yield*/, clientOPCUA.connect(endpointURL)];
                 case 2:
                     _a.sent();
@@ -132,134 +135,41 @@ function startProduction(beers, productionSpeed, batchnumber, beerType) {
                 case 3:
                     session = _a.sent();
                     console.log("Session created");
-                    // figure out something about produtionID and timestamp
-                    // Set amount of beer to produce
-                    beers = 1500.0;
-                    beerAmountToWrite = [{
-                            nodeID: batchSizeNodeID,
-                            attributeId: opcua.AttributeIds.Value,
+                    stateToWrite2 = [{
+                            nodeId: stateNodeID,
+                            attributeId: node_opcua_1.AttributeIds.Value,
                             indexRange: null,
-                            value: {
-                                value: {
-                                    dataType: opcua.DataType.Float,
-                                    value: beers
-                                }
+                            Value: {
+                                dataType: node_opcua_1.DataType.Int32,
+                                value: 1
                             }
                         }];
-                    session.write(beerAmountToWrite);
-                    // Set production speed
-                    productionSpeed = 300.0;
-                    productionSpeedToWrite = [{
-                            nodeID: productionSpeedNodeID,
-                            attributeId: opcua.AttributeIds.Value,
+                    session.write(stateToWrite2);
+                    changeStateRequestToWrite2 = [{
+                            nodeId: requestChangeCommandNodeID,
+                            attributeId: node_opcua_1.AttributeIds.Value,
                             indexRange: null,
-                            value: {
-                                value: {
-                                    dataType: opcua.DataType.Float,
-                                    value: productionSpeed
-                                }
+                            Value: {
+                                dataType: node_opcua_1.DataType.Boolean,
+                                value: true
                             }
                         }];
-                    session.write(productionSpeedToWrite);
-                    // Set batchnumber
-                    batchnumber = 300.0;
-                    batchnumberToWrite = [{
-                            nodeID: batchNumberNodeID,
-                            attributeId: opcua.AttributeIds.Value,
-                            indexRange: null,
-                            value: {
-                                value: {
-                                    dataType: opcua.DataType.Float,
-                                    value: batchnumber
-                                }
-                            }
-                        }];
-                    session.write(batchnumberToWrite);
-                    // Set beertype
-                    beerType = 1;
-                    beerTypeToWrite = [{
-                            nodeID: beerTypeNodeID,
-                            attributeId: opcua.AttributeIds.Value,
-                            indexRange: null,
-                            value: {
-                                value: {
-                                    dataType: opcua.DataType.Float,
-                                    value: beerType
-                                }
-                            }
-                        }];
-                    session.write(beerTypeToWrite);
-                    state = startProductionCommand;
-                    stateToWrite = [{
-                            nodeID: stateNodeID,
-                            attributeId: opcua.AttributeIds.Value,
-                            indexRange: null,
-                            value: {
-                                value: {
-                                    dataType: opcua.DataType.Int,
-                                    value: state
-                                }
-                            }
-                        }];
-                    session.write(stateToWrite);
-                    changeStateRequest = true;
-                    changeStateRequestToWrite = [{
-                            nodeID: requestChangeCommandNodeID,
-                            attributeId: opcua.AttributeIds.Value,
-                            indexRange: null,
-                            value: {
-                                value: {
-                                    dataType: opcua.DataType.Boolean,
-                                    value: changeStateRequest
-                                }
-                            }
-                        }];
-                    session.write(changeStateRequestToWrite);
-                    //Close the sesssion sheesh
-                    return [4 /*yield*/, session.close()];
+                    session.write(changeStateRequestToWrite2);
+                    return [3 /*break*/, 5];
                 case 4:
-                    //Close the sesssion sheesh
-                    _a.sent();
-                    // Do not forget to also close down the connection 
-                    return [4 /*yield*/, clientOPCUA.disconnect()];
-                case 5:
-                    // Do not forget to also close down the connection 
-                    _a.sent();
-                    thisValue = 'Sone value';
-                    return [2 /*return*/, thisValue];
-                case 6:
                     err_3 = _a.sent();
                     console.log("Ohh no something went wrong when opening connection ", err_3);
-                    return [3 /*break*/, 8];
-                case 7:
-                    console.log("I dids it");
-                    return [2 /*return*/, ('Something went wrong')];
-                case 8: return [2 /*return*/];
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
             }
         });
     });
 }
 exports.startProduction = startProduction;
 ;
-function somefunction() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, startProduction(1500.0, 200.0, 10, 1)];
-                case 1: 
-                // let value = startProduction(1500.0, 200.0, 10, 1).then(x => {
-                //     return (x);
-                // });
-                return [2 /*return*/, _a.sent()];
-            }
-        });
-    });
-}
-exports.somefunction = somefunction;
-;
 function stopProduction() {
     return __awaiter(this, void 0, void 0, function () {
-        var currentStateNodeID, session, stateStatus, stateToWrite, changeStateRequest, changeStateRequestToWrite, err_4;
+        var currentStateNodeID, session, nodeToRead, stateStatus, stateToWrite, changeStateRequest, changeStateRequestToWrite, err_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -275,21 +185,21 @@ function stopProduction() {
                 case 3:
                     session = _a.sent();
                     console.log("Session created");
-                    session = openOPCUAConnection();
-                    return [4 /*yield*/, session.read({
-                            nodeID: currentStateNodeID,
-                            attributeId: opcua.AttributeIds.Value,
-                        })];
+                    nodeToRead = {
+                        nodeId: currentStateNodeID,
+                        attributeId: node_opcua_1.AttributeIds.Value,
+                    };
+                    return [4 /*yield*/, session.read(nodeToRead, 0)];
                 case 4:
                     stateStatus = _a.sent();
-                    if (stateStatus == 2) {
+                    if (Number(stateStatus.toString) === 2) {
                         stateToWrite = [{
-                                nodeID: stateNodeID,
-                                attributeId: opcua.AttributeIds.Value,
+                                nodeId: stateNodeID,
+                                attributeId: node_opcua_1.AttributeIds.Value,
                                 indexRange: null,
                                 value: {
                                     value: {
-                                        dataType: opcua.DataType.Int,
+                                        dataType: node_opcua_1.DataType.Int32,
                                         value: stopProductionCommand
                                     }
                                 }
@@ -297,12 +207,12 @@ function stopProduction() {
                         session.write(stateToWrite);
                         changeStateRequest = true;
                         changeStateRequestToWrite = [{
-                                nodeID: requestChangeCommandNodeID,
-                                attributeId: opcua.AttributeIds.Value,
+                                nodeId: requestChangeCommandNodeID,
+                                attributeId: node_opcua_1.AttributeIds.Value,
                                 indexRange: null,
                                 value: {
                                     value: {
-                                        dataType: opcua.DataType.Boolean,
+                                        dataType: node_opcua_1.DataType.Boolean,
                                         value: changeStateRequest
                                     }
                                 }
@@ -350,10 +260,9 @@ function getMaintenanceStatus() {
                 case 3:
                     session = _a.sent();
                     console.log("Session created");
-                    session = openOPCUAConnection();
                     return [4 /*yield*/, session.read({
-                            nodeID: maintenanceStatusNodeID,
-                            attributeId: opcua.AttributeIds.Value,
+                            nodeId: maintenanceStatusNodeID,
+                            attributeId: node_opcua_1.AttributeIds.Value,
                         })];
                 case 4:
                     stateStatus = _a.sent();
