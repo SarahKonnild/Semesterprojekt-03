@@ -16,8 +16,12 @@ import {
   } from "node-opcua";
 
 // Globale constants for use to OPCUA connections
-//"opc.tcp://127.0.0.1:4840"
-const endpointURL = "opc.tcp://192.168.0.122:4840"
+
+//Test Simulation
+const endpointURL = "opc.tcp://127.0.0.1:4840"
+
+//Test the Physical Machine
+// const endpointURL = "opc.tcp://192.168.0.122:4840"
 const stateNodeID = "ns=6;s=::Program:Cube.Command.CntrlCmd"; //Takes an int32
 const requestChangeCommandNodeID = "ns=6;s=::Program:Cube.Command.CmdChangeRequest"; //Takes a boolean
 const currentStateNodeID = "ns=6;s=::Program:Cube.Status.StateCurrent";
@@ -212,7 +216,7 @@ export async function resetProduction() {
         };
         const stateStatus = await session.read(nodeToRead);
         
-        if (stateStatus.value.dataType == 2) {
+        if (stateStatus.value.value == 2) {
             //Change state on machine
             const stateToWrite = [{
                 nodeId: stateNodeID,
@@ -275,7 +279,7 @@ export async function stopProduction(){
         };
         const stateStatus = await session.read(nodeToRead);
         
-        if (stateStatus.value.dataType == 6) {
+        if (stateStatus.value.value == 6) {
             //Change state on machine
             const stateToWrite = [{
                 nodeId: stateNodeID,
