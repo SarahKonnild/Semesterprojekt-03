@@ -8,7 +8,7 @@ module.exports = function(app) {
     .get(opcua.startProduction);
 
   app.route('/stopProduction')
-    .post(opcua.stopProduction);
+    .get(opcua.stopProduction);
 
   app.route('/detectMaintenanceStatus')
     .get(opcua.detectMaintenanceStatus);
@@ -21,4 +21,7 @@ module.exports = function(app) {
 
   app.route('/calculateOptimalSpeed')
     .get(optimization.calculateOptimalSpeed);
+  
+  app.route('/resetProduction')
+    .get(opcua.resetProduction);
 };

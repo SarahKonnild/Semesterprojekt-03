@@ -6,6 +6,7 @@ exports.startProduction = async function(req,res){
     let someValue = await nodeOPCUA.startProduction();
     console.log(someValue);
     res.send(someValue);
+    res.end;
 };
 
 exports.stopProduction = async function(req,res){
@@ -17,6 +18,11 @@ exports.stopProduction = async function(req,res){
 exports.detectMaintenanceStatus = async function(req,res){
     returnValue = await nodeOPCUA.getMaintenanceStatus();
     res.send(returnValue);
-    res.end();
+    res.end;
+}
+exports.resetProduction = async function(req, res){
+    returnValue = await nodeOPCUA.resetProduction();
+    res.send(returnValue);
+    res.end;
 }
 

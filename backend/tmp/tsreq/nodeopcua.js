@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMaintenanceStatus = exports.stopProduction = exports.startProduction = void 0;
+exports.getMaintenanceStatus = exports.stopProduction = exports.resetProduction = exports.startProduction = void 0;
 // declarationer til node OPC UA
 var node_opcua_1 = require("node-opcua");
 // Globale constants for use to OPCUA connections
@@ -44,6 +44,7 @@ var node_opcua_1 = require("node-opcua");
 var endpointURL = "opc.tcp://192.168.0.122:4840";
 var stateNodeID = "ns=6;s=::Program:Cube.Command.CntrlCmd"; //Takes an int32
 var requestChangeCommandNodeID = "ns=6;s=::Program:Cube.Command.CmdChangeRequest"; //Takes a boolean
+var currentStateNodeID = "ns=6;s=::Program:Cube.Status.StateCurrent";
 var stopProductionCommand = 3;
 var resetProductionCommand = 1;
 var startProductionCommand = 2;
@@ -114,18 +115,18 @@ function closeOPCUAConnection(session) {
 }
 function startProduction(beers, productionSpeed, batchnumber, beerType) {
     return __awaiter(this, void 0, void 0, function () {
-        var beerTypeNodeID, productionSpeedNodeID, batchSizeNodeID, batchNumberNodeID, session, stateToWrite2, changeStateRequestToWrite2, err_3;
+        var beerTypeNodeID, productionSpeedNodeID, batchSizeNodeID, batchNumberNodeID, session, beerAmountToWrite, productionSpeedToWrite, batchnumberToWrite, beerTypeToWrite, state, stateToWrite, changeStateRequest, changeStateRequestToWrite, thisValue, err_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    beerTypeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[1]";
-                    productionSpeedNodeID = "ns=6;s=::Program:Cube.Command.MarchSpeed";
-                    batchSizeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[2]";
-                    batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0]";
+                    beerTypeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[1].Value";
+                    productionSpeedNodeID = "ns=6;s=::Program:Cube.Command.MachSpeed";
+                    batchSizeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[2].Value";
+                    batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0].Value";
                     console.log('We are in the endgame now');
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 4, , 5]);
+                    _a.trys.push([1, 6, , 7]);
                     console.log("We did done do it");
                     return [4 /*yield*/, clientOPCUA.connect(endpointURL)];
                 case 2:
@@ -135,64 +136,207 @@ function startProduction(beers, productionSpeed, batchnumber, beerType) {
                 case 3:
                     session = _a.sent();
                     console.log("Session created");
-                    stateToWrite2 = [{
+                    // figure out something about produtionID and timestamp
+                    // Set amount of beer to produce
+                    beers = 1500.0;
+                    beerAmountToWrite = [{
+                            nodeId: batchSizeNodeID,
+                            attributeId: node_opcua_1.AttributeIds.Value,
+                            indexRange: null,
+                            value: {
+                                value: {
+                                    dataType: node_opcua_1.DataType.Float,
+                                    value: beers
+                                }
+                            }
+                        }];
+                    session.write(beerAmountToWrite);
+                    // Set production speed
+                    productionSpeed = 100.0;
+                    productionSpeedToWrite = [{
+                            nodeId: productionSpeedNodeID,
+                            attributeId: node_opcua_1.AttributeIds.Value,
+                            indexRange: null,
+                            value: {
+                                value: {
+                                    dataType: node_opcua_1.DataType.Float,
+                                    value: productionSpeed
+                                }
+                            }
+                        }];
+                    session.write(productionSpeedToWrite);
+                    // Set batchnumber
+                    batchnumber = 300.0;
+                    batchnumberToWrite = [{
+                            nodeId: batchNumberNodeID,
+                            attributeId: node_opcua_1.AttributeIds.Value,
+                            indexRange: null,
+                            value: {
+                                value: {
+                                    dataType: node_opcua_1.DataType.Float,
+                                    value: batchnumber
+                                }
+                            }
+                        }];
+                    session.write(batchnumberToWrite);
+                    // Set beertype
+                    beerType = 3;
+                    beerTypeToWrite = [{
+                            nodeId: beerTypeNodeID,
+                            attributeId: node_opcua_1.AttributeIds.Value,
+                            indexRange: null,
+                            value: {
+                                value: {
+                                    dataType: node_opcua_1.DataType.Float,
+                                    value: beerType
+                                }
+                            }
+                        }];
+                    session.write(beerTypeToWrite);
+                    state = startProductionCommand;
+                    stateToWrite = [{
                             nodeId: stateNodeID,
                             attributeId: node_opcua_1.AttributeIds.Value,
                             indexRange: null,
-                            Value: {
-                                dataType: node_opcua_1.DataType.Int32,
-                                value: 1
+                            value: {
+                                value: {
+                                    dataType: node_opcua_1.DataType.Int32,
+                                    value: startProductionCommand
+                                }
                             }
                         }];
-                    session.write(stateToWrite2);
-                    changeStateRequestToWrite2 = [{
+                    session.write(stateToWrite);
+                    changeStateRequest = true;
+                    changeStateRequestToWrite = [{
                             nodeId: requestChangeCommandNodeID,
                             attributeId: node_opcua_1.AttributeIds.Value,
                             indexRange: null,
-                            Value: {
-                                dataType: node_opcua_1.DataType.Boolean,
-                                value: true
+                            value: {
+                                value: {
+                                    dataType: node_opcua_1.DataType.Boolean,
+                                    value: changeStateRequest
+                                }
                             }
                         }];
-                    session.write(changeStateRequestToWrite2);
-                    return [3 /*break*/, 5];
+                    session.write(changeStateRequestToWrite);
+                    //Close the sesssion sheesh
+                    return [4 /*yield*/, session.close()];
                 case 4:
+                    //Close the sesssion sheesh
+                    _a.sent();
+                    // Do not forget to also close down the connection 
+                    return [4 /*yield*/, clientOPCUA.disconnect()];
+                case 5:
+                    // Do not forget to also close down the connection 
+                    _a.sent();
+                    thisValue = 'Some value';
+                    return [2 /*return*/, thisValue];
+                case 6:
                     err_3 = _a.sent();
                     console.log("Ohh no something went wrong when opening connection ", err_3);
-                    return [3 /*break*/, 5];
-                case 5: return [2 /*return*/];
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
     });
 }
 exports.startProduction = startProduction;
 ;
-function stopProduction() {
+function resetProduction() {
     return __awaiter(this, void 0, void 0, function () {
-        var currentStateNodeID, session, nodeToRead, stateStatus, stateToWrite, changeStateRequest, changeStateRequestToWrite, err_4;
+        var session, nodeToRead, stateStatus, stateToWrite, changeStateRequest, changeStateRequestToWrite, err_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    currentStateNodeID = "ns=6;s=::Program:Cube.Command.Parameter[1]";
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 7, , 8]);
+                    _a.trys.push([0, 6, , 7]);
                     return [4 /*yield*/, clientOPCUA.connect(endpointURL)];
-                case 2:
+                case 1:
                     _a.sent();
                     console.log("Connected ");
                     return [4 /*yield*/, clientOPCUA.createSession()];
-                case 3:
+                case 2:
                     session = _a.sent();
                     console.log("Session created");
                     nodeToRead = {
                         nodeId: currentStateNodeID,
                         attributeId: node_opcua_1.AttributeIds.Value,
                     };
-                    return [4 /*yield*/, session.read(nodeToRead, 0)];
-                case 4:
+                    return [4 /*yield*/, session.read(nodeToRead)];
+                case 3:
                     stateStatus = _a.sent();
-                    if (Number(stateStatus.toString) === 2) {
+                    if (stateStatus.value.dataType == 2) {
+                        stateToWrite = [{
+                                nodeId: stateNodeID,
+                                attributeId: node_opcua_1.AttributeIds.Value,
+                                indexRange: null,
+                                value: {
+                                    value: {
+                                        dataType: node_opcua_1.DataType.Int32,
+                                        value: resetProductionCommand
+                                    }
+                                }
+                            }];
+                        session.write(stateToWrite);
+                        changeStateRequest = true;
+                        changeStateRequestToWrite = [{
+                                nodeId: requestChangeCommandNodeID,
+                                attributeId: node_opcua_1.AttributeIds.Value,
+                                indexRange: null,
+                                value: {
+                                    value: {
+                                        dataType: node_opcua_1.DataType.Boolean,
+                                        value: changeStateRequest
+                                    }
+                                }
+                            }];
+                        session.write(changeStateRequestToWrite);
+                    }
+                    //Close the sesssion sheesh
+                    return [4 /*yield*/, session.close()];
+                case 4:
+                    //Close the sesssion sheesh
+                    _a.sent();
+                    // Do not forget to also close down the connection 
+                    return [4 /*yield*/, clientOPCUA.disconnect()];
+                case 5:
+                    // Do not forget to also close down the connection 
+                    _a.sent();
+                    console.log("Disssssconnected");
+                    return [3 /*break*/, 7];
+                case 6:
+                    err_4 = _a.sent();
+                    console.log("Ohh no something went wrong when opening connection ", err_4);
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.resetProduction = resetProduction;
+;
+function stopProduction() {
+    return __awaiter(this, void 0, void 0, function () {
+        var session, nodeToRead, stateStatus, stateToWrite, changeStateRequest, changeStateRequestToWrite, err_5;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 6, , 7]);
+                    return [4 /*yield*/, clientOPCUA.connect(endpointURL)];
+                case 1:
+                    _a.sent();
+                    console.log("Connected ");
+                    return [4 /*yield*/, clientOPCUA.createSession()];
+                case 2:
+                    session = _a.sent();
+                    console.log("Session created");
+                    nodeToRead = {
+                        nodeId: currentStateNodeID,
+                        attributeId: node_opcua_1.AttributeIds.Value,
+                    };
+                    return [4 /*yield*/, session.read(nodeToRead)];
+                case 3:
+                    stateStatus = _a.sent();
+                    if (stateStatus.value.dataType == 6) {
                         stateToWrite = [{
                                 nodeId: stateNodeID,
                                 attributeId: node_opcua_1.AttributeIds.Value,
@@ -221,21 +365,21 @@ function stopProduction() {
                     }
                     //Close the sesssion sheesh
                     return [4 /*yield*/, session.close()];
-                case 5:
+                case 4:
                     //Close the sesssion sheesh
                     _a.sent();
                     // Do not forget to also close down the connection 
                     return [4 /*yield*/, clientOPCUA.disconnect()];
-                case 6:
+                case 5:
                     // Do not forget to also close down the connection 
                     _a.sent();
                     console.log("Disssssconnected");
-                    return [3 /*break*/, 8];
-                case 7:
-                    err_4 = _a.sent();
-                    console.log("Ohh no something went wrong when opening connection ", err_4);
-                    return [3 /*break*/, 8];
-                case 8: return [2 /*return*/];
+                    return [3 /*break*/, 7];
+                case 6:
+                    err_5 = _a.sent();
+                    console.log("Ohh no something went wrong when opening connection ", err_5);
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
     });
@@ -244,7 +388,7 @@ exports.stopProduction = stopProduction;
 ;
 function getMaintenanceStatus() {
     return __awaiter(this, void 0, void 0, function () {
-        var maintenanceStatusNodeID, session, stateStatus, err_5;
+        var maintenanceStatusNodeID, session, stateStatus, err_6;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -279,8 +423,8 @@ function getMaintenanceStatus() {
                     console.log("Disssssconnected");
                     return [2 /*return*/, stateStatus];
                 case 7:
-                    err_5 = _a.sent();
-                    console.log("Ohh no something went wrong when opening connection ", err_5);
+                    err_6 = _a.sent();
+                    console.log("Ohh no something went wrong when opening connection ", err_6);
                     return [3 /*break*/, 8];
                 case 8: return [2 /*return*/];
             }
