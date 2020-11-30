@@ -4,6 +4,9 @@ WORKDIR /usr/src/app
 
 RUN npm install -g nodemon
 
+COPY nodeopcua.ts /usr/src/app/nodeopcua.ts
+COPY nodeopcua.js /usr/src/app/tmp/tsreq/nodeopcua.js
+
 COPY package.json /usr/src/app/package.json
 COPY package-lock.json /usr/src/app/package-lock.json
 
