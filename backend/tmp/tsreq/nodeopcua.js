@@ -40,8 +40,10 @@ exports.getMaintenanceStatus = exports.stopProduction = exports.resetProduction 
 // declarationer til node OPC UA
 var node_opcua_1 = require("node-opcua");
 // Globale constants for use to OPCUA connections
-//"opc.tcp://127.0.0.1:4840"
-var endpointURL = "opc.tcp://192.168.0.122:4840";
+//Test Simulation
+var endpointURL = "opc.tcp://127.0.0.1:4840";
+//Test the Physical Machine
+// const endpointURL = "opc.tcp://192.168.0.122:4840"
 var stateNodeID = "ns=6;s=::Program:Cube.Command.CntrlCmd"; //Takes an int32
 var requestChangeCommandNodeID = "ns=6;s=::Program:Cube.Command.CmdChangeRequest"; //Takes a boolean
 var currentStateNodeID = "ns=6;s=::Program:Cube.Status.StateCurrent";
@@ -264,11 +266,11 @@ function resetProduction() {
                     return [4 /*yield*/, session.read(nodeToRead)];
                 case 3:
                     stateStatus = _a.sent();
-                    stateToWrite = [{
-                            nodeId: stateNodeID,
-                            attributeId: node_opcua_1.AttributeIds.Value,
-                            indexRange: null,
-                            value: {
+                    if (stateStatus.value.value == 2) {
+                        stateToWrite = [{
+                                nodeId: stateNodeID,
+                                attributeId: node_opcua_1.AttributeIds.Value,
+                                indexRange: null,
                                 value: {
                                     dataType: node_opcua_1.DataType.Int32,
                                     value: resetProductionCommand
@@ -337,8 +339,8 @@ function stopProduction() {
                     };
                     return [4 /*yield*/, session.read(nodeToRead)];
                 case 3:
-                    stateStatus2 = _a.sent();
-                    if (stateStatus2.value.dataType === 6) {
+                    stateStatus = _a.sent();
+                    if (stateStatus.value.dataType == 6) {
                         stateToWrite = [{
                                 nodeId: stateNodeID,
                                 attributeId: node_opcua_1.AttributeIds.Value,
