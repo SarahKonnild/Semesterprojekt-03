@@ -24,26 +24,63 @@ class SimulationGraph extends Component {
 	updateDataPoints() {
 		this.state.updatedDataPoints = []
 		var x = 0;
-		var numberOfDataPoints = 10
+		var numberOfDataPoints = 6
 		var interval = 100
 
 		for (x; x < numberOfDataPoints * interval; x = x + interval) {
-			console.log("x is: " + x + " y is: " + this.equations(x))
+			//console.log("x is: " + x + " y is: " + this.equations(x))
 			this.state.updatedDataPoints.push({x: x, y: this.equations(x)})
 			
 		}
 		
 	}
+	//We could put all the update functions into a component to reduce clutter
 
+	//TODO implement all beer types
+	//Maybe extract equations as variables outside the function
 	equations(x) {
-		if (this.props.beerTypeFromCreateProductionForm === "Pilsner") {
+		var beerType = this.props.beerTypeFromCreateProductionForm;
+
+		if (beerType === "Pilsner") {
 			return x * 1/10
-		} else if (this.props.beerTypeFromCreateProductionForm === "Ale") {
+		} else if (beerType === "Ale") {
 			return x * 1/20
+		} else if (beerType === "Stout") {
+			return x * 1/30
+		} else if (beerType === "Non Alcoholic") {
+			return x * 1/40
+		} else if (beerType === "Wheat") {
+			//x is productions speed, result is y.
+			return (0.00312*(Math.pow(x, 2)) + (0.0658*x) - 3.54)
+		} else if (beerType === "IPA") {
+			return x * 1/60
+		} else {
+			console.log("Error in equations under SimulationGraph. Can't find beerType")
 		}
 	}
 
-	
+	//A production speed must be found for a certain percentage of failed products.
+	//I am guessing we need to isolate for x in our formula but i couldn't figure it out. See wheat in equations().
+	calculateErrorMargin(batchSize) {
+		var beerType = this.props.beerTypeFromCreateProductionForm;
+		var errorMargin = parseInt(this.props.errorMarginFromCreateProductionForm, 10);
+
+		if (beerType === "Pilsner") {
+			return 100
+		} else if (beerType === "Ale") {
+			return 100
+		} else if (beerType === "Stout") {
+			return 100
+		} else if (beerType === "Non Alcoholic") {
+			return 100
+		} else if (beerType === "Wheat") {
+			return 100
+		} else if (beerType === "IPA") {
+			return 100
+		} else {
+			console.log("Error in calculateErrorMargin under SimulationGraph. Can't find beerType")
+		}
+	}
 
 	render() {
 		this.updateDataPoints() //Should only calculate when beerType changes. If statement?
@@ -82,6 +119,13 @@ class SimulationGraph extends Component {
                 color:"#d8d8d8",
                 label : "Current production speed",
                 labelFontColor: "green"
+			},
+			{
+				startValue: this.calculateErrorMargin(parseInt(this.props.batchSizeFromCreateProductionForm, 10)),
+				endValue: this.calculateErrorMargin(parseInt(this.props.batchSizeFromCreateProductionForm, 10)) + 5,                
+				color:"#d8d8d8",
+				label : "Error Margin: " + this.props.errorMarginFromCreateProductionForm + "%",
+				labelFontColor: "purple"
 			}
 			]
 			
@@ -91,7 +135,7 @@ class SimulationGraph extends Component {
 			axisY: {
 				title: "Defective",
         //prefix: "$"
-        maximum: 100
+        maximum: 1000 //Should the amount of defective be dynamic or do we do it percentage wise and make errorMargin horisontal?
 			},
 			data: [{
 				//yValueFormatInt: 0,

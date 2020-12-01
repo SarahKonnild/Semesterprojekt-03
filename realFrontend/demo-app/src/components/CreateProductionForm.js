@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import SetErrorMargin from './SetErrorMargin';
 import SetProductionSpeed from './SetProductionSpeed';
+import * as StartProduction from './StartProduction'
 
 
 const { default: SetBatchSize } = require("./SetBatchSize");
@@ -10,13 +11,11 @@ class CreateProductionForm extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        beerType: 'pils',
+        beerType: 'Pilsner',
         productionSpeed: 0,
         batchSize: 0,
         errorMargin: 0
       };
-  
-      
     }
 
     /*setState is async so if we don't wait for it 
@@ -47,10 +46,14 @@ class CreateProductionForm extends Component {
       //console.log(this.state.errorMargin)
     }
 
+    //.this refers to the current method/component. By using an arrow function in the button it ensures that it points to the component
+    //instead. There are more ways to bind .this.
+    runStartProduction() {
+      StartProduction.startProduction(this.state.beerType, this.state.productionSpeed, this.state.batchSize)
+    }
 
     render() {
         return (
-
           <form>
             <label>
                 <SetBeerType handleBeerType = {this.handleBeerType} />
@@ -60,6 +63,7 @@ class CreateProductionForm extends Component {
             </label>
             <input type="submit" value="Simulate" /> <br />
             <input type="submit" value="Start Production" />
+            <input type="button" value="Start Production Test" onClick={() => this.runStartProduction()} />
           </form>
         );
       }
