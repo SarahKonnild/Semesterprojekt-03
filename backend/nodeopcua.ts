@@ -12,8 +12,9 @@ import {
     MonitoringParametersOptions,
     ReadValueIdLike,
     ClientMonitoredItem,
-    DataValue
-  } from "node-opcua";
+    DataValue,
+    ClientSession
+} from "node-opcua";
 
 // Globale constants for use to OPCUA connections
 
@@ -56,9 +57,9 @@ async function openOPCUAConnection() {
     catch (err) {
         console.log("Ohh no something went wrong when opening connection ", err);
     }
-}
+};
 
-async function closeOPCUAConnection(session) {
+async function closeOPCUAConnection(session:ClientSession) {
     try {
         //Close the sesssion sheesh
         await session.close();
@@ -70,7 +71,45 @@ async function closeOPCUAConnection(session) {
     catch (err) {
         console.log("Ohh no something went wrong when opening connection ", err);
     }
-}
+};
+
+async function changeToState(session:ClientSession, stateCommand) {
+
+    const stateToWrite = [{
+        nodeId: stateNodeID,
+        attributeId: AttributeIds.Value,
+        indexRange: null,
+        value: {
+            value: {
+                dataType: DataType.Int32,
+                value: startProductionCommand
+            }
+        }
+    }];
+
+    session.write(stateToWrite);
+    
+};
+async function changeStateToTrue(session: ClientSession) {
+
+    //Send request to change state
+    let changeStateRequest = true;
+
+    const changeStateRequestToWrite = [{
+        nodeId: requestChangeCommandNodeID,
+        attributeId: AttributeIds.Value,
+        indexRange: null,
+        value: {
+            value: {
+                dataType: DataType.Boolean,
+                value: changeStateRequest
+            }
+        }
+    }];
+
+    session.write(changeStateRequestToWrite);
+
+};
 
 export async function startProduction(beers, productionSpeed, batchnumber, beerType) {
     const beerTypeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[1].Value";
@@ -88,9 +127,8 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
         console.log("Session created");
 
         // figure out something about produtionID and timestamp
-        
+
         // Set amount of beer to produce
-        beers = 1500.0;
 
         const beerAmountToWrite = [{
             nodeId: batchSizeNodeID,
@@ -107,8 +145,6 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
         session.write(beerAmountToWrite);
 
         // Set production speed
-        productionSpeed = 100.0;
-
         const productionSpeedToWrite = [{
             nodeId: productionSpeedNodeID,
             attributeId: AttributeIds.Value,
@@ -124,7 +160,6 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
         session.write(productionSpeedToWrite);
 
         // Set batchnumber
-        batchnumber = 300.0;
 
         const batchnumberToWrite = [{
             nodeId: batchNumberNodeID,
@@ -140,9 +175,6 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
 
         session.write(batchnumberToWrite);
 
-        // Set beertype
-        beerType = 3;
-
         const beerTypeToWrite = [{
             nodeId: beerTypeNodeID,
             attributeId: AttributeIds.Value,
@@ -156,39 +188,13 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
         }];
         session.write(beerTypeToWrite);
 
-        //Change state on machine
-        let state = startProductionCommand;
+        //send command to start production
+        await changeToState(session, startProduction);
 
-        const stateToWrite = [{
-            nodeId: stateNodeID,
-            attributeId: AttributeIds.Value,
-            indexRange: null,
-            value: {
-                value: {
-                    dataType: DataType.Int32,
-                    value: startProductionCommand
-                }
-            }
-        }];
-
-        session.write(stateToWrite);
 
         //Send request to change state
-        const changeStateRequest = true;
+        await changeStateToTrue(session);
 
-        const changeStateRequestToWrite = [{
-            nodeId: requestChangeCommandNodeID,
-            attributeId: AttributeIds.Value,
-            indexRange: null,
-            value: {
-                value: {
-                    dataType: DataType.Boolean,
-                    value: changeStateRequest
-                }
-                }
-        }];
-
-        session.write(changeStateRequestToWrite);
 
         //Close the sesssion sheesh
         await session.close();
@@ -202,6 +208,7 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
         console.log("Ohh no something went wrong when opening connection ", err);
     }
 };
+
 export async function resetProduction() {
     try {
         await clientOPCUA.connect(endpointURL);
@@ -214,42 +221,16 @@ export async function resetProduction() {
             nodeId: currentStateNodeID,
             attributeId: AttributeIds.Value,
         };
-        
+
         const stateStatus = await session.read(nodeToRead);
-        
+
         if (stateStatus.value.value == 2) {
             //Change state on machine
-            const stateToWrite = [{
-                nodeId: stateNodeID,
-                attributeId: AttributeIds.Value,
-                indexRange: null,
-                value: {
-                    value: {
-                        dataType: DataType.Int32,
-                        value: resetProductionCommand
-                    }
-                }
-            }];
-
-            await session.write(stateToWrite);
+            await changeToState(session, resetProduction);
 
             //Send request to change state
-            let changeStateRequest = true;
-
-            const changeStateRequestToWrite = [{
-                nodeId: requestChangeCommandNodeID,
-                attributeId: AttributeIds.Value,
-                indexRange: null,
-                value: {
-                    value: {
-                        dataType: DataType.Boolean,
-                        value: changeStateRequest
-                    }
-                }
-            }];
-
-            await session.write(changeStateRequestToWrite);
-        
+            changeStateToTrue(session);
+        }
         //Close the sesssion sheesh
         await session.close();
 
@@ -262,7 +243,7 @@ export async function resetProduction() {
     }
 };
 
-export async function stopProduction(){
+export async function stopProduction() {
 
     try {
         await clientOPCUA.connect(endpointURL);
@@ -276,40 +257,15 @@ export async function stopProduction(){
             nodeId: currentStateNodeID,
             attributeId: AttributeIds.Value,
         };
-        const stateStatus2 = await session.read(nodeToRead);
-        
-        if (stateStatus.value.dataType == 6) {
-            //Change state on machine
-            const stateToWrite = [{
-                nodeId: stateNodeID,
-                attributeId: AttributeIds.Value,
-                indexRange: null,
-                value: {
-                    value: {
-                        dataType: DataType.Int32,
-                        value: stopProductionCommand
-                    }
-                }
-            }];
 
-            session.write(stateToWrite);
+        const stateStatus = await session.read(nodeToRead);
+
+        if (stateStatus.value.value == 6) {
+            //Change state on machine
+            await changeToState(session, stopProductionCommand);
 
             //Send request to change state
-            let changeStateRequest = true;
-
-            const changeStateRequestToWrite = [{
-                nodeId: requestChangeCommandNodeID,
-                attributeId: AttributeIds.Value,
-                indexRange: null,
-                value: {
-                    value: {
-                        dataType: DataType.Boolean,
-                        value: changeStateRequest
-                    }
-                }
-            }];
-
-            session.write(changeStateRequestToWrite);
+            await changeStateToTrue(session);
         }
 
 
