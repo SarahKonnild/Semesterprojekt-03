@@ -48,14 +48,12 @@ const clientOPCUA = OPCUAClient.create({
 async function openOPCUAConnection() {
     try {
         await clientOPCUA.connect(endpointURL);
-        console.log("Connected ");
 
         let session = await clientOPCUA.createSession();
-        console.log("Session created");
         return session;
     }
     catch (err) {
-        console.log("Ohh no something went wrong when opening connection ", err);
+        console.log("Connection to the server failed", err);
     }
 };
 
@@ -66,10 +64,9 @@ async function closeOPCUAConnection(session:ClientSession) {
 
         // Do not forget to also close down the connection 
         await clientOPCUA.disconnect();
-        console.log("Disssssconnected");
     }
     catch (err) {
-        console.log("Ohh no something went wrong when opening connection ", err);
+        console.log("Connection to the server failed", err);
     }
 };
 
@@ -116,15 +113,11 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
     const productionSpeedNodeID = "ns=6;s=::Program:Cube.Command.MachSpeed";
     const batchSizeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[2].Value";
     const batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0].Value";
-    console.log('We are in the endgame now');
 
     try {
-        console.log("We did done do it");
         await clientOPCUA.connect(endpointURL);
-        console.log("Connected ");
 
         let session = await clientOPCUA.createSession();
-        console.log("Session created");
 
         // figure out something about produtionID and timestamp
 
@@ -195,27 +188,27 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
         //Send request to change state
         await changeStateToTrue(session);
 
-
         //Close the sesssion sheesh
         await session.close();
 
         // Do not forget to also close down the connection 
         await clientOPCUA.disconnect();
-        let thisValue = 'Some value';
-        return thisValue;
+
+        // The return value gets passed to the API controller that sends it back to the frontend
+        return 'Production started';
     }
     catch (err) {
-        console.log("Ohh no something went wrong when opening connection ", err);
+        console.log("Connection to the server failed", err);
+        return 'Production failed';
     }
 };
 
 export async function resetProduction() {
     try {
         await clientOPCUA.connect(endpointURL);
-        console.log("Connected ");
 
         const session = await clientOPCUA.createSession();
-        console.log("Session created");
+
         // check if a production is going on then kill it
         const nodeToRead = {
             nodeId: currentStateNodeID,
@@ -226,7 +219,7 @@ export async function resetProduction() {
 
         if (stateStatus.value.value == 2) {
             //Change state on machine
-            await changeToState(session, resetProduction);
+            await changeToState(session, resetProductionCommand);
 
             //Send request to change state
             changeStateToTrue(session);
@@ -236,10 +229,9 @@ export async function resetProduction() {
 
         // Do not forget to also close down the connection 
         await clientOPCUA.disconnect();
-        console.log("Disssssconnected");
     }
     catch (err) {
-        console.log("Ohh no something went wrong when opening connection ", err);
+        console.log("Connection to the server failed", err);
     }
 };
 
