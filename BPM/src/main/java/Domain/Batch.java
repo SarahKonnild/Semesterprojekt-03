@@ -2,6 +2,7 @@ package Domain;
 
 import Interfaces.IBatch;
 
+import javax.persistence.Entity;
 import java.util.Date;
 
 public class Batch implements IBatch {

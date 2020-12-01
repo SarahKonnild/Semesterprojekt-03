@@ -72,8 +72,8 @@ public class JsonToProductionsConverter {
 //                    Batch batch = new Batch(batchId, startTime, endTime, beerType, batchSize, productionSpeed, defects, temp, humidity, vib);
 //                    batchList.add(batch);
                 }
-                Production production = new Production(productionId, batchList);
-                finalList.add(production);
+//                Production production = new Production(productionId, batchList);
+//                finalList.add(production);
             }
             return finalList;
         } catch (ParseException e) {
