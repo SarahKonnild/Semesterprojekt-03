@@ -5,14 +5,6 @@ import {
     SecurityPolicy,
     AttributeIds,
     DataType,
-    StatusCodes,
-    makeBrowsePath,
-    ClientSubscription,
-    TimestampsToReturn,
-    MonitoringParametersOptions,
-    ReadValueIdLike,
-    ClientMonitoredItem,
-    DataValue,
     ClientSession
 } from "node-opcua";
 
@@ -45,32 +37,11 @@ const clientOPCUA = OPCUAClient.create({
     endpoint_must_exist: false
 });
 
-async function openOPCUAConnection() {
-    try {
-        await clientOPCUA.connect(endpointURL);
+;
 
-        let session = await clientOPCUA.createSession();
-        return session;
-    }
-    catch (err) {
-        console.log("Connection to the server failed", err);
-    }
-};
+;
 
-async function closeOPCUAConnection(session:ClientSession) {
-    try {
-        //Close the sesssion sheesh
-        await session.close();
-
-        // Do not forget to also close down the connection 
-        await clientOPCUA.disconnect();
-    }
-    catch (err) {
-        console.log("Connection to the server failed", err);
-    }
-};
-
-async function changeToState(session:ClientSession, stateCommand) {
+async function changeToState(session: ClientSession) {
 
     const stateToWrite = [{
         nodeId: stateNodeID,
@@ -85,7 +56,7 @@ async function changeToState(session:ClientSession, stateCommand) {
     }];
 
     session.write(stateToWrite);
-    
+
 };
 async function changeStateToTrue(session: ClientSession) {
 
@@ -182,7 +153,7 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
         session.write(beerTypeToWrite);
 
         //send command to start production
-        await changeToState(session, startProduction);
+        await changeToState(session);
 
 
         //Send request to change state
@@ -219,7 +190,7 @@ export async function resetProduction() {
 
         if (stateStatus.value.value == 2) {
             //Change state on machine
-            await changeToState(session, resetProductionCommand);
+            await changeToState(session);
 
             //Send request to change state
             changeStateToTrue(session);
@@ -254,7 +225,7 @@ export async function stopProduction() {
 
         if (stateStatus.value.value == 6) {
             //Change state on machine
-            await changeToState(session, stopProductionCommand);
+            await changeToState(session);
 
             //Send request to change state
             await changeStateToTrue(session);
@@ -301,3 +272,53 @@ export async function getMaintenanceStatus() {
         console.log("Ohh no something went wrong when opening connection ", err);
     }
 };
+
+export async function getProducedAmount() {
+    const defectiveProductsNodeId = "ns=6;s=::Program:Maintenance.State"
+    const acceptableProductsNodeId = "ns=6;s=::Program:Maintenance.State"
+    let defectiveCount = null; 
+    let acceptableCount = null; 
+
+    try {
+        //Starts the connection to the machine
+        await clientOPCUA.connect(endpointURL);
+        const session = await clientOPCUA.createSession();
+
+        // Read the state status of the machine
+        const nodeToRead = {
+            nodeId: currentStateNodeID,
+            attributeId: AttributeIds.Value,
+        };
+
+        const stateStatus = await session.read(nodeToRead);
+        
+        //Checking to see if the machine is done with the production
+        if (stateStatus.value.value == 17) {
+
+            //Reads the 2 values we need to return
+            const defectiveNodeRead = {
+                nodeId: defectiveProductsNodeId,
+                attributeId: AttributeIds.Value,
+            };
+            const acceptableNodeRead = {
+                nodeId: acceptableProductsNodeId,
+                attributeId: AttributeIds.Value,
+            };
+
+            defectiveCount = session.read(defectiveNodeRead);
+            acceptableCount = session.read(acceptableNodeRead);
+        }
+        // Closing down the connection to the machine
+        await session.close();
+        await clientOPCUA.disconnect();
+
+        //Setting up the json return object
+        let returnResult = {"defective": defectiveCount,
+                            "acceptable": acceptableCount };
+        return returnResult;
+    }
+    catch (err) {
+        console.log("Ohh no something went wrong when opening connection ", err);
+    }
+
+}

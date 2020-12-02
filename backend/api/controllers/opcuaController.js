@@ -25,5 +25,10 @@ exports.detectMaintenanceStatus = async function(req,res){
     res.send("Maintenance Status: " + "\n" + returnValue);
     res.end;
 }
+exports.getProductionCount = async function(req,res){
+    returnValue = await nodeOPCUA.getProductionCount();
+    res.send(returnValue);
+    res.end;
+}
 
 
