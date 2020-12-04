@@ -4,7 +4,7 @@ const optimization = require('../controllers/optimizationController')
 
 //OPC UA Controller
 //Start Production
-router.route('/startProduction').get(opcua.startProduction);
+router.route('/startProduction').post(opcua.startProduction);
 
 //Stop Production
 router.route('/stopProduction').get(opcua.stopProduction); 

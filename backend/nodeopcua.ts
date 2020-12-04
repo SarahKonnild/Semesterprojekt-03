@@ -15,6 +15,7 @@ const endpointURL = "opc.tcp://127.0.0.1:4840"
 
 //Test the Physical Machine
 // const endpointURL = "opc.tcp://192.168.0.122:4840"
+
 const stateNodeID = "ns=6;s=::Program:Cube.Command.CntrlCmd"; //Takes an int32
 const requestChangeCommandNodeID = "ns=6;s=::Program:Cube.Command.CmdChangeRequest"; //Takes a boolean
 const currentStateNodeID = "ns=6;s=::Program:Cube.Status.StateCurrent";
@@ -38,7 +39,6 @@ const clientOPCUA = OPCUAClient.create({
 });
 
 async function changeToState(session: ClientSession, command) {
-
     const stateToWrite = [{
         nodeId: stateNodeID,
         attributeId: AttributeIds.Value,
@@ -55,7 +55,6 @@ async function changeToState(session: ClientSession, command) {
 
 };
 async function changeStateToTrue(session: ClientSession) {
-
     //Send request to change state
     let changeStateRequest = true;
 
@@ -75,6 +74,30 @@ async function changeStateToTrue(session: ClientSession) {
 
 };
 
+async function startSession() {
+    try {
+        await clientOPCUA.connect(endpointURL);
+
+        let session = await clientOPCUA.createSession();
+
+        return session;
+    }catch(err){
+
+    }; 
+}
+
+async function stopSession(session: ClientSession) {
+    try {
+        //Close the sesssion sheesh
+        await session.close();
+
+        // Do not forget to also close down the connection 
+        await clientOPCUA.disconnect();
+    }catch(err){
+
+    }; 
+}
+
 export async function startProduction(beers, productionSpeed, batchnumber, beerType) {
     const beerTypeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[1].Value";
     const productionSpeedNodeID = "ns=6;s=::Program:Cube.Command.MachSpeed";
@@ -82,9 +105,7 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
     const batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0].Value";
 
     try {
-        await clientOPCUA.connect(endpointURL);
-
-        let session = await clientOPCUA.createSession();
+        let session = await startSession();
 
         // figure out something about produtionID and timestamp
 
@@ -154,14 +175,10 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
         //Send request to change state
         await changeStateToTrue(session);
 
-        //Close the sesssion sheesh
-        await session.close();
-
-        // Do not forget to also close down the connection 
-        await clientOPCUA.disconnect();
+        await stopSession(session);
 
         // The return value gets passed to the API controller that sends it back to the frontend
-        return 'Production started';
+        return beers;
     }
     catch (err) {
         console.log("Connection to the server failed", err);
@@ -171,9 +188,7 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
 
 export async function resetProduction() {
     try {
-        await clientOPCUA.connect(endpointURL);
-
-        const session = await clientOPCUA.createSession();
+        const session = await startSession();
 
         // check if a production is going on then kill it
         const nodeToRead = {
@@ -183,18 +198,14 @@ export async function resetProduction() {
 
         const stateStatus = await session.read(nodeToRead);
 
-        if (stateStatus.value.value == 2) {
+        if (stateStatus.value.value == 2 || stateStatus.value.value == 17) {
             //Change state on machine
             await changeToState(session, resetProductionCommand);
 
             //Send request to change state
             await changeStateToTrue(session);
         }
-        //Close the sesssion sheesh
-        await session.close();
-
-        // Do not forget to also close down the connection 
-        await clientOPCUA.disconnect();
+        await stopSession(session);
     }
     catch (err) {
         console.log("Connection to the server failed", err);
@@ -204,11 +215,7 @@ export async function resetProduction() {
 export async function stopProduction() {
 
     try {
-        await clientOPCUA.connect(endpointURL);
-        console.log("Connected ");
-
-        const session = await clientOPCUA.createSession();
-        console.log("Session created");
+        const session = await startSession();
 
         // check if a production is going on then kill it
         const nodeToRead = {
@@ -225,14 +232,7 @@ export async function stopProduction() {
             //Send request to change state
             await changeStateToTrue(session);
         }
-
-
-        //Close the sesssion sheesh
-        await session.close();
-
-        // Do not forget to also close down the connection 
-        await clientOPCUA.disconnect();
-        console.log("Disssssconnected");
+        await stopSession(session);
 
     }
     catch (err) {
@@ -243,24 +243,15 @@ export async function stopProduction() {
 export async function getMaintenanceStatus() {
     const maintenanceStatusNodeID = "ns=6;s=::Program:Maintenance.State"
     try {
-        await clientOPCUA.connect(endpointURL);
-        console.log("Connected ");
-
-        const session = await clientOPCUA.createSession();
-        console.log("Session created");
+        const session = await startSession();
 
         // read the state of maintenance and returning it
         const stateStatus = await session.read({
             nodeId: maintenanceStatusNodeID,
             attributeId: AttributeIds.Value,
         });
-        //Close the sesssion sheesh
-        await session.close();
-
-        // Do not forget to also close down the connection 
-        await clientOPCUA.disconnect();
-
-        console.log("Disssssconnected");
+        await stopSession(session);
+        
         return stateStatus;
     }
     catch (err) {
@@ -276,8 +267,7 @@ export async function getProducedAmount() {
 
     try {
         //Starts the connection to the machine
-        await clientOPCUA.connect(endpointURL);
-        const session = await clientOPCUA.createSession();
+        const session = await startSession();
 
         // Read the state status of the machine
         const nodeToRead = {
@@ -304,9 +294,7 @@ export async function getProducedAmount() {
             acceptableCount = await session.read(acceptableNodeRead);
         }
         // Closing down the connection to the machine
-        await session.close();
-        await clientOPCUA.disconnect();
-
+        await stopSession(session);
         //Setting up the json return object
         let returnResult = {"defective": defectiveCount,
                             "acceptable": acceptableCount };
