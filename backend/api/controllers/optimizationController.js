@@ -8,7 +8,7 @@ exports.calculateErrorSpeed = function(req,res){
 }
 
 //REQUIRES A SPEED TO BE SENT IN. WILL RETURN A MARGIN IN PERCENTAGE
-exports.cacluateErrorMargin = function(req,res){
+exports.calculateErrorMargin = function(req,res){
     let speed = req.body.speed;
     //Sends the error margin in percentage of beers produced
     let margin = ((3.12*Math.pow(10,-3)*Math.pow(speed,2)+0.0658*speed-3.54)/speed)*100;
