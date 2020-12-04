@@ -51,7 +51,7 @@ async function changeToState(session: ClientSession, command) {
         }
     }];
 
-    session.write(stateToWrite);
+    await session.write(stateToWrite);
 
 };
 async function changeStateToTrue(session: ClientSession) {
@@ -71,7 +71,7 @@ async function changeStateToTrue(session: ClientSession) {
         }
     }];
 
-    session.write(changeStateRequestToWrite);
+    await session.write(changeStateRequestToWrite);
 
 };
 
@@ -150,7 +150,6 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
 
         //send command to start production
         await changeToState(session, startProductionCommand);
-
 
         //Send request to change state
         await changeStateToTrue(session);
@@ -301,8 +300,8 @@ export async function getProducedAmount() {
                 attributeId: AttributeIds.Value,
             };
 
-            defectiveCount = session.read(defectiveNodeRead);
-            acceptableCount = session.read(acceptableNodeRead);
+            defectiveCount = await session.read(defectiveNodeRead);
+            acceptableCount = await session.read(acceptableNodeRead);
         }
         // Closing down the connection to the machine
         await session.close();
