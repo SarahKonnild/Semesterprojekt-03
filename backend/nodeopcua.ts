@@ -37,7 +37,7 @@ const clientOPCUA = OPCUAClient.create({
     endpoint_must_exist: false
 });
 
-async function changeToState(session: ClientSession) {
+async function changeToState(session: ClientSession, command) {
 
     const stateToWrite = [{
         nodeId: stateNodeID,
@@ -46,7 +46,7 @@ async function changeToState(session: ClientSession) {
         value: {
             value: {
                 dataType: DataType.Int32,
-                value: startProductionCommand
+                value: command
             }
         }
     }];
@@ -149,7 +149,7 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
         session.write(beerTypeToWrite);
 
         //send command to start production
-        await changeToState(session);
+        await changeToState(session, startProductionCommand);
 
 
         //Send request to change state
@@ -186,10 +186,10 @@ export async function resetProduction() {
 
         if (stateStatus.value.value == 2) {
             //Change state on machine
-            await changeToState(session);
+            await changeToState(session, resetProductionCommand);
 
             //Send request to change state
-            changeStateToTrue(session);
+            await changeStateToTrue(session);
         }
         //Close the sesssion sheesh
         await session.close();
@@ -221,7 +221,7 @@ export async function stopProduction() {
 
         if (stateStatus.value.value == 6) {
             //Change state on machine
-            await changeToState(session);
+            await changeToState(session, stopProductionCommand);
 
             //Send request to change state
             await changeStateToTrue(session);
