@@ -103,9 +103,10 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
     const productionSpeedNodeID = "ns=6;s=::Program:Cube.Command.MachSpeed";
     const batchSizeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[2].Value";
     const batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0].Value";
+    let session = null;
 
     try {
-        let session = await startSession();
+        session = await startSession();
 
         // figure out something about produtionID and timestamp
 
@@ -175,20 +176,23 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
         //Send request to change state
         await changeStateToTrue(session);
 
-        await stopSession(session);
-
         // The return value gets passed to the API controller that sends it back to the frontend
-        return beers;
+        return 'Production started';
     }
     catch (err) {
         console.log("Connection to the server failed", err);
         return 'Production failed';
-    }
+    }finally{
+        if(session != null){
+            await stopSession(session);
+        };
+    };
 };
 
 export async function resetProduction() {
+    let session = null;
     try {
-        const session = await startSession();
+        session = await startSession();
 
         // check if a production is going on then kill it
         const nodeToRead = {
@@ -196,26 +200,34 @@ export async function resetProduction() {
             attributeId: AttributeIds.Value,
         };
 
-        const stateStatus = await session.read(nodeToRead);
+        const stateStatus = await (await session.read(nodeToRead)).value.value;
 
-        if (stateStatus.value.value == 2 || stateStatus.value.value == 17) {
+        if (stateStatus == 2 || stateStatus == 17) {
             //Change state on machine
             await changeToState(session, resetProductionCommand);
 
             //Send request to change state
             await changeStateToTrue(session);
+
+            return 'Beer Machine was in state ' + stateStatus + ' and is now reset to state 4';
+        }else{
+            return 'Beer machine is in state ' + stateStatus + ' and cannot reset from that state'
         }
-        await stopSession(session);
     }
     catch (err) {
         console.log("Connection to the server failed", err);
-    }
+        return 'Beer Machine failed to reset'
+    }finally{
+        if(session != null){
+            await stopSession(session);
+        };
+    };
 };
 
 export async function stopProduction() {
-
+    let session = null;
     try {
-        const session = await startSession();
+        session = await startSession();
 
         // check if a production is going on then kill it
         const nodeToRead = {
@@ -231,32 +243,46 @@ export async function stopProduction() {
 
             //Send request to change state
             await changeStateToTrue(session);
+            
+            return 'Production stopped';
+        }else{
+            return 'No production to stop';
         }
-        await stopSession(session);
 
     }
     catch (err) {
-        console.log("Ohh no something went wrong when opening connection ", err);
-    }
+        console.log('Error happened', err);
+        return 'Failed to stop the production, and error happened';
+    }finally{
+        if(session != null){
+            await stopSession(session);
+        };
+    };
 };
 
 export async function getMaintenanceStatus() {
-    const maintenanceStatusNodeID = "ns=6;s=::Program:Maintenance.State"
+    const maintenanceStatusNodeID = "ns=6;s=::Program:Maintenance.Counter";
+    let session = null;
     try {
-        const session = await startSession();
+        session = await startSession();
 
         // read the state of maintenance and returning it
-        const stateStatus = await session.read({
+        const maintenanceStatus = await session.read({
             nodeId: maintenanceStatusNodeID,
             attributeId: AttributeIds.Value,
         });
         await stopSession(session);
         
-        return stateStatus;
+        return maintenanceStatus;
     }
     catch (err) {
         console.log("Ohh no something went wrong when opening connection ", err);
-    }
+        return 'Could not get the status of the machine, an error happened';
+    }finally{
+        if(session != null){
+            await stopSession(session);
+        };
+    };
 };
 
 export async function getProducedAmount() {
@@ -265,9 +291,10 @@ export async function getProducedAmount() {
     let defectiveCount = null; 
     let acceptableCount = null; 
 
+    let session = null;
     try {
         //Starts the connection to the machine
-        const session = await startSession();
+        session = await startSession();
 
         // Read the state status of the machine
         const nodeToRead = {
@@ -292,16 +319,20 @@ export async function getProducedAmount() {
 
             defectiveCount = await session.read(defectiveNodeRead);
             acceptableCount = await session.read(acceptableNodeRead);
+            //Setting up the json return object
+            let returnResult = {"defective": defectiveCount, "acceptable": acceptableCount };
+            return returnResult;
+        }else{
+            return 'Production has not finished';
         }
-        // Closing down the connection to the machine
-        await stopSession(session);
-        //Setting up the json return object
-        let returnResult = {"defective": defectiveCount,
-                            "acceptable": acceptableCount };
-        return returnResult;
     }
     catch (err) {
         console.log("Ohh no something went wrong when opening connection ", err);
-    }
+        return 'An error happened and it wasnt possible to read the values'
+    }finally{
+        if(session != null){
+            await stopSession(session);
+        };
+    };
 
 }
