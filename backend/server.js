@@ -19,17 +19,13 @@ app.use(express.urlencoded({
 app.use(express.json());
 
 //Connection to MongoDB
-// mongoose.Promise = global.Promise;
-// mongoose.connect(config.db, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true});
-//
-// let db = mongoose.connection;
-// db.once('open', () => {
-//     console.log("MongoDB database connection established succesfully");
-// })
+mongoose.Promise = global.Promise;
+mongoose.connect(config.db, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true});
 
-//Java to Server API
-let routes = require('./api/routes/brewsterRoutes.js'); //importing route
-routes(app); //register the route
+let db = mongoose.connection;
+db.once('open', () => {
+    console.log("MongoDB database connection established succesfully");
+})
 
 //API Connection
 const batchesRouter = require('./api/routes/batches');
