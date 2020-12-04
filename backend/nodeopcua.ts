@@ -98,6 +98,17 @@ async function stopSession(session: ClientSession) {
     }; 
 }
 
+async function getCurrentState(session: ClientSession) {
+    const nodeToRead = {
+        nodeId: currentStateNodeID,
+        attributeId: AttributeIds.Value,
+    };
+
+    const stateStatus = await (await session.read(nodeToRead)).value.value;
+
+    return stateStatus;
+};
+
 export async function startProduction(beers, productionSpeed, batchnumber, beerType) {
     const beerTypeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[1].Value";
     const productionSpeedNodeID = "ns=6;s=::Program:Cube.Command.MachSpeed";
@@ -195,23 +206,18 @@ export async function resetProduction() {
         session = await startSession();
 
         // check if a production is going on then kill it
-        const nodeToRead = {
-            nodeId: currentStateNodeID,
-            attributeId: AttributeIds.Value,
-        };
+        let machineState = await getCurrentState(session);
 
-        const stateStatus = await (await session.read(nodeToRead)).value.value;
-
-        if (stateStatus == 2 || stateStatus == 17) {
+        if (machineState == 2 || machineState == 17) {
             //Change state on machine
             await changeToState(session, resetProductionCommand);
 
             //Send request to change state
             await changeStateToTrue(session);
 
-            return 'Beer Machine was in state ' + stateStatus + ' and is now reset to state 4';
+            return 'Beer Machine was in state ' + machineState + ' and is now reset to state 4';
         }else{
-            return 'Beer machine is in state ' + stateStatus + ' and cannot reset from that state'
+            return 'Beer machine is in state ' + machineState + ' and cannot reset from that state'
         }
     }
     catch (err) {
@@ -230,14 +236,9 @@ export async function stopProduction() {
         session = await startSession();
 
         // check if a production is going on then kill it
-        const nodeToRead = {
-            nodeId: currentStateNodeID,
-            attributeId: AttributeIds.Value,
-        };
+        let machineState = await getCurrentState(session);
 
-        const stateStatus = await session.read(nodeToRead);
-
-        if (stateStatus.value.value == 6) {
+        if (machineState == 6) {
             //Change state on machine
             await changeToState(session, stopProductionCommand);
 
@@ -297,15 +298,10 @@ export async function getProducedAmount() {
         session = await startSession();
 
         // Read the state status of the machine
-        const nodeToRead = {
-            nodeId: currentStateNodeID,
-            attributeId: AttributeIds.Value,
-        };
-
-        const stateStatus = await session.read(nodeToRead);
+        let machineState = await getCurrentState(session);
         
         //Checking to see if the machine is done with the production
-        if (stateStatus.value.value == 17) {
+        if (machineState== 17) {
 
             //Reads the 2 values we need to return
             const defectiveNodeRead = {
