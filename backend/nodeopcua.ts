@@ -37,10 +37,6 @@ const clientOPCUA = OPCUAClient.create({
     endpoint_must_exist: false
 });
 
-;
-
-;
-
 async function changeToState(session: ClientSession) {
 
     const stateToWrite = [{
