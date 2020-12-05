@@ -7,7 +7,7 @@ import {
 
   import Dashboard from '../pages/Dashboard';
   import BatchOverview from '../pages/BatchOverview';
-  import CreateProduction from '../pages/CreateProduction';
+  import CHMAcreateProduction from '../pages/CHMAcreateProduction';
   import BatchDetails from '../pages/BatchDetails';
 
 function Navigation(){
@@ -35,7 +35,7 @@ function Navigation(){
             renders the first one that matches the current URL. */}
         <Switch>
           <Route exact path="/" component={Dashboard} />
-          <Route path="/create-production" component={CreateProduction} />
+          <Route path="/create-production" component={CHMAcreateProduction} />
           <Route path="/batch-overview" component={BatchOverview} />
           <Route path="/batch-details" component={BatchDetails} />
 
