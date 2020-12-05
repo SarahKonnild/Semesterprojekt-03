@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import SimulationGraph from '../components/SimulationGraph';
 import NumericInput from 'react-numeric-input';
-import './CHMAcreateProduction.css';
+import '../css/App.css';
 
 
 class CHMAcreateProduction extends Component {

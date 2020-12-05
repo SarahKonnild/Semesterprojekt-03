@@ -2,7 +2,7 @@
 import CreateProductionForm from '../components/CreateProductionForm'
 import { Component } from 'react'
 import SimulationGraph from '../components/SimulationGraph';
-
+import '../css/App.css';
 
 class CreateProduction extends Component {
   constructor(props) {

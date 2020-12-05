@@ -9,11 +9,12 @@ import {
   import BatchOverview from '../pages/BatchOverview';
   import CreateProduction from '../pages/CreateProduction';
   import BatchDetails from '../pages/BatchDetails';
+  import '../css/App.css';
 
 function Navigation(){
     return (
         <Router>
-      <div>
+
         <nav>
           <ul>
             <li>
@@ -29,6 +30,7 @@ function Navigation(){
               <Link to="/batch-details">Batch Details</Link>
             </li>
           </ul>
+          <div className="zanga">zanga</div>
         </nav>
 
         {/* A <Switch> looks through its children <Route>s and
@@ -40,7 +42,7 @@ function Navigation(){
           <Route path="/batch-details" component={BatchDetails} />
 
         </Switch>
-      </div>
+
     </Router>
     )
 }

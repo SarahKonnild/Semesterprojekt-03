@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 
 
 import CanvasJSReact from '../canvasjs.react'
+import '../css/App.css';
+
 //var CanvasJSReact = require('./canvasjs.react');
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -25,7 +27,7 @@ class IngredientStatus extends Component {
      }
           
      return (
-        <div>
+        <div className="ingredients-status">
           <CanvasJSChart options = {options}
               onRef = {ref => this.chart = ref}
           />
