@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import SimulationGraph from '../components/SimulationGraph';
+import SimulationGraph from '../components/ChmaSimulationGraph';
 import NumericInput from 'react-numeric-input';
 import '../css/App.css';
 
@@ -85,7 +85,8 @@ class CHMAcreateProduction extends Component {
                     productionSpeed={this.state.productionSpeed}
                     batchSize={this.state.batchSize}
                     timeframe={this.state.timeframe}
-                    errorMargin={this.state.errorMargin} />
+                    errorMargin={this.state.errorMargin}
+                    maxSpeed={300} />
                 <input type="submit" value="Simulate" /> <br />
                 <input type="submit" value="Start Production" />
             </div>
