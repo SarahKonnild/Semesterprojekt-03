@@ -30,7 +30,7 @@ function Navigation(){
               <Link to="/batch-details">Batch Details</Link>
             </li>
           </ul>
-          <div className="zanga">zanga</div>
+          <div className="zanga"></div>
         </nav>
 
         {/* A <Switch> looks through its children <Route>s and
