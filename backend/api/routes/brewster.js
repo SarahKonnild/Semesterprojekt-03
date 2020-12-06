@@ -27,7 +27,7 @@ router.route('/calculateErrorSpeed').get(optimization.calculateErrorSpeed);
 router.route('/calculateErrorMargin').get(optimization.calculateErrorMargin);
 
 //Calculate Amount of Errors
-router.route('/calculateAmountOfErrors').get(optimization.calculateAmountOfErrors);
+// router.route('/calculateAmountOfErrors').get(optimization.calculateAmountOfErrors);
 
 //Calculate Estimated Production Time
 router.route('/calculateEstimatedProductionTime').get(optimization.calculateEstimatedProductionTime);
