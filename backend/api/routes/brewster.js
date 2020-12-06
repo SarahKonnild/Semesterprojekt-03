@@ -33,17 +33,19 @@ router.route('/calculateValidMargin').get(optimization.calculateValidMargin);
 router.route('/calculateValidSpeed').get(optimization.calculateValidSpeed);
 
 //Calculate Error Percentage of Total Batch Size
-router.route('/calculatePercentageBeers').get(optimization.calculatePercentageErrors);
+router.route('/calculatePercentageBeers').get(optimization.calculatePercentageBeers);
 
 //Calculate Amount of Errors based on Percentage of Batch Size
-router.route('/calculateAmountOfBeers').get(optimization.calculateAmountOfErrors);
+router.route('/calculateAmountOfBeers').get(optimization.calculateAmountOfBeers);
 
 //Calculate Estimated Production Time
 router.route('/calculateEstimatedProductionTime').get(optimization.calculateEstimatedProductionTime);
 
-//Calculate Optimal Speed
-router.route('/calculateOptimalSpeed').get(optimization.calculateOptimalSpeed);
+//Calculate Optimal Speed Using Errors
+router.route('/calculateOptimalSpeedUsingErrors').get(optimization.calculateOptimalSpeedUsingErrors);
 
+//Calculate Optimal Speed Using Valids
+router.route('/calculateOptimalSpeedUsingValids').get(optimization.calculateOptimalSpeedUsingValids);
 
 
 module.exports = router;

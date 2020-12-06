@@ -7,7 +7,6 @@
  * @param req this parameter must include a JSON formatted object: {"margin":value}
  * @param res this parameter will send back a JSON formatted object: {"speed":value}
 */
-//WORKS, IS TESTED
 exports.calculateErrorSpeed = function(req,res){
     let margin = req.body.margin;
     if(margin >= 0){
@@ -26,7 +25,6 @@ exports.calculateErrorSpeed = function(req,res){
  * @param req this parameter must include a JSON formatted object: {"speed":value}
  * @param res this parameter will send back a JSON formatted object: {"margin":value}
  */
-//WORKS, IS TESTED
 exports.calculateErrorMargin = function(req,res){
     let speed = req.body.speed;
     if(speed > 0 && speed <= 146.771){
@@ -84,7 +82,6 @@ exports.calculateValidMargin = function(req,res){
  * @param req this parameter must include a JSON formatted object: {"margin":value, "batch":value}
  * @param res this parameter will send back a JSON formatted object: {"percentage":value}
  */
-//WORKS, IS TESTED
 exports.calculatePercentageBeers = function(req,res){
     let margin = req.body.margin;
     let batch = req.body.batch;
@@ -106,7 +103,6 @@ exports.calculatePercentageBeers = function(req,res){
  * @param req this parameter must include a JSON formatted object: {"percentage":value, "batch":value}
  * @param res this parameter will send back a JSON formatted object: {"amount":value}
  */
-//WORKS, IS TESTED
 exports.calculateAmountOfBeers = function(req,res){
     let percentage = req.body.percentage;
     let batch = req.body.batch;
@@ -127,7 +123,6 @@ exports.calculateAmountOfBeers = function(req,res){
  * @param req this parameter must include a JSON formatted object: {"batch":value, "speed":value}
  * @param res this parameter will send back a JSON formatted object: {"time":value} which is noted in minutes
  */
-//WORKS, IS TESTED
 exports.calculateEstimatedProductionTime = function(req,res){
     if(batch > 0 && speed > 0){
         let batch = req.body.batch;
@@ -144,7 +139,7 @@ exports.calculateEstimatedProductionTime = function(req,res){
  * 
  * This function will evaluate if the specified acceptable error margin is a realistic goal for the batch size and allotted time that the user has specified. 
  * The function will find the minimum necessary speed to accomplish this task, and calculate the amount of minimum estimated errors that this produces. If the 
- * calculated minimum necessary speed creates an amount of errors which exceeds the specified acceptable amount of errors, an HTTP statusCode of 404 'Bad Request'
+ * calculated minimum necessary speed creates an amount of errors which exceeds the specified acceptable amount of errors, an HTTP statusCode of 400 'Bad Request'
  * is returned to the frontend, because it is not possible to produce less than or equal to the maximum amount of errors that the user is willing to accept. 
  * On the other hand, if the minimum necessary speed dictates an estimated amount of errors that is less than or equal to the amount of errors that the user can
  * accept, the speed is returned.
@@ -153,8 +148,7 @@ exports.calculateEstimatedProductionTime = function(req,res){
  * @param res this parameter will potentially send back an HTTP status code 400 'Bad Request'
  * @param res this parameter will potentially send back a JSON formatted object: {"speed":value}
  */
-//WORKS, IS TESTED
-exports.calculateOptimalSpeed = function(req,res){
+exports.calculateOptimalSpeedUsingErrors = function(req,res){
     let batch = req.body.batch;
     let margin = req.body.margin;
     let time = req.body.time;
@@ -174,3 +168,36 @@ exports.calculateOptimalSpeed = function(req,res){
         res.send(400).status('Bad Request');
     }
 }
+
+/**
+ * @author Sarah Manon Pradel
+ * 
+ * This function will evaluate if the specified amount of desired valid beers is a realistic goal for the batch size and the allotted time that the user has specified.
+ * The function will find the minimum necessary speed to accomplish this task, and calculate the amount of valid beers that this produces. If the calculated
+ * minimum necessary speed creates an amount of valid beers that is equal to or higher than the user-specified amount of valid beers, the speed is returned to the user. 
+ * On the other hand, if the minimum necessary speed dictates an estimated amount of valid beers that is less than the specified necessary amount of valids, 
+ * an HTTP status code of 400 'Bad Request' is returned to the frontend, because it is not possible to produce more than or equal to the specified amount of
+ * valid beers. 
+ * 
+ * 
+ * @param req this parameter must include a JSON formatted object: {"batch":value, "margin":value, "time":value}
+ * @param res this parameter will potentially send back a JSON formatted object: {"speed":speed}
+ * @param res this parameter will potentially send back an HTTP status code 400 'Bad Request'
+ */
+exports.calculateOptimalSpeedUsingValids = function(req,res){
+    let batch = req.body.batch;
+    let margin = req.body.margin;
+    let time = req.body.time;
+    if(batch > 0 && margin >= 0 && time > 0){
+        let speed = batch/time;
+        let amount = margin/time
+
+        let calcValidMarg = speed - (0.00312*Math.pow(speed,2)+0.0658*speed-3.54);
+        if(calcValidMarg >= amount){
+            res.send({"speed":speed});
+        }else{
+            res.status(400).send('Bad Request');
+        }
+    }
+}
+
