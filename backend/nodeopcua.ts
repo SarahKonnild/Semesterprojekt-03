@@ -135,7 +135,7 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
             }
         }];
 
-        session.write(beerAmountToWrite);
+        await session.write(beerAmountToWrite);
 
         // Set production speed
         const productionSpeedToWrite = [{
@@ -150,7 +150,7 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
             }
         }];
 
-        session.write(productionSpeedToWrite);
+        await session.write(productionSpeedToWrite);
 
         // Set batchnumber
 
@@ -166,7 +166,7 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
             }
         }];
 
-        session.write(batchnumberToWrite);
+        await session.write(batchnumberToWrite);
 
         const beerTypeToWrite = [{
             nodeId: beerTypeNodeID,
@@ -179,7 +179,7 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
                 }
             }
         }];
-        session.write(beerTypeToWrite);
+        await session.write(beerTypeToWrite);
 
         //send command to start production
         await changeToState(session, startProductionCommand);
