@@ -4,7 +4,7 @@ const optimization = require('../controllers/optimizationController')
 
 //OPC UA Controller
 //Start Production
-router.route('/startProduction').get(opcua.startProduction);
+router.route('/startProduction').post(opcua.startProduction);
 
 //Stop Production
 router.route('/stopProduction').get(opcua.stopProduction); 
@@ -26,8 +26,27 @@ router.route('/calculateErrorSpeed').get(optimization.calculateErrorSpeed);
 //Calculate Error Margin
 router.route('/calculateErrorMargin').get(optimization.calculateErrorMargin);
 
-//Calculate Optimal Speed
-router.route('/calculateOptimalSpeed').get(optimization.calculateOptimalSpeed);
+//Calculate Valid Margin
+router.route('/calculateValidMargin').get(optimization.calculateValidMargin);
+
+//Calculate Valid Speed
+router.route('/calculateValidSpeed').get(optimization.calculateValidSpeed);
+
+//Calculate Error Percentage of Total Batch Size
+router.route('/calculatePercentageBeers').get(optimization.calculatePercentageBeers);
+
+//Calculate Amount of Errors based on Percentage of Batch Size
+router.route('/calculateAmountOfBeers').get(optimization.calculateAmountOfBeers);
+
+//Calculate Estimated Production Time
+router.route('/calculateEstimatedProductionTime').get(optimization.calculateEstimatedProductionTime);
+
+//Calculate Optimal Speed Using Errors
+router.route('/calculateOptimalSpeedUsingErrors').get(optimization.calculateOptimalSpeedUsingErrors);
+
+//Calculate Optimal Speed Using Valids
+router.route('/calculateOptimalSpeedUsingValids').get(optimization.calculateOptimalSpeedUsingValids);
+
 
 module.exports = router;
 
