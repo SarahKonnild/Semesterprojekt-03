@@ -6,7 +6,6 @@ exports.startProduction = async function(req,res){
     //beers, productionSpeed, batchnumber, beerType
     let someValue = await nodeOPCUA.startProduction(req.body.beers, req.body.speed, req.body.batchnumber, req.body.beerType);
     res.send(someValue)
-    console.log(req.body)
     res.end;
 };
 
@@ -24,7 +23,7 @@ exports.resetProduction = async function(req, res){
 
 exports.detectMaintenanceStatus = async function(req,res){
     returnValue = await nodeOPCUA.getMaintenanceStatus();
-    res.send("Maintenance Status: " + "\n" + returnValue);
+    res.send(returnValue);
     res.end;
 }
 exports.getProductionCount = async function(req,res){

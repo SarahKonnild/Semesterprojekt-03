@@ -188,11 +188,13 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
         await changeStateToTrue(session);
 
         // The return value gets passed to the API controller that sends it back to the frontend
-        return 'Production started';
+        return {"statusCode": 201,
+                "message":"Starting production"};
     }
     catch (err) {
         console.log("Connection to the server failed", err);
-        return 'Production failed';
+        return {"statusCode": 400,
+                "message":"Starting production failed"};
     }finally{
         if(session != null){
             await stopSession(session);
@@ -207,7 +209,7 @@ export async function resetProduction() {
 
         // check if a production is going on then kill it
         let machineState = await getCurrentState(session);
-
+        let newMachineState = null;
         if (machineState == 2 || machineState == 17) {
             //Change state on machine
             await changeToState(session, resetProductionCommand);
@@ -215,14 +217,23 @@ export async function resetProduction() {
             //Send request to change state
             await changeStateToTrue(session);
 
-            return 'Beer Machine was in state ' + machineState + ' and is now reset to state 4';
+            newMachineState = await getCurrentState(session);
+
+            return {"statusCode": 200,
+                    "message":"Beer Machine reset",
+                    "oldState": machineState,
+                    "newState": newMachineState}
         }else{
-            return 'Beer machine is in state ' + machineState + ' and cannot reset from that state'
+            return {"statusCode": 400,
+                    "message":"Beer Machine could not reset",
+                    "oldState": machineState,
+                    "newState": newMachineState}
         }
     }
     catch (err) {
         console.log("Connection to the server failed", err);
-        return 'Beer Machine failed to reset'
+        return {"statusCode": 400,
+                "message":"Failed to reset the beer machine"};
     }finally{
         if(session != null){
             await stopSession(session);
@@ -245,15 +256,18 @@ export async function stopProduction() {
             //Send request to change state
             await changeStateToTrue(session);
             
-            return 'Production stopped';
+            return {"statusCode": 200,
+                    "message":"Production stopped"};
         }else{
-            return 'No production to stop';
+            return {"statusCode": 400,
+                    "message":"No production to be stopped"};
         }
 
     }
     catch (err) {
         console.log('Error happened', err);
-        return 'Failed to stop the production, and error happened';
+        return {"statusCode": 400,
+                "message":"Failed to stop the production"};
     }finally{
         if(session != null){
             await stopSession(session);
@@ -274,11 +288,14 @@ export async function getMaintenanceStatus() {
         });
         await stopSession(session);
         
-        return maintenanceStatus;
+        return {"statusCode": 200,
+                "message": "Got the status",
+                "maintenacneStatus": maintenanceStatus};
     }
     catch (err) {
         console.log("Ohh no something went wrong when opening connection ", err);
-        return 'Could not get the status of the machine, an error happened';
+        return {"statusCode": 400,
+                "message":"Could not get the maintenace status"};
     }finally{
         if(session != null){
             await stopSession(session);
@@ -316,15 +333,20 @@ export async function getProducedAmount() {
             defectiveCount = await session.read(defectiveNodeRead);
             acceptableCount = await session.read(acceptableNodeRead);
             //Setting up the json return object
-            let returnResult = {"defective": defectiveCount, "acceptable": acceptableCount };
+            let returnResult = {"statusCode": 200,
+                                "message": "Got the values", 
+                                "defective": defectiveCount, 
+                                "acceptable": acceptableCount};
             return returnResult;
         }else{
-            return 'Production has not finished';
+            return {"statusCode": 400,
+                    "message":"Production has not finished"};
         }
     }
     catch (err) {
         console.log("Ohh no something went wrong when opening connection ", err);
-        return 'An error happened and it wasnt possible to read the values'
+        return {"statusCode": 400,
+                "message":"Failed to get the produced amounts"};
     }finally{
         if(session != null){
             await stopSession(session);
