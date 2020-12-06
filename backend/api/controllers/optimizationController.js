@@ -1,11 +1,11 @@
 /**
  * @author Sarah Manon Pradel
  * 
- * @param req this parameter must include a JSON formatted object: {"margin":value}
- * @param res this parameter will send back a JSON formatted object: {"speed":value}
- * 
  * This function calculates the speed that is the highest possible that the user can produce at, while not exceeding the error margin that the user has indicated.
  * Therefore, this function can be used to impose an upper limit on the speed that the user can set the machine to work at. 
+ * 
+ * @param req this parameter must include a JSON formatted object: {"margin":value}
+ * @param res this parameter will send back a JSON formatted object: {"speed":value}
 */
 //WORKS, IS TESTED
 exports.calculateErrorSpeed = function(req,res){
@@ -20,11 +20,11 @@ exports.calculateErrorSpeed = function(req,res){
 
 /**
  * @author Sarah Manon Pradel
- *
- * @param req this parameter must include a JSON formatted object: {"speed":value}
- * @param res this parameter will send back a JSON formatted object: {"margin":value}
  * 
  * This function calculates the minimum estimated amount of errors that the user will have to accept for the given speed. 
+ *  
+ * @param req this parameter must include a JSON formatted object: {"speed":value}
+ * @param res this parameter will send back a JSON formatted object: {"margin":value}
  */
 //WORKS, IS TESTED
 exports.calculateErrorMargin = function(req,res){
@@ -37,13 +37,46 @@ exports.calculateErrorMargin = function(req,res){
     }
 }
 
-//REQUIRES A BATCH SIZE TO BE SENT IN AND A MARGIN IN PERCENTAGE. WILL RETURN AN AMOUNT OF ERROR BEERS.
-// exports.calculateAmountOfErrors = function(req,res){
-//     let margin = req.body.margin;
-//     let batch = req.body.batch;
-//     let amount = (margin/100)*batch;
-//     res.send({"errors":amount});
-// }
+/**
+ * @author Sarah Manon Pradel
+ * 
+ * This function calculates the percentage of errors based on the designated batch size and the minimum acceptable amount of errors.
+ * 
+ * @param req this parameter must include a JSON formatted object: {"margin":value, "batch":value}
+ * @param res this parameter will send back a JSON formatted object: {"percentage":value}
+ */
+//WORKS, IS TESTED
+exports.calculatePercentageErrors = function(req,res){
+    let margin = req.body.margin;
+    let batch = req.body.batch;
+    if(margin > 0 && batch > 0){
+        let amount = (margin/batch)*100;
+        res.send({"percentage":amount});
+    }else{
+        res.send(400).status('Bad Request');
+    }
+}
+
+/**
+ * @author Sarah Manon Pradel
+ * 
+ * This function calculates the amount of errors based on the batch size and the specified percentage error margin. Useful for 
+ * presentation to the user and live updating of the effects of adjusting parameters in the frontend.
+ * 
+ * @param req this parameter must include a JSON formatted object: {"percentage":value, "batch":value}
+ * @param res this parameter will send back a JSON formatted object: {"errors":value}
+ */
+//WORKS, IS TESTED
+exports.calculateAmountOfErrors = function(req,res){
+    let percentage = req.body.percentage;
+    let batch = req.body.batch;
+    if(percentage > 0 && batch > 0){
+        let amount = (percentage/100)*batch;
+        res.send({"errors":amount});
+    }else{
+        res.send(400).status('Bad Request');
+    }
+}
 
 /**
  * @author Sarah Manon Pradel
