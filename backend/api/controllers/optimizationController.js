@@ -29,9 +29,46 @@ exports.calculateErrorSpeed = function(req,res){
 //WORKS, IS TESTED
 exports.calculateErrorMargin = function(req,res){
     let speed = req.body.speed;
-    if(speed > 0){
+    if(speed > 0 && speed <= 146.771){
         let margin = (3.12*Math.pow(10,-3)*Math.pow(speed,2)+0.0658*speed-3.54);
-    res.send({"margin":margin});
+        res.send({"margin":margin});
+    }else{
+        res.send(400).status('Bad Request');
+    }
+}
+
+
+/**
+ * @author Sarah Manon Pradel
+ * 
+ * This function calculates the maximum speed that the user can produce at, in order to get the specified amount of valid beers per minute. 
+ * The square root is negated in order to ensure that only the value that is found prior to the vertex (x=149.711) will be returned, as this 
+ * is the point where there is still more valid beers produced than defective. 
+ * 
+ * @param req this parameter must include a JSON formatted object: {"margin":value}
+ * @param res this parameter will send back a JSON formatted object: {"speed":value}
+ */
+exports.calculateValidSpeed = function(req,res){
+    let margin = req.body.margin;
+    if(margin >= 0){
+        let speed = (6250*(-1)*Math.pow((22922721/25000000)-(39*margin)/3125,0.5))/39+(7785/52);
+        res.send({"speed":speed});
+    }
+}
+
+/**
+ * @author Sarah Manon Pradel
+ * 
+ * This function estimates the maximum amount of valid beers produced per minute at the given speed. 
+ * 
+ * @param req this parameter must include a JSON formatted object: {"speed":value}
+ * @param res this parameter will send back a JSON formatted object: {"margin":value}
+ */
+exports.calculateValidMargin = function(req,res){
+    let speed = req.body.speed;
+    if(speed > 0 ){
+        let margin = speed - (0.00312*Math.pow(speed,2)+0.0658*speed-3.54);
+        res.send({"margin":margin});
     }else{
         res.send(400).status('Bad Request');
     }
@@ -40,13 +77,15 @@ exports.calculateErrorMargin = function(req,res){
 /**
  * @author Sarah Manon Pradel
  * 
- * This function calculates the percentage of errors based on the designated batch size and the minimum acceptable amount of errors.
+ * This function calculates the percentage of beers based on the designated batch size and the minimum acceptable amount of errors.
+ * Percentage of beers must be understood as that this function doesn't care if the percentage describes valid or defective beers, it will just
+ * calculate how much the specified amount of beers make up of the total batch size. It can therefore be used for BOTH valid and defective beers.
  * 
  * @param req this parameter must include a JSON formatted object: {"margin":value, "batch":value}
  * @param res this parameter will send back a JSON formatted object: {"percentage":value}
  */
 //WORKS, IS TESTED
-exports.calculatePercentageErrors = function(req,res){
+exports.calculatePercentageBeers = function(req,res){
     let margin = req.body.margin;
     let batch = req.body.batch;
     if(margin > 0 && batch > 0){
@@ -60,19 +99,20 @@ exports.calculatePercentageErrors = function(req,res){
 /**
  * @author Sarah Manon Pradel
  * 
- * This function calculates the amount of errors based on the batch size and the specified percentage error margin. Useful for 
- * presentation to the user and live updating of the effects of adjusting parameters in the frontend.
+ * This function calculates the amount of beers based on the batch size and the specified percentage error margin. 
+ * Amount of beers must be understood as this function doesn't care if the amount describes valid or defective beers, it will just calculate how many
+ * the specified percentage make up of the total batch size. It can therefore be used for BOTH valid and defective beers. 
  * 
  * @param req this parameter must include a JSON formatted object: {"percentage":value, "batch":value}
- * @param res this parameter will send back a JSON formatted object: {"errors":value}
+ * @param res this parameter will send back a JSON formatted object: {"amount":value}
  */
 //WORKS, IS TESTED
-exports.calculateAmountOfErrors = function(req,res){
+exports.calculateAmountOfBeers = function(req,res){
     let percentage = req.body.percentage;
     let batch = req.body.batch;
     if(percentage > 0 && batch > 0){
         let amount = (percentage/100)*batch;
-        res.send({"errors":amount});
+        res.send({"amount":amount});
     }else{
         res.send(400).status('Bad Request');
     }
