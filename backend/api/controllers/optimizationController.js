@@ -10,8 +10,12 @@
 //WORKS, IS TESTED
 exports.calculateErrorSpeed = function(req,res){
     let margin = req.body.margin;
-    let speed = (6250*Math.pow(((39*margin)/3125) + (1212721/25000000),0.5))/39 - (1645/156);
-    res.send({"speed":speed});
+    if(margin >= 0){
+        let speed = (6250*Math.pow(((39*margin)/3125) + (1212721/25000000),0.5))/39 - (1645/156);
+        res.send({"speed":speed});
+    }else{
+        res.send(400).status('Bad Request');
+    }
 }
 
 /**
@@ -25,9 +29,12 @@ exports.calculateErrorSpeed = function(req,res){
 //WORKS, IS TESTED
 exports.calculateErrorMargin = function(req,res){
     let speed = req.body.speed;
-    //Sends the error margin in amount of beers produced
-    let margin = (3.12*Math.pow(10,-3)*Math.pow(speed,2)+0.0658*speed-3.54);
+    if(speed > 0){
+        let margin = (3.12*Math.pow(10,-3)*Math.pow(speed,2)+0.0658*speed-3.54);
     res.send({"margin":margin});
+    }else{
+        res.send(400).status('Bad Request');
+    }
 }
 
 //REQUIRES A BATCH SIZE TO BE SENT IN AND A MARGIN IN PERCENTAGE. WILL RETURN AN AMOUNT OF ERROR BEERS.
@@ -49,10 +56,14 @@ exports.calculateErrorMargin = function(req,res){
  */
 //WORKS, IS TESTED
 exports.calculateEstimatedProductionTime = function(req,res){
-    let batch = req.body.batch;
-    let speed = req.body.speed;
-    let time = batch/speed;   
-    res.send({"time":time});
+    if(batch > 0 && speed > 0){
+        let batch = req.body.batch;
+        let speed = req.body.speed;
+        let time = batch/speed;   
+        res.send({"time":time});
+    }else{
+        res.send(400).status('Bad Request');
+    }
 }
 
 /**
@@ -74,15 +85,19 @@ exports.calculateOptimalSpeed = function(req,res){
     let batch = req.body.batch;
     let margin = req.body.margin;
     let time = req.body.time;
-    let speed = batch/time;
+    if(batch > 0 && margin >= 0 && time > 0){
+        let speed = batch/time;
 
-    let calcErrMarg = 0.00312*Math.pow(speed,2)+0.0658*speed-3.54;
+        let calcErrMarg = 0.00312*Math.pow(speed,2)+0.0658*speed-3.54;
 
-    if(calcErrMarg > margin){
-        //IF THE CALCULATED ERROR MARGIN IS BIGGER THAN THE ACCEPTABLE ONE (user-defined), THEN THIS IS A BAD REQUEST; THE SPEED IS NOT ALLOWED FOR THE GIVEN MARGIN
-        res.status(400).send('Bad Request');
-    }else if( calcErrMarg == margin || calcErrMarg < margin){
-        //IF THE CALCULATED ERROR MARGIN IS THE SAME AS THE SPECIFIED MARGIN, NO PROBLEMS
-        res.send({"speed":speed});
+        if(calcErrMarg > margin){
+            //IF THE CALCULATED ERROR MARGIN IS BIGGER THAN THE ACCEPTABLE ONE (user-defined), THEN THIS IS A BAD REQUEST; THE SPEED IS NOT ALLOWED FOR THE GIVEN MARGIN
+            res.status(400).send('Bad Request');
+        }else if( calcErrMarg == margin || calcErrMarg < margin){
+            //IF THE CALCULATED ERROR MARGIN IS THE SAME AS THE SPECIFIED MARGIN, NO PROBLEMS
+            res.send({"speed":speed});
+        }
+    }else{
+        res.send(400).status('Bad Request');
     }
 }
