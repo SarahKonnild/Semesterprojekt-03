@@ -1,199 +1,149 @@
-import React, {Component} from 'react'
+// All methods should be async when implemented
 
-
-import CanvasJSReact from '../canvasjs.react'
-
-//var CanvasJSReact = require('./canvasjs.react');
-var CanvasJS = CanvasJSReact.CanvasJS;
-var CanvasJSChart = CanvasJSReact.CanvasJSChart;
-
-/*
-productionSpeed: this.props.productionSpeedFromCreateProductionForm,
-batchSize: this.props.batchSizeFromCreateProductionForm,
-errorMargin: this.props.errorMarginFromCreateProductionForm */
-
-class SimulationGraph extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			beerType: this.props.beerTypeFromCreateProductionForm,
-			updatedDataPoints: [],
-			errorSpeed: 0,
-			errorMargin: 0,
-			amountOfErrors: 0,
-			estimatedProductionTime: 0,
-			optimalSpeed: 0
-		}
+export async function fetchErrorSpeed(margin) {
+	// constructs the object to send in json format to backend api
+	let data = {
+		'margin': margin,
 	}
-
-	fetchOptimalSpeed() {
-		var context = this;
-		let newRequest = new Request('http://localhost:5000/calculateOptimalSpeed', {
-			method: 'GET',
-			body: {
-				batch: this.batchSize,
-				margin: this.margin,
-				time: this.time
-			},
-			mode: 'cors',
-			cache: 'default'
+	// constructs a Reuest object that holds configurations for the Request to be made.
+	let newRequest = new Request('http://localhost:5000/errorSpeed', {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data),
+		mode: 'cors',
+		cache: 'default',
+	})
+	// executes the request, reads the response, returns the value received from the backend api, or logs the error.
+	await fetch(newRequest).then(response => {
+		response.json().then(data => {
+			console.log(data.speed);
+			return data.speed;
+		}).catch(err => {
+			console.log(err);
+			return 10;
 		})
-
-		fetch(newRequest).then(response => {
-			context.setState({
-				optimalSpeed: response.optimalSpeed
-			})
-		})
-	  }
-
-	fetchOptimalSpeed() {
-		var context = this;
-	  
-		$.ajax({
-		  url: 'http://localhost:5000',
-		  method: 'GET',
-		  success: function(response) {
-			context.setState({
-			  errorSpeed: response.errorSpeed,
-			  errorMargin: response.errorMargin,
-			  amountOfErrors: response.amountOfErrors,
-			  estimatedProductionTime: response.estimatedProductionTime,
-			  optimalSpeed: response.optimalSpeed
-			});
-		  }
-		});
-	  }
-
-	updateDataPoints() {
-		this.state.updatedDataPoints = []
-		var x = 0;
-		var numberOfDataPoints = 6
-		var interval = 100
-
-		for (x; x < numberOfDataPoints * interval; x = x + interval) {
-			//console.log("x is: " + x + " y is: " + this.equations(x))
-			this.state.updatedDataPoints.push({x: x, y: this.equations(x)})
-			
-		}
-		
-	}
-	//We could put all the update functions into a component to reduce clutter
-
-	//TODO implement all beer types
-	//Maybe extract equations as variables outside the function
-	equations(x) {
-		var beerType = this.props.beerTypeFromCreateProductionForm;
-
-		if (beerType === "Pilsner") {
-			return x * 1/10
-		} else if (beerType === "Ale") {
-			return x * 1/20
-		} else if (beerType === "Stout") {
-			return x * 1/30
-		} else if (beerType === "Non Alcoholic") {
-			return x * 1/40
-		} else if (beerType === "Wheat") {
-			//x is productions speed, result is y.
-			return (0.00312*(Math.pow(x, 2)) + (0.0658*x) - 3.54)
-		} else if (beerType === "IPA") {
-			return x * 1/60
-		} else {
-			console.log("Error in equations under SimulationGraph. Can't find beerType")
-		}
-	}
-
-	//A production speed must be found for a certain percentage of failed products.
-	//I am guessing we need to isolate for x in our formula but i couldn't figure it out. See wheat in equations().
-	calculateErrorMargin(batchSize) {
-		var beerType = this.props.beerTypeFromCreateProductionForm;
-		var errorMargin = parseInt(this.props.errorMarginFromCreateProductionForm, 10);
-
-		if (beerType === "Pilsner") {
-			return 100
-		} else if (beerType === "Ale") {
-			return 100
-		} else if (beerType === "Stout") {
-			return 100
-		} else if (beerType === "Non Alcoholic") {
-			return 100
-		} else if (beerType === "Wheat") {
-			return 100
-		} else if (beerType === "IPA") {
-			return 100
-		} else {
-			console.log("Error in calculateErrorMargin under SimulationGraph. Can't find beerType")
-		}
-	}
-
-	render() {
-		this.updateDataPoints() //Should only calculate when beerType changes. If statement?
-		const options = {
-			animationEnabled: true,
-			title:{
-				text: "Optimal speed for " + this.props.beerTypeFromCreateProductionForm
-			},
-			axisX: {
-        
-        xValueFormatInt: 0,
-        title: 'Speed',
-        minimum: -30,
-		maximum: 1000,
-		stripLines:[
-            {
-                startValue:this.fetchOptimalSpeed(this.batch, this.margin, this.time)+2.5, // if 2.5 is omitted, the line displayed is not visible
-                endValue:this.fetchOptimalSpeed(this.batch, this.margin, this.time)-2.5,                
-                color:"#d8d8d8",
-                label : "Optimal production speed",
-                labelFontColor: "red"
-			},
-			{
-                
-                startValue:695,
-                endValue:700,                
-                color:"#d8d8d8",
-                label : "Fastest speed",
-                labelFontColor: "blue"
-			},
-			{
-                //parseInt because they at some point the integer turned into an object... Maybe
-                startValue: parseInt(this.props.productionSpeedFromCreateProductionForm, 10),
-                endValue: parseInt(this.props.productionSpeedFromCreateProductionForm, 10) + 5,                
-                color:"#d8d8d8",
-                label : "Current production speed",
-                labelFontColor: "green"
-			},
-			{
-				startValue: this.calculateErrorMargin(parseInt(this.props.batchSizeFromCreateProductionForm, 10)),
-				endValue: this.calculateErrorMargin(parseInt(this.props.batchSizeFromCreateProductionForm, 10)) + 5,                
-				color:"#d8d8d8",
-				label : "Error Margin: " + this.props.errorMarginFromCreateProductionForm + "%",
-				labelFontColor: "purple"
-			}
-			]
-			
-		
-		
-			},
-			axisY: {
-				title: "Defective",
-        //prefix: "$"
-        maximum: 1000 //Should the amount of defective be dynamic or do we do it percentage wise and make errorMargin horisontal?
-			},
-			data: [{
-				//yValueFormatInt: 0,
-				//xValueFormatInt: 0,
-				type: "spline",
-				dataPoints: this.state.updatedDataPoints
-			}]
-		}
-		return (
-		<div>
-			<CanvasJSChart options = {options}
-				onRef={ref => this.chart = ref}
-			/>
-			{/*You can get reference to the chart instance as shown above using onRef. This allows you to access all chart properties and methods*/}
-		</div>
-		);
-	}
+	}).catch((err) => {
+		console.log("heelooooo")
+		return 10;
+	})
 }
-export default SimulationGraph; 
+
+export async function fetchErrorMargin(speed) {
+	let data = {
+		'speed': speed,
+	}
+
+	let newRequest = new Request('http://localhost:5000/errorMargin', {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data),
+		mode: 'cors',
+		cache: 'default',
+	})
+	await fetch(newRequest).then(response => {
+		response.json().then(data => {
+			console.log(data.margin);
+			return data.margin;
+		}).catch(err => {
+			console.log(err);
+			return 10;
+		})
+	}).catch((err) => {
+		console.log("heelooooo")
+		return 10;
+	})
+}
+
+export async function fetchErrorAmount(batch, margin) {
+	let data = {
+		'batch': batch,
+		'margin': margin
+	}
+	let newRequest = new Request('http://localhost:5000/errorAmount', {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data),
+		mode: 'cors',
+		cache: 'default',
+	})
+	await fetch(newRequest).then(response => {
+		response.json().then(data => {
+			console.log(data.amount);
+			return data.amount;
+		}).catch(err => {
+			console.log(err);
+			return 10;
+		})
+	}).catch((err) => {
+		console.log("heelooooo")
+		return 10;
+	})
+}
+
+export async function fetchEstimatedTime(batch, speed) {
+	let data = {
+		'batch': batch,
+		'speed': speed
+	}
+	let newRequest = new Request('http://localhost:5000/estimatedTime', {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data),
+		mode: 'cors',
+		cache: 'default',
+	})
+	await fetch(newRequest).then(response => {
+		response.json().then(data => {
+			console.log(data.time);
+			return data.time;
+		}).catch(err => {
+			console.log(err);
+			return 10;
+		})
+	}).catch((err) => {
+		console.log("heelooooo")
+		return 10;
+	})
+}
+
+export async function fetchOptimalSpeed(batch, time, margin) {
+	let data = {
+		'batch': batch,
+		'time': time,
+		'margin': margin
+	}
+	let newRequest = new Request('http://localhost:5000/optimalSpeed', {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data),
+		mode: 'cors',
+		cache: 'default',
+	})
+	await fetch(newRequest).then(response => {
+		response.json().then(data => {
+			console.log(data.speed);
+			return data.speed;
+		}).catch(err => {
+			console.log(err);
+			return 10;
+		})
+	}).catch((err) => {
+		console.log("heelooooo")
+		return 10;
+	})
+}

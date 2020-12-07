@@ -6,51 +6,68 @@ import './CHMAcreateProduction.css';
 
 class CHMAcreateProduction extends Component {
     constructor(props) {
-        super();
+        super(props);
         this.state = {
             beerType: 'Pilsner',
-            productionSpeed: 0,
-            batchSize: 0,
-            errorMargin: 0,
-            timeframe: 0
+            speed: 0,
+            batch: 0,
+            margin: 0,
+            time: 0
         }
+        
+        // this is believed to necessary in order for the methods to be usable from within the render method. 
         this.beerTypeHandler = this.beerTypeHandler.bind(this);
         this.speedHandler = this.speedHandler.bind(this);
-        this.batchSizeHandler = this.batchSizeHandler.bind(this);
-        this.errorMarginHandler = this.errorMarginHandler.bind(this);
-        this.timeframeHandler = this.timeframeHandler.bind(this);
+        this.batchHandler = this.batchHandler.bind(this);
+        this.marginHandler = this.marginHandler.bind(this);
+        this.timeHandler = this.timeHandler.bind(this);
+        
     }
 
-    beerTypeHandler = (event) => {
+    // methods below are event handlers that changes the values of this.state when theyre changed by the user. 
+
+    beerTypeHandler(event){
         this.setState({
             beerType: event.target.value
         })
     }
 
-    speedHandler = (event) => {
+    speedHandler(event){
         this.setState({
-            productionSpeed: document.getElementById('speed').value
+            speed: document.getElementById('speed').value
         })
     }
 
-    batchSizeHandler = (event) => {
+    batchHandler = (event) => {
         this.setState({
-            batchSize: document.getElementById('batchSize').value
+            batch: document.getElementById('batch').value
         })
     }
 
-    errorMarginHandler = (event) => {
+    marginHandler = (event) => {
         this.setState({
-            errorMargin: document.getElementById('margin').value
+            margin: document.getElementById('margin').value
         })
         
     }
 
-    timeframeHandler = (event) => {
+    timeHandler(event){
         this.setState({
-            timeframe: document.getElementById('timeframe').value
+            time: document.getElementById('time').value
         })
     }
+
+    // this was used to try and fix the error where the app crashes when fetch methods is called in ChmaSimulationGraph.
+    // Look there fore more comments on this.
+    /*
+    componentWillMount(){
+        this.beerTypeHandler();
+        this.speedHandler();
+        this.batchHandler();
+        this.errorMarginHandler();
+        this.timeHandler();
+    }
+    */
 
     render() {
         return (
@@ -67,25 +84,25 @@ class CHMAcreateProduction extends Component {
                         </select>
                     </label>
                     <label>Production speed:
-                        <NumericInput id="speed" step={10} precision={0} value={this.state.productionSpeed} min={0} max={1000}
+                        <NumericInput id="speed" step={10} precision={0} value={this.state.speed} min={0} max={1000}
                             onChange={this.speedHandler}></NumericInput>
                     </label>
                     <label>Batch size:
-                        <NumericInput id="batchSize" step={100} precision={0} value={this.state.batchSize} min={0} onChange={this.batchSizeHandler}></NumericInput>
+                        <NumericInput id="batch" step={100} precision={0} value={this.state.batch} min={0} onChange={this.batchHandler}></NumericInput>
                     </label>
                     <label>Error margin:
-                        <NumericInput id="margin" step={1} precision={0} value={this.state.errorMargin} min={0} max={100} onChange={this.errorMarginHandler}></NumericInput>
+                        <NumericInput id="margin" step={1} precision={0} value={this.state.margin} min={0} max={100} onChange={this.marginHandler}></NumericInput>
                     </label>
                     <label>Time:
-                        <NumericInput id="timeframe" step={1} precision={0} value={this.state.timeframe} min={0} max={1000} onChange={this.timeframeHandler}></NumericInput>
+                        <NumericInput id="time" step={1} precision={0} value={this.state.time} min={0} max={1000} onChange={this.timeHandler}></NumericInput>
                     </label>
                 </form>
                 <SimulationGraph
                     beerType={this.state.beerType}
-                    productionSpeed={this.state.productionSpeed}
-                    batchSize={this.state.batchSize}
-                    timeframe={this.state.timeframe}
-                    errorMargin={this.state.errorMargin}
+                    speed={this.state.speed}
+                    batch={this.state.batch}
+                    time={this.state.time}
+                    margin={this.state.margin}
                     maxSpeed={300} />
                 <input type="submit" value="Simulate" /> <br />
                 <input type="submit" value="Start Production" />
