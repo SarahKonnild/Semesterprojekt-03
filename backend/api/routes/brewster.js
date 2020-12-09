@@ -21,31 +21,31 @@ router.route('/getProductionCount').get(opcua.getProductionCount);
 
 //Optimization Controller
 //Calculate Error Speed
-router.route('/calculateErrorSpeed').get(optimization.calculateErrorSpeed);
+router.route('/calculateErrorSpeed').post(optimization.calculateErrorSpeed);
 
 //Calculate Error Margin
-router.route('/calculateErrorMargin').get(optimization.calculateErrorMargin);
+router.route('/calculateErrorMargin').post(optimization.calculateErrorMargin);
 
 //Calculate Valid Margin
-router.route('/calculateValidMargin').get(optimization.calculateValidMargin);
+router.route('/calculateValidMargin').post(optimization.calculateValidMargin);
 
 //Calculate Valid Speed
-router.route('/calculateValidSpeed').get(optimization.calculateValidSpeed);
+router.route('/calculateValidSpeed').post(optimization.calculateValidSpeed);
 
 //Calculate Error Percentage of Total Batch Size
-router.route('/calculatePercentageBeers').get(optimization.calculatePercentageBeers);
+router.route('/calculatePercentageBeers').post(optimization.calculatePercentageBeers);
 
 //Calculate Amount of Errors based on Percentage of Batch Size
-router.route('/calculateAmountOfBeers').get(optimization.calculateAmountOfBeers);
+router.route('/calculateAmountOfBeers').post(optimization.calculateAmountOfBeers);
 
 //Calculate Estimated Production Time
-router.route('/calculateEstimatedProductionTime').get(optimization.calculateEstimatedProductionTime);
+router.route('/calculateEstimatedProductionTime').post(optimization.calculateEstimatedProductionTime);
 
 //Calculate Optimal Speed Using Errors
-router.route('/calculateOptimalSpeedUsingErrors').get(optimization.calculateOptimalSpeedUsingErrors);
+router.route('/calculateOptimalSpeedUsingErrors').post(optimization.calculateOptimalSpeedUsingErrors);
 
 //Calculate Optimal Speed Using Valids
-router.route('/calculateOptimalSpeedUsingValids').get(optimization.calculateOptimalSpeedUsingValids);
+router.route('/calculateOptimalSpeedUsingValids').post(optimization.calculateOptimalSpeedUsingValids);
 
 
 module.exports = router;
