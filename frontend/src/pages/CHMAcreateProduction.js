@@ -1,7 +1,6 @@
 import { Component } from 'react'
 import SimulationGraph from '../components/ChmaSimulationGraph';
 import NumericInput from 'react-numeric-input';
-import './CHMAcreateProduction.css';
 import * as MachineControls from '../components/MachineControls';
 import * as Api from '../components/ChmaAPIcall'
 
@@ -77,55 +76,39 @@ class CHMAcreateProduction extends Component {
     startProduction = (event) => {
         if (this.state.speed > 0 && this.state.batch > 0) {
             MachineControls.startProduction(this.state.beerType, this.state.speed, this.state.batch);
-            alert('Production has been started. ');
+            alert('Production has been started. View the log to see the result. ');
         } else {
             alert('Please fill out a beertype a production speed and a batchsize. ');
-        }
-
+        }   
     }
 
     stopProduction = (event) => {
-        if (MachineControls.stopProduction().then(result => {
-            if(result !== undefined){
-                console.log(result);
-                return 1;
-            } else {
-                return -1;
-            }
-        }) > 0) {
-            alert('The machine has been stopped. ')
-        } else {
-            alert('The machine was not running. ')
-        }
+        alert('The system has politely asked the machine to stop producing, and log response from the server. ')
+        MachineControls.stopProduction();
     }
 
     resetProduction = (event) => {
-        if (MachineControls.resetProduction().then(result => {
-            if(result !== undefined){
-                console.log(result);
-                return 1;
-            } else {
-                return -1;
-            }
-        }) > 0) {
-            alert('Machine has been reset.');
-        } else {
-            alert('Machine was already reset.')
-        }
-
+        alert('The system has been asked to reset the machine, and log the response from the server. ')
+        MachineControls.resetProduction();
     }
 
     detectMaintenanceStatus = (event) => {
-        alert(MachineControls.detectMaintenanceStatus());
+        alert('The system asked for the machines maintenance status. View the console to see the response. ');
+        MachineControls.detectMaintenanceStatus();
     }
 
     getProductionCount = (event) => {
-        alert(MachineControls.getProductionCount());
+        alert('The system was asked to account for the current production count View the console to see the response. ');
+        MachineControls.getProductionCount();
     }
 
     getOptimalSpeed = (event) => {
+        console.log("batch: ", this.state.batch);
+        console.log("time: ", this.state.time);
+        console.log("margin: ", this.state.margin);
         if(this.state.batch > 0 && this.state.time > 0 && this.state.margin > 0){
-            alert(Api.fetchOptimalSpeed(this.state.batch, this.state.time, this.state.margin));
+            Api.fetchOptimalSpeed(this.state.batch, this.state.time, this.state.margin);
+            alert('The system was asked to calculate the optimal speed. View the console to see the result. ');
         } else {
             alert('Please fill out a batchsize, a timeframe and an accepted error margin. ')
         }
@@ -133,7 +116,8 @@ class CHMAcreateProduction extends Component {
 
     getErrorMargin = (event) => {
         if(this.state.speed > 0){
-            alert(Api.fetchErrorMargin(this.state.speed));
+            Api.fetchErrorMargin(this.state.speed)
+            alert('The system was asked to calculate the error margin based on the selected production speed. View the console to see the result. ');
         } else {
             alert('Please fill in a production speed');
         }
@@ -141,7 +125,8 @@ class CHMAcreateProduction extends Component {
 
     getErrorspeed = (event) => {
         if(this.state.margin > 0){
-            alert(Api.fetchErrorSpeed());
+            Api.fetchErrorSpeed(this.state.margin);
+            alert('The system was asked to calculate the errors pr. minute based on the selected error margin. View the console to see the result.');
         } else {
             alert('Please fill in an error margin');
         }
@@ -149,7 +134,8 @@ class CHMAcreateProduction extends Component {
 
     getDefects = (event) => {
         if(this.state.batch > 0 && this.state.margin > 0){
-            alert(Api.fetchErrorAmount(this.state.batch, this.state.margin));
+            Api.fetchErrorAmount(this.state.batch, this.state.margin);
+            alert('The system was asked to calculate the amount of errors based on the selected batch size and error margin. View the console to see the result.');
         } else {
             alert('Please fill in a batch size and an error margin');
         }
@@ -157,7 +143,8 @@ class CHMAcreateProduction extends Component {
 
     getEstimatedTime = (event) => {
         if(this.state.batch > 0 && this.state.speed > 0){
-            alert(Api.fetchEstimatedTime(this.state.batch, this.state.speed));
+            Api.fetchEstimatedTime(this.state.batch, this.state.speed);
+            alert('The system was asked to calculate the estimated time based on the selected batch size and production speed. View the console to see the result.');
         } else {
             alert('Please fill in a batch size and a production speed');
         }
@@ -178,7 +165,7 @@ class CHMAcreateProduction extends Component {
 
     render() {
         return (
-            <div className="container">
+            <div>
                 <form>
                     <label>Beertype:
                     <select onChange={this.beerTypeHandler} value={this.state.beerType}>
@@ -201,7 +188,7 @@ class CHMAcreateProduction extends Component {
                         <NumericInput id="margin" step={1} precision={0} value={this.state.margin} min={0} max={100} onChange={this.marginHandler}></NumericInput>
                     </label>
                     <label>Time:
-                        <NumericInput id="time" step={1} precision={0} value={this.state.time} min={0}></NumericInput>
+                        <NumericInput id="time" step={1} precision={0} value={this.state.time} min={0} onChange={this.timeHandler}></NumericInput>
                     </label>
                     <label>Batch Id:
                         <input type="text"></input>

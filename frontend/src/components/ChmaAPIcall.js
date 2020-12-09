@@ -18,16 +18,13 @@ export async function fetchErrorSpeed(margin) {
 	})
 	// executes the request, reads the response, returns the value received from the backend api, or logs the error.
 	await fetch(newRequest).then(response => {
-		response.json().then(data => {
-			console.log(data.speed);
-			return data.speed;
+		response.json().then(result => {
+			console.log("fetchErrorSpeed(): result: ", result);
 		}).catch(err => {
-			console.log(err);
-			return 10;
+			console.log("fetchErrorSpeed(): response.json(): error: ", err);
 		})
 	}).catch((err) => {
-		console.log("heelooooo")
-		return 10;
+		console.log("fetchErrorSpeed(): error: ", err)
 	})
 }
 
@@ -46,16 +43,13 @@ export async function fetchErrorMargin(speed) {
 		cache: 'default',
 	})
 	await fetch(newRequest).then(response => {
-		response.json().then(data => {
-			console.log(data.margin);
-			return data.margin;
+		response.json().then(result => {
+			console.log("fetchErrorMargin(): result: ", result);
 		}).catch(err => {
-			console.log(err);
-			return 10;
+			console.log("fetchErrorMargin(): response.json(): error: ", err);
 		})
 	}).catch((err) => {
-		console.log("heelooooo")
-		return 10;
+		console.log("fetchErrorMargin(): error: ", err)
 	})
 }
 
@@ -75,16 +69,13 @@ export async function fetchErrorAmount(batch, margin) {
 		cache: 'default',
 	})
 	await fetch(newRequest).then(response => {
-		response.json().then(data => {
-			console.log(data.amount);
-			return data.amount;
+		response.json().then(result => {
+			console.log("fetchErrorAmount(): result: ", result);
 		}).catch(err => {
-			console.log(err);
-			return 10;
+			console.log("fetchErrorAmount(): response.json(): error: ", err);
 		})
 	}).catch((err) => {
-		console.log("heelooooo")
-		return 10;
+		console.log("fetchErrorAmount(): error: ", err)
 	})
 }
 
@@ -104,16 +95,13 @@ export async function fetchEstimatedTime(batch, speed) {
 		cache: 'default',
 	})
 	await fetch(newRequest).then(response => {
-		response.json().then(data => {
-			console.log(data.time);
-			return data.time;
+		response.json().then(result => {
+			console.log("fetchEstimatedTime(): result: ", result);
 		}).catch(err => {
-			console.log(err);
-			return 10;
+			console.log("fetchEstimatedTime(): response.json(): error: ", err);
 		})
 	}).catch((err) => {
-		console.log("heelooooo")
-		return 10;
+		console.log("fetchEstimatedTime(): error: ", err)
 	})
 }
 
@@ -134,15 +122,12 @@ export async function fetchOptimalSpeed(batch, time, margin) {
 		cache: 'default',
 	})
 	await fetch(newRequest).then(response => {
-		response.json().then(data => {
-			console.log(data.speed);
-			return data.speed;
+		response.json().then(result => {
+			console.log("fetchOptimalSpeed(): result: ", result);
 		}).catch(err => {
-			console.log(err);
-			return 10;
+			console.log("fetchOptimalSpeed(): response.json(): error: ", err);
 		})
 	}).catch((err) => {
-		console.log("heelooooo")
-		return 10;
+		console.log("fetchOptimalSpeed(): error: ", err)
 	})
 }

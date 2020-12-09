@@ -4,7 +4,6 @@ export async function startProduction(beerType, productionSpeed, batchSize) {
 		'productionSpeed': productionSpeed,
 		'batchSize': batchSize
 	}
-	let fetchedData = {};
 	// 'http://localhost:5000/brewster/startProduction'
 	let newRequest = new Request('http://localhost:5000/brewster/startProduction', {
 		method: 'POST',
@@ -17,16 +16,13 @@ export async function startProduction(beerType, productionSpeed, batchSize) {
 		cache: 'default',
 	})
 	await fetch(newRequest).then(response => {
-		response.json().then(data => {
-			console.log(data);
-			return data;
-		}).catch(err => {
-			console.log(err);
-			return 10;
+		response.json().then((data) => {
+			console.log("startProduction(): response.json(): data: ", data);
+		}).catch((err) => {
+			console.log("startProduction(): response.json(): error: ", err);
 		})
 	}).catch((err) => {
-		console.log("heelooooo")
-		return 10;
+		console.log("startProduction(): response.json(): fetch: ", err)
 	})
 }
 
@@ -37,7 +33,9 @@ export async function stopProduction(){
 		cache: 'default',
 	});
 	await fetch(newRequest).then(result => {
-		console.log(result);
+		console.log("stopProduction(): result: ", result);
+	}).catch((err) => {
+		console.log("stopProduction(): error: ", err);
 	})
 }
 
@@ -48,30 +46,34 @@ export async function resetProduction(){
 		cache: 'default',
 	})
 	await fetch(newRequest).then(result => {
-		return result;
+		console.log("resetProduction(): result: ", result);
+	}).catch((err) => {
+		console.log("resetProduction(): error: ", err);
 	})
 }
 
 export async function detectMaintenanceStatus(){
-	return 10;
 	let newRequest = new Request('http://localhost:5000/brewster/detectMaintenanceStatus', {
 		method: 'GET',
 		mode: 'cors',
 		cache: 'default',
 	})
 	await fetch(newRequest).then(result => {
-		return result.maintenanceStatus;
+		console.log("detectMaintenanceStatus(): result: ", result);
+	}).catch((err) => {
+		console.log("detectMaintenanceStatus(): error: ", err);
 	})
 }
 
 export async function getProductionCount(){
-	return 1;
 	let newRequest = new Request('http://localhost:5000/brewster/getProductionCount', {
 		method: 'GET',
 		mode: 'cors',
 		cache: 'default',
 	})
 	await fetch(newRequest).then(result => {
-		console.log(result);
+		console.log("getProductionCount(): result: ", result);
+	}).catch((err) => {
+		console.log("getProductionCount(): error: ", err);
 	})
 }
