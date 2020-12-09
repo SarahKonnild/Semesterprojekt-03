@@ -12,8 +12,6 @@ class Dashboard extends Component {
       <div>
         <h2>Dashboard</h2>
         <IngredientStatus />
-        
-        <MachineStatus />
       </div>
     )
   }

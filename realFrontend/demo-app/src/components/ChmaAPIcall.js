@@ -35,7 +35,6 @@ export async function fetchErrorMargin(speed) {
 	let data = {
 		'speed': speed,
 	}
-
 	let newRequest = new Request('http://localhost:5000/errorMargin', {
 		method: 'POST',
 		headers: {
@@ -124,7 +123,7 @@ export async function fetchOptimalSpeed(batch, time, margin) {
 		'time': time,
 		'margin': margin
 	}
-	let newRequest = new Request('http://localhost:5000/optimalSpeed', {
+	let newRequest = new Request('http://localhost:5000/brewster/calculateOptimalSpeedUsingValids', {
 		method: 'POST',
 		headers: {
 			'Accept': 'application/json',

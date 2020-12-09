@@ -2,19 +2,18 @@ const { Component } = require("react");
 const { default: MachineStatusData } = require("./MachineStatusData");
 
 
-
-class MachineStatus extends Component {state = {data: 1}
-
-
+class MachineStatus extends Component {
+  constructor(props){
+    super();
+    this.state = {
+      data: {}
+    }
+  }
 
     render() {
         return(
          <div>
-           {MachineStatusData().map(item => {
-               return (
-                  <div>{item[this.state.data]} </div>
-               )
-           })}           
+           {1}         
           </div>
         )
       }

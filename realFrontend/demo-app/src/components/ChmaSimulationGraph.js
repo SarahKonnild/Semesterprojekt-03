@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CanvasJSReact from '../canvasjs.react'
-import * as Api from './ChmaAPIcall'
+
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -39,6 +39,7 @@ class SimulationGraph extends Component{
 	// tried to use this for solving issue where these specific values that follows below, are being used as values of labels
 	// in the render(){return();} method. Whenever the fetch is called, it crashes the app. The request is send, and response is 
 	// received, but the app crashes. Not been able to solve this issue.
+	/*
 	componentDidUpdate(prevProps, prevState, snapShot){
 		if(prevState.batch !== this.state.batch && prevState.time !== this.state.time && prevState.margin !== this.state.margin){
 			this.setState({
@@ -66,6 +67,7 @@ class SimulationGraph extends Component{
 			})
 		}
 	}
+	*/
 	  
 
 	// creates the datapoints for the graph based on the errorfunction calculated. Can be changed to display another graph. 
@@ -100,7 +102,7 @@ class SimulationGraph extends Component{
             {
                 value: 149.71,            
                 color: "red",
-                label : "Optimal production speed: " + 10,
+                label : "Optimal production speed: " + 149.71,
                 labelFontColor: "red"
 			},
 			{
@@ -137,11 +139,6 @@ class SimulationGraph extends Component{
 				/>
 				{/*You can get reference to the chart instance as shown above using onRef. This allows you to access all chart properties and methods*/}
 		    	</div>
-				<label>Optimal speed: {this.state.fetchOptimalSpeed} </label><br></br>
-				<label>Errormargin: {this.state.fetchMargin} </label><br></br>
-				<label>Errorspeed: {this.state.fetchErrorSpeed} </label><br></br>
-				<label>Defects total: {this.state.fetchErrorAmount} </label><br></br>
-				<label>Estimated time: {this.state.fetchEstimatedTime}</label>
         	</div>
         )
     }
