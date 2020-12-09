@@ -97,18 +97,14 @@ async function startSession() {
     it should get caugt by the try catch and the it should try to connect to the physcial machine instead. It will return null if it couldnt connect to either of them. **/
     try {
         await clientOPCUA.connect(simulationEndpointURL);
-
-        session = await clientOPCUA.createSession();
     }catch(err){
         try {
             await clientOPCUA.connect(physicalEndpointURL);
-
-            session = await clientOPCUA.createSession();
         } catch (error) {
             session = null;
         }
-        
     }finally{
+        session = await clientOPCUA.createSession();
         return session;
     };
 }
