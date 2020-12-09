@@ -17,7 +17,7 @@ public interface IProduction {
 
     public void setProductionId(int productionId);
 
-    public ArrayList<Batch> getBatchQueue();
+    public Batch getBatch();
 
-    public void setBatchQueue(ArrayList<Batch> batchQueue);
+    public void setBatch(Batch batch);
 }

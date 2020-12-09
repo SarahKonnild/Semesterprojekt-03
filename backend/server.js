@@ -1,14 +1,21 @@
+//Importing dependencies
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('typescript-require');
 
+//Connection to DB Configuration
 const config = require('./config/db');
 
+//Connection to Express for API and Setting Port for 5000
 const app = express();
 const port = process.env.PORT || 5000;
 
 //Middleware
 app.use(cors());
+app.use(express.urlencoded({
+    extended: true
+}));
 app.use(express.json());
 
 //Connection to MongoDB
@@ -20,20 +27,24 @@ db.once('open', () => {
     console.log("MongoDB database connection established succesfully");
 })
 
-//Connection to Java 
-var net = require('net');
-var client = net.connect(8000, 'localhost');
-client.setEncoding('utf8');
-setInterval(function() {
-console.log("Writing....")
-var ret = client.write('Hello from node.js\n');
-console.log("Wrote", ret)
-}, 1000);
+//API Connection
+const batchesRouter = require('./api/routes/batches');
+const IngredientsRouter = require('./api/routes/ingredients');
+const productionsRouter = require('./api/routes/productions');
+const countersRouter = require('./api/routes/counters');
+const brewsterRouter = require('./api/routes/brewster');
 
-//Java to Server API
-var routes = require('./api/routes/brewsterRoutes.js'); //importing route
-routes(app); //register the route
+app.use('/batches', batchesRouter);
+app.use('/ingredients', IngredientsRouter);
+app.use('/productions', productionsRouter);
+app.use('/counters', countersRouter);
+app.use('/brewster', brewsterRouter);
 
+//Welcome Message for API
+app.get('/', (req, res) => res.send('Welcome to Group 2 API frontpage'));
+
+
+//Setting server to listen to Port 5000
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });

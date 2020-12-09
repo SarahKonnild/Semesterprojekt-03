@@ -37,9 +37,9 @@ public class JsonToBatchesConverter {
                 double humidity = (double) Float.parseFloat(batch.get("humidity").toString());
                 double vib = (double) Float.parseFloat(batch.get("vibration").toString());
 
-                Batch batch1 = new Batch(batchId, startTime, endTime, beerType, batchSize, productionSpeed, defects, temp,
-                        humidity, vib);
-                finalList.add(batch1);
+//                Batch batch1 = new Batch(batchId, startTime, endTime, beerType, batchSize, productionSpeed, defects, temp,
+//                        humidity, vib);
+//                finalList.add(batch1);
             }
         } catch (ParseException e) {
             e.printStackTrace();
