@@ -29,6 +29,7 @@ let toProduce = null;
 //node ids 
 const stateNodeID = "ns=6;s=::Program:Cube.Command.CntrlCmd";
 const producedNodeID = "ns=6;s=::Program:Cube.Status.StateCurrent";
+const producedProcessedNodeID = "ns=6;s=::Program:Cube.Admin.ProdProcessedCount";
 const maintenanceStatusNodeID = "ns=6;s=::Program:Maintenance.Counter";
 const currentStateNodeID = "ns=6;s=::Program:Cube.Status.StateCurrent";
 const requestChangeCommandNodeID = "ns=6;s=::Program:Cube.Command.CmdChangeRequest";
@@ -38,6 +39,10 @@ const batchSizeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[2].Value";
 const batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0].Value";
 const defectiveProductsNodeId = "ns=6;s=::Program:Maintenance.State"
 const acceptableProductsNodeId = "ns=6;s=::Program:Maintenance.State"
+const getBatchNumberNodeID = "ns=6;s=::Program:Cube.Status.Parameter[0].Value";
+const getCurrentProductionSpeedNodeID = "ns=6;s=::Program:Cube.Status.MachSpeed";
+const getBeerTypeNodeID = "ns=6;s=::Program:Cube.Admin.Parameter[0].Value";
+const getBatchSizeNodeID = "ns=6;s=::Program:Cube.Status.Parameter[1].Value";
 
 
 // Setting up the connection strategy 
@@ -57,7 +62,7 @@ const clientOPCUA = OPCUAClient.create({
 
 export async function getSubValues(){
 
-    let nodeIDArray = [producedNodeID, currentStateNodeID, batchNumberNodeID, batchSizeNodeID, beerTypeNodeID, maintenanceStatusNodeID]
+    let nodeIDArray = [producedProcessedNodeID, currentStateNodeID, getBatchNumberNodeID, getBatchSizeNodeID, getBeerTypeNodeID, maintenanceStatusNodeID, getCurrentProductionSpeedNodeID, defectiveProductsNodeId, acceptableProductsNodeId]
     let session = null;
     try {
         session = await startSession();
@@ -109,6 +114,27 @@ export async function getSubValues(){
     
         resultArray.push((await session.read(nodeToRead5)).value.value);
 
+        const nodeToRead6 = {
+            nodeId: nodeIDArray[6],
+            attributeId: AttributeIds.Value,
+        };
+    
+        resultArray.push((await session.read(nodeToRead6)).value.value);
+
+        const nodeToRead7 = {
+            nodeId: nodeIDArray[7],
+            attributeId: AttributeIds.Value,
+        };
+    
+        resultArray.push((await session.read(nodeToRead7)).value.value);
+
+        const nodeToRead8 = {
+            nodeId: nodeIDArray[8],
+            attributeId: AttributeIds.Value,
+        };
+    
+        resultArray.push((await session.read(nodeToRead8)).value.value);
+
         
         
         return {"statusCode": 200,
@@ -118,7 +144,10 @@ export async function getSubValues(){
                 "batchNumberNodeID": resultArray[2],
                 "batchSizeNodeID": resultArray[3],
                 "beerTypeNodeID": resultArray[4],
-                "maintenanceStatusNodeID": resultArray[5]};
+                "maintenanceStatusNodeID": resultArray[5],
+                "getCurrentProductionSpeedNodeID": resultArray[6],
+                "defectiveProductsNodeId": resultArray[7],
+                "acceptableProductsNodeId": resultArray[8]};
     }
     catch (err) {
         console.log("Ohh no something went wrong when opening connection ", err);
@@ -263,13 +292,13 @@ export async function getCurrentStatePublic() {
         
         return {"statusCode": 200,
                 "message": "Got the status",
-                "maintenacneStatus": stateStatus};
+                "state": stateStatus};
     }
     catch (err) {
         console.log("Ohh no something went wrong when opening connection ", err);
         return {"statusCode": 400,
                 "message":"Could not get the maintenace status",
-                "maintenacneStatus": null,
+                "state": null,
                 "error": err};
     }finally{
         // Make sure to close down the session so its possible to connect to it again through another function

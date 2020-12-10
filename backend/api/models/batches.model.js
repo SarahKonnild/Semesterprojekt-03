@@ -7,18 +7,12 @@ const Double = require('@mongoosejs/double');
 const Schema = mongoose.Schema;
 
 const batchesSchema = new Schema ({
-    _id: {type: Int32, required: true},
-    startTime: {type: String, required:true},
-    endTime: {type: String, required:true},
-    beerType: {type: String, required: true},
+    batchNumber: {type: Int32, required: true},
+    beerType: {type: Int32, required: true},
     batchSize: {type: Int32, required: true},
-    defects: {type: Int32, required: true},
-    productionSpeed: {type: Double, required: true},
-    temp: {type: Double, required: true},
-    humidity: {type: Double, required: true},
-    vibration: {type: Double, required: true}
-}, {
-    timestamps: true,
+    acceptable: {type: Int32},
+    defects: {type: Int32},
+    productionSpeed: {type: Int32, required: true}
 });
 
 const Batches = mongoose.model('Batches', batchesSchema);

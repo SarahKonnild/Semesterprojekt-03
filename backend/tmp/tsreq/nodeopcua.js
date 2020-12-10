@@ -51,6 +51,7 @@ var toProduce = null;
 //node ids 
 var stateNodeID = "ns=6;s=::Program:Cube.Command.CntrlCmd";
 var producedNodeID = "ns=6;s=::Program:Cube.Status.StateCurrent";
+var producedProcessedNodeID = "ns=6;s=::Program:Cube.Admin.ProdProcessedCount";
 var maintenanceStatusNodeID = "ns=6;s=::Program:Maintenance.Counter";
 var currentStateNodeID = "ns=6;s=::Program:Cube.Status.StateCurrent";
 var requestChangeCommandNodeID = "ns=6;s=::Program:Cube.Command.CmdChangeRequest";
@@ -60,6 +61,10 @@ var batchSizeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[2].Value";
 var batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0].Value";
 var defectiveProductsNodeId = "ns=6;s=::Program:Maintenance.State";
 var acceptableProductsNodeId = "ns=6;s=::Program:Maintenance.State";
+var getBatchNumberNodeID = "ns=6;s=::Program:Cube.Status.Parameter[0].Value";
+var getCurrentProductionSpeedNodeID = "ns=6;s=::Program:Cube.Status.MachSpeed";
+var getBeerTypeNodeID = "ns=6;s=::Program:Cube.Admin.Parameter[0].Value";
+var getBatchSizeNodeID = "ns=6;s=::Program:Cube.Status.Parameter[1].Value";
 // Setting up the connection strategy 
 var connectionStrategy = {
     initialDelay: 1000,
@@ -75,18 +80,18 @@ var clientOPCUA = node_opcua_1.OPCUAClient.create({
 });
 function getSubValues() {
     return __awaiter(this, void 0, void 0, function () {
-        var nodeIDArray, session, resultArray, nodeToRead0, _a, _b, nodeToRead1, _c, _d, nodeToRead2, _e, _f, nodeToRead3, _g, _h, nodeToRead4, _j, _k, nodeToRead5, _l, _m, err_1;
-        return __generator(this, function (_o) {
-            switch (_o.label) {
+        var nodeIDArray, session, resultArray, nodeToRead0, _a, _b, nodeToRead1, _c, _d, nodeToRead2, _e, _f, nodeToRead3, _g, _h, nodeToRead4, _j, _k, nodeToRead5, _l, _m, nodeToRead6, _o, _p, nodeToRead7, _q, _r, nodeToRead8, _s, _t, err_1;
+        return __generator(this, function (_u) {
+            switch (_u.label) {
                 case 0:
-                    nodeIDArray = [producedNodeID, currentStateNodeID, batchNumberNodeID, batchSizeNodeID, beerTypeNodeID, maintenanceStatusNodeID];
+                    nodeIDArray = [producedProcessedNodeID, currentStateNodeID, getBatchNumberNodeID, getBatchSizeNodeID, getBeerTypeNodeID, maintenanceStatusNodeID, getCurrentProductionSpeedNodeID, defectiveProductsNodeId, acceptableProductsNodeId];
                     session = null;
-                    _o.label = 1;
+                    _u.label = 1;
                 case 1:
-                    _o.trys.push([1, 9, 10, 13]);
+                    _u.trys.push([1, 12, 13, 16]);
                     return [4 /*yield*/, startSession()];
                 case 2:
-                    session = _o.sent();
+                    session = _u.sent();
                     //Checking to make sure there is an active connection, otherwise throw an error.
                     if (session == null) {
                         throw new Error("No session");
@@ -99,7 +104,7 @@ function getSubValues() {
                     _b = (_a = resultArray).push;
                     return [4 /*yield*/, session.read(nodeToRead0)];
                 case 3:
-                    _b.apply(_a, [(_o.sent()).value.value]);
+                    _b.apply(_a, [(_u.sent()).value.value]);
                     nodeToRead1 = {
                         nodeId: nodeIDArray[1],
                         attributeId: node_opcua_1.AttributeIds.Value,
@@ -107,7 +112,7 @@ function getSubValues() {
                     _d = (_c = resultArray).push;
                     return [4 /*yield*/, session.read(nodeToRead1)];
                 case 4:
-                    _d.apply(_c, [(_o.sent()).value.value]);
+                    _d.apply(_c, [(_u.sent()).value.value]);
                     nodeToRead2 = {
                         nodeId: nodeIDArray[2],
                         attributeId: node_opcua_1.AttributeIds.Value,
@@ -115,7 +120,7 @@ function getSubValues() {
                     _f = (_e = resultArray).push;
                     return [4 /*yield*/, session.read(nodeToRead2)];
                 case 5:
-                    _f.apply(_e, [(_o.sent()).value.value]);
+                    _f.apply(_e, [(_u.sent()).value.value]);
                     nodeToRead3 = {
                         nodeId: nodeIDArray[3],
                         attributeId: node_opcua_1.AttributeIds.Value,
@@ -123,7 +128,7 @@ function getSubValues() {
                     _h = (_g = resultArray).push;
                     return [4 /*yield*/, session.read(nodeToRead3)];
                 case 6:
-                    _h.apply(_g, [(_o.sent()).value.value]);
+                    _h.apply(_g, [(_u.sent()).value.value]);
                     nodeToRead4 = {
                         nodeId: nodeIDArray[4],
                         attributeId: node_opcua_1.AttributeIds.Value,
@@ -131,7 +136,7 @@ function getSubValues() {
                     _k = (_j = resultArray).push;
                     return [4 /*yield*/, session.read(nodeToRead4)];
                 case 7:
-                    _k.apply(_j, [(_o.sent()).value.value]);
+                    _k.apply(_j, [(_u.sent()).value.value]);
                     nodeToRead5 = {
                         nodeId: nodeIDArray[5],
                         attributeId: node_opcua_1.AttributeIds.Value,
@@ -139,7 +144,31 @@ function getSubValues() {
                     _m = (_l = resultArray).push;
                     return [4 /*yield*/, session.read(nodeToRead5)];
                 case 8:
-                    _m.apply(_l, [(_o.sent()).value.value]);
+                    _m.apply(_l, [(_u.sent()).value.value]);
+                    nodeToRead6 = {
+                        nodeId: nodeIDArray[6],
+                        attributeId: node_opcua_1.AttributeIds.Value,
+                    };
+                    _p = (_o = resultArray).push;
+                    return [4 /*yield*/, session.read(nodeToRead6)];
+                case 9:
+                    _p.apply(_o, [(_u.sent()).value.value]);
+                    nodeToRead7 = {
+                        nodeId: nodeIDArray[7],
+                        attributeId: node_opcua_1.AttributeIds.Value,
+                    };
+                    _r = (_q = resultArray).push;
+                    return [4 /*yield*/, session.read(nodeToRead7)];
+                case 10:
+                    _r.apply(_q, [(_u.sent()).value.value]);
+                    nodeToRead8 = {
+                        nodeId: nodeIDArray[8],
+                        attributeId: node_opcua_1.AttributeIds.Value,
+                    };
+                    _t = (_s = resultArray).push;
+                    return [4 /*yield*/, session.read(nodeToRead8)];
+                case 11:
+                    _t.apply(_s, [(_u.sent()).value.value]);
                     return [2 /*return*/, { "statusCode": 200,
                             "message": "Got the status",
                             "producedNodeID": resultArray[0],
@@ -147,24 +176,27 @@ function getSubValues() {
                             "batchNumberNodeID": resultArray[2],
                             "batchSizeNodeID": resultArray[3],
                             "beerTypeNodeID": resultArray[4],
-                            "maintenanceStatusNodeID": resultArray[5] }];
-                case 9:
-                    err_1 = _o.sent();
+                            "maintenanceStatusNodeID": resultArray[5],
+                            "getCurrentProductionSpeedNodeID": resultArray[6],
+                            "defectiveProductsNodeId": resultArray[7],
+                            "acceptableProductsNodeId": resultArray[8] }];
+                case 12:
+                    err_1 = _u.sent();
                     console.log("Ohh no something went wrong when opening connection ", err_1);
                     return [2 /*return*/, { "statusCode": 400,
                             "message": "Could not get the maintenace status",
                             "maintenacneStatus": null,
                             "error": err_1 }];
-                case 10:
-                    if (!(session != null)) return [3 /*break*/, 12];
+                case 13:
+                    if (!(session != null)) return [3 /*break*/, 15];
                     return [4 /*yield*/, stopSession(session)];
-                case 11:
-                    _o.sent();
-                    _o.label = 12;
-                case 12:
+                case 14:
+                    _u.sent();
+                    _u.label = 15;
+                case 15:
                     ;
                     return [7 /*endfinally*/];
-                case 13:
+                case 16:
                     ;
                     return [2 /*return*/];
             }
@@ -367,13 +399,13 @@ function getCurrentStatePublic() {
                     stateStatus = _a.sent();
                     return [2 /*return*/, { "statusCode": 200,
                             "message": "Got the status",
-                            "maintenacneStatus": stateStatus }];
+                            "state": stateStatus }];
                 case 5:
                     err_4 = _a.sent();
                     console.log("Ohh no something went wrong when opening connection ", err_4);
                     return [2 /*return*/, { "statusCode": 400,
                             "message": "Could not get the maintenace status",
-                            "maintenacneStatus": null,
+                            "state": null,
                             "error": err_4 }];
                 case 6:
                     if (!(session != null)) return [3 /*break*/, 8];
@@ -399,14 +431,14 @@ exports.getCurrentStatePublic = getCurrentStatePublic;
  */
 function startProduction(beers, productionSpeed, batchnumber, beerType) {
     return __awaiter(this, void 0, void 0, function () {
-        var session, beerAmountToWrite, productionSpeedToWrite, batchnumberToWrite, beerTypeToWrite, err_5;
+        var session, state, beerAmountToWrite, productionSpeedToWrite, batchnumberToWrite, beerTypeToWrite, err_5;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     session = null;
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 9, 10, 13]);
+                    _a.trys.push([1, 10, 11, 14]);
                     return [4 /*yield*/, startSession()];
                 case 2:
                     //Trying to start up a connection to the machine
@@ -415,6 +447,11 @@ function startProduction(beers, productionSpeed, batchnumber, beerType) {
                     if (session == null) {
                         throw new Error("No session");
                     }
+                    return [4 /*yield*/, getCurrentState(session)];
+                case 3:
+                    state = _a.sent();
+                    if (state != 4)
+                        throw new Error("Machine not ready for production, please reset the machine to state 4");
                     beerAmountToWrite = [{
                             nodeId: batchSizeNodeID,
                             attributeId: node_opcua_1.AttributeIds.Value,
@@ -427,7 +464,7 @@ function startProduction(beers, productionSpeed, batchnumber, beerType) {
                             }
                         }];
                     return [4 /*yield*/, session.write(beerAmountToWrite)];
-                case 3:
+                case 4:
                     _a.sent();
                     productionSpeedToWrite = [{
                             nodeId: productionSpeedNodeID,
@@ -441,7 +478,7 @@ function startProduction(beers, productionSpeed, batchnumber, beerType) {
                             }
                         }];
                     return [4 /*yield*/, session.write(productionSpeedToWrite)];
-                case 4:
+                case 5:
                     _a.sent();
                     batchnumberToWrite = [{
                             nodeId: batchNumberNodeID,
@@ -455,7 +492,7 @@ function startProduction(beers, productionSpeed, batchnumber, beerType) {
                             }
                         }];
                     return [4 /*yield*/, session.write(batchnumberToWrite)];
-                case 5:
+                case 6:
                     _a.sent();
                     beerTypeToWrite = [{
                             nodeId: beerTypeNodeID,
@@ -469,37 +506,37 @@ function startProduction(beers, productionSpeed, batchnumber, beerType) {
                             }
                         }];
                     return [4 /*yield*/, session.write(beerTypeToWrite)];
-                case 6:
+                case 7:
                     _a.sent();
                     //Send the command to put the machine in the start production state
                     return [4 /*yield*/, changeToState(session, startProductionCommand)];
-                case 7:
+                case 8:
                     //Send the command to put the machine in the start production state
                     _a.sent();
                     //Send command to change the state
                     return [4 /*yield*/, changeStateToTrue(session)];
-                case 8:
+                case 9:
                     //Send command to change the state
                     _a.sent();
                     // The return value in JSON gets passed to the API controller that sends it back to the frontend
                     return [2 /*return*/, { "statusCode": 201,
                             "message": "Starting production" }];
-                case 9:
+                case 10:
                     err_5 = _a.sent();
                     console.log("Connection to the server failed", err_5);
                     return [2 /*return*/, { "statusCode": 400,
                             "message": "Starting production failed",
                             "error": err_5 }];
-                case 10:
-                    if (!(session != null)) return [3 /*break*/, 12];
-                    return [4 /*yield*/, stopSession(session)];
                 case 11:
-                    _a.sent();
-                    _a.label = 12;
+                    if (!(session != null)) return [3 /*break*/, 13];
+                    return [4 /*yield*/, stopSession(session)];
                 case 12:
+                    _a.sent();
+                    _a.label = 13;
+                case 13:
                     ;
                     return [7 /*endfinally*/];
-                case 13:
+                case 14:
                     ;
                     return [2 /*return*/];
             }

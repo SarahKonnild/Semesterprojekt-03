@@ -49,7 +49,7 @@ router.route('/calculateEstimatedProductionTime').get(optimization.calculateEsti
 router.route('/calculateOptimalSpeedUsingErrors').get(optimization.calculateOptimalSpeedUsingErrors);
 
 //Calculate Optimal Speed Using Valids
-router.route('/calculateOptimalSpeedUsingValids').get(optimization.calculateOptimalSpeedUsingValids);
+router.route('/calculateOptimalSpeedUsingValids').post(optimization.calculateOptimalSpeedUsingValids);
 
 
 module.exports = router;

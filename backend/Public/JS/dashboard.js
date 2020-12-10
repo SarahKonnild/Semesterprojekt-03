@@ -3,52 +3,59 @@ function scrollWin(x, y) {
     window.scrollBy(x, y);
 }
 document.addEventListener("DOMContentLoaded", fetchData, false);
-function fetchData() {
-    fetch('http://localhost:5000/brewster/getSubValues')
-    .then(response => {
-        if(!response.ok) {
-            throw Error('Error');
-        }
-        return response.json();
-    })
-    .then(data => {
-            console.log(data.data);
-            // EXTRACT VALUE FOR HTML HEADER.
-            // ('Book ID', 'Book Name', 'Category' and 'Price')
-            let col = [];
-            for (let i = 0; i < data.data.length; i++) {
-                for (let key in data.data[i]) {
-                if (col.indexOf(key) === -1) {
-                    col.push(key);
-                }
-                }
-            }
 
-        // CREATE DYNAMIC TABLE.
-        let table = document.createElement("table");
+function fetchData(params) {
+    var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    };
 
-        // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+    fetch("http://localhost:5000/brewster/getSubValues", requestOptions)
+        .then(response => response.text())
+        .then(result => addDataToTable(result))
+        .catch(error => console.log('error', error));
+};
 
-        let tr = table.insertRow(-1); // TABLE ROW.
+function addDataToTable(jsonData) {
 
-        for (let i = 0; i < col.length; i++) {
-            let th = document.createElement("th"); // TABLE HEADER.
-            th.innerHTML = col[i];
-            tr.appendChild(th);
-        }
+    jsonData = JSON.parse(jsonData)
 
-        // ADD JSON DATA TO THE TABLE AS ROWS.
-        for (let i = 0; i < data.data.length; i++) {
-            tr = table.insertRow();
-            for (var j = 0; j < col.length; j++) {
-                let tabCell = tr.insertCell();
-                tabCell.innerHTML = data.data[i][col[j]];
-            }
-        }
+    let col = ['Produced', 'Current state', 'Batch number', 'Batch size', 'Beer Type', 'Maintenance Status','Production Speed', 'Defects', 'Acceptable'];
+    let cardIDs = ['produced', 'state', 'batchNumber', 'batchSize', 'beerType', 'maintenance', 'productionSpeed', 'defects', 'acceptable'];
 
-        // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
-        var divContainer = document.getElementById("productionData");
-        divContainer.innerHTML = "";
-        divContainer.appendChild(table);
-        })
+    let dataTable = [];
+
+    dataTable.push(jsonData.producedNodeID)
+    dataTable.push(jsonData.currentStateNodeID)
+    dataTable.push(jsonData.batchNumberNodeID)
+    dataTable.push(jsonData.batchSizeNodeID)
+    dataTable.push(jsonData.beerTypeNodeID)
+    dataTable.push(jsonData.maintenanceStatusNodeID)
+    dataTable.push(jsonData.getCurrentProductionSpeedNodeID)
+    dataTable.push(jsonData.defectiveProductsNodeId)
+    dataTable.push(jsonData.acceptableProductsNodeId)
+
+    for (let index = 0; index < cardIDs.length; index++) {
+        // let div = document.createElement("div")
+        // div.classList.add('col-sm-4')
+        // let card = document.createElement('div')
+        // card.classList.add('card')
+        // div.appendChild(card)
+        // let cardBody = document.createElement('div')
+        // cardBody.classList.add('card-body')
+        // card.append(cardBody)
+        // let h5 = document.createElement('h5')
+        // h5.classList('card-title')
+        // cardBody.appendChild(h5)
+        // let p = document.createElement('p')
+        // p.classList('card-text')
+        // cardBody.appendChild(p)
+
+        document.getElementById(cardIDs[index]).textContent = dataTable[index]
+        // var divContainer = document.getElementById("test");
+        // divContainer.innerHTML = "";
+        // divContainer.appendChild(div);
+    }
 }
+
+e
