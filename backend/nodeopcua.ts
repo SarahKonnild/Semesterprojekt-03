@@ -166,6 +166,10 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
             throw new Error("No session");
         }
 
+        let state = await getCurrentState(session);
+
+        if(state != 4) throw new Error("Machine not ready for production, please reset the machine to state 4")
+
         // setting the amount of beers to produce
         const beerAmountToWrite = [{
             nodeId: batchSizeNodeID,
