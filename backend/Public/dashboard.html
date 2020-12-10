@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!-- THIS IS THE DASHBOARD PAGE -->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Dashboard</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="CSS/style.css">
+        <link href='https://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script type="text/javascript" src='JS/dashboard.js'></script>
+        <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+        <script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.11/typed.min.js"></script>
+        <script src="https://apps.elfsight.com/p/platform.js" defer></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script>
+        
+
+    </head>
+    <body>
+        <!--Header with Navigation bar-->  
+        <header>
+            <nav>
+                <ul class="nav__links">
+                    <div class="logo">
+                        <h4>Refslevbæk Bryghus A/S</h4>
+                    </div>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="production.html">Production</a></li>
+                    <li><a href="batchOverview.html">Batch Overview</a></li>
+                    <li><a href="batchDetail.html">Batch Detail</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!--View Data from Production-->
+        <!--Skills Section Start-->
+    <section class="skills" id="skills">
+        <div class="max-width">
+          <h2 class="title">Production Data</h2>
+          <div class="skills-content">
+            <div class="column left">
+                <div id="productionData"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+        <!--Brewing Machine Section Start-->
+    <section class="services" id="services">
+        <div class="max-width">
+            <h2 class="title">Brewing Machine</h2>
+            <div class="serv-content">
+                    <div class="card">
+                        <div class="box">
+                            <i class="fas fa-chart-line"></i>
+                            <div div class="text"><a href="production.html" style="color: white;">Production</a></div>
+                            <p>
+                                Production is where you can start a production
+                            </p>
+                        </div>
+                    </div>
+         
+                <div class="card">
+                    <div class="box">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div div class="text"><a href="batchOverview.html" style="color: white;">Batch Overview</a></div>
+                        <p>
+                            Batch Overview can you get a list of all the Batches produced 
+                        </p>
+                    </div>
+                </div>
+        
+                <div class="card">
+                    <div class="box">
+                        <i class="fas fa-chart-bar"></i>
+                        <div div class="text"><a href="batchDetail.html" style="color: white;">Batch Detail</a></div>
+                        <p>
+                            Batch Detail will illustrate a specific batch
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <button onclick="scrollWin(0, 100)"  class="scroll-up-btn">
+        <i class="fas fa-arrow-down"></i>
+    </button>
+
+      <!--Footer Section Start-->
+    <footer>
+        <div class="wrapper">
+  
+          <div class="icon github">
+            <span><a href="https://github.com/SarahKonnild/Semesterprojekt-03" target="_blank"><i class="fab fa-github"></i></a></span>
+          </div>
+        </div>
+
+  
+        <span>Created by <a style="color: black;">Group 2 ST</a> | <span class="far fa-copyright"></span> 2020 All Rights reserved.</span>
+      </footer>
+    
+    </body>
+ 
+</html>
