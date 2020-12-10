@@ -60,7 +60,7 @@ export default class ExercisesList extends Component {
       <div>
         <h3>Logged Batches</h3>
         <table className="table">
-          <thead className="thead-light">
+          <thead className="thead-light"> 
             <tr>
               <th>ID</th>
               <th>Start time</th>

@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path')
 require('typescript-require');
 
 //Connection to DB Configuration
@@ -40,8 +41,10 @@ app.use('/productions', productionsRouter);
 app.use('/counters', countersRouter);
 app.use('/brewster', brewsterRouter);
 
-//Welcome Message for API
-app.get('/', (req, res) => res.send('Welcome to Group 2 API frontpage'));
+//Path for CSS
+
+//Paths for HTML files
+app.use(express.static("Public"));
 
 
 //Setting server to listen to Port 5000
