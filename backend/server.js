@@ -41,10 +41,17 @@ app.use('/productions', productionsRouter);
 app.use('/counters', countersRouter);
 app.use('/brewster', brewsterRouter);
 
-//Path for CSS
+//Static Files
+app.use(express.static('Public'));
+app.use('/css', express.static(__dirname + 'Public/CSS'));
+app.use('/img', express.static(__dirname + 'Public/images'));
+app.use('/js', express.static(__dirname + 'Public/JS'));
 
-//Paths for HTML files
-app.use(express.static("Public"));
+
+//HTML Files
+app.get('/', function(req, res) {
+    res.sendFile(__dirname + '/Public/dashboard.html')
+})
 
 
 //Setting server to listen to Port 5000

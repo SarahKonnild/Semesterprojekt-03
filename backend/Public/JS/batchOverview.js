@@ -12,12 +12,13 @@ function append_json(myBooks) {
 
   // EXTRACT VALUE FOR HTML HEADER.
   // ('Book ID', 'Book Name', 'Category' and 'Price')
-  let col = ['batchNumber', 'beerType', 'batchSize', 'acceptable', 'defects', 'productionSpeed'];
+  let col = ['Batch ID', 'Beer Type', 'Batch Size', 'Acceptable Beers', 'Defects Beers', 'Production Speed'];
 
   // CREATE DYNAMIC TABLE.
   let table = document.createElement("table");
   let thead = document.createElement('thead')
   thead.classList.add('thead-dark')
+  thead.classList.add('vw-100')
   table.appendChild(thead)
 
   // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.

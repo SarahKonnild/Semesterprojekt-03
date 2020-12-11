@@ -9,6 +9,22 @@ $(function () {
     $('[data-toggle="tooltip"]').tooltip()
 })
 
+document.addEventListener("DOMContentLoaded", setupRefresh, false);
+
+function setupRefresh() {
+    var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    };
+
+    fetch("http://localhost:5000/brewster/getSubValues", requestOptions)
+        .then(response => response.text())
+        .then(result => addDataToTable(result))
+        .catch(error => console.log('error', error));
+
+    setTimeout(setupRefresh, 5000); // milliseconds
+}
+
 function fetchData(params) {
     var requestOptions = {
         method: 'GET',
@@ -25,18 +41,19 @@ function addDataToTable(jsonData) {
     jsonData = JSON.parse(jsonData)
 
     let label = ['Batch ID', 'Batch Size', 'Beer Type', 'Production Speed', 'Machine State', 'Produced'];
-    let valueID = ['showID', 'showSize', 'showType', 'showSpeed', 'showState', 'showProduced'];
-
+    let valueID = ['showId', 'showSize', 'showType', 'showSpeed', 'showState', 'showProduced'];
+    console.log(jsonData);
     let dataTable = []
     dataTable.push(jsonData.batchNumberNodeID);
     dataTable.push(jsonData.batchSizeNodeID);
     dataTable.push(jsonData.beerTypeNodeID);
     dataTable.push(jsonData.getCurrentProductionSpeedNodeID);
-    dataTable.push(jsonData.getCurrentStateNodeID);
+    dataTable.push(jsonData.currentStateNodeID);
     dataTable.push(jsonData.producedNodeID);
 
-    for(let i = 0; i < valueID.length; i++){
-        document.getElementById(valueID[i]).textContent = dataTable[i];
+    console.log(dataTable);
+    for (let i = 0; i < valueID.length; i++) {
+        document.getElementById(valueID[i]).value = dataTable[i];
     }
     //use the data here
 }
@@ -65,7 +82,7 @@ function calcOptimal() {
             let finalResult = speedString.substring(0, speedString.length - 1)
             document.getElementById("optimalSpeed").value = finalResult
             setTimeout(recolor("optimalSpeed", "green"), 5000);
-            setTimeout(recolor("optiLabel", "green"),5000);
+            setTimeout(recolor("optiLabel", "green"), 5000);
         })
         .catch(error => {
             document.getElementById("optimalSpeed").value = "Impossible configuration";
@@ -75,7 +92,7 @@ function calcOptimal() {
         });
 }
 
-function recolor(element, color){
+function recolor(element, color) {
     document.getElementById(element).style.borderColor = color;
 }
 
@@ -103,7 +120,7 @@ function saveToDatabase(raw, interval) {
 //         method: 'GET',
 //         redirect: 'follow'
 //       };
-      
+
 //       fetch("http://localhost:5000/brewster/machineStatus", requestOptions)
 //         .then(response => response.text())
 //         .then(result => {
@@ -123,7 +140,7 @@ function startProduction() {
     let batchSize = document.getElementById("batchSize").value;
     let speed = document.getElementById("speed").value;
     let myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Content-Type", "application/json");
 
     let raw = JSON.stringify({ "beers": batchSize, "speed": speed, "batchNumber": batchID, "beerType": beerType });
 
@@ -137,34 +154,45 @@ function startProduction() {
     fetch("http://localhost:5000/brewster/startProduction", requestOptions)
         .then(response => response.text())
         .then(result => {
-            let rawToDatabase = JSON.stringify({
-                "batchNumber": batchID,
-                "beerType": beerType, 
-                "batchSize": batchSize,
-                "acceptable": 2, 
-                "defects": 2, 
-                "productionSpeed": speed
-            });
-            let interval = setInterval(function() {
-                let data = rawToDatabase;
-                console.log(data);
+            let interval = setInterval(function () {
                 var requestOptions = {
                     method: 'GET',
                     redirect: 'follow'
-                  };
-                  
-                  fetch("http://localhost:5000/brewster/machineStatus", requestOptions)
+                };
+
+                fetch("http://localhost:5000/brewster/machineStatus", requestOptions)
                     .then(response => response.text())
                     .then(result => {
                         let json = JSON.parse(result)
-                        if(json.statusCode != 200) throw new Error("not supported");
-                        if(json.state == 17) {
-                            console.log(data);
-                            saveToDatabase(data, interval)};
-                        console.log(JSON.parse(result).state)})
+                        if (json.statusCode != 200) throw new Error("not supported");
+                        if (json.state == 17) {
+                            let requestOptions = {
+                                method: 'GET',
+                                redirect: 'follow'
+                              };
+                              
+                              fetch("http://localhost:5000/brewster/getProductionCount", requestOptions)
+                                .then(response => response.text())
+                                .then(result => {
+                                    let produced = JSON.parse(result)
+                                    let rawToDatabase = JSON.stringify({
+                                        "batchNumber": batchID,
+                                        "beerType": beerType,
+                                        "batchSize": batchSize,
+                                        "acceptable": produced.acceptable,
+                                        "defects": produced.defective,
+                                        "productionSpeed": speed
+                                    });
+                                    saveToDatabase(rawToDatabase, interval)
+                                })
+                                .catch(error => console.log('error', error));
+                        };
+                        console.log(JSON.parse(result).state)
+                    })
                     .catch(error => console.log('error', error));
-              }, 5000)
-            myAlert("The production was started", "alert-success")})
+            }, 5000)
+            myAlert("The production was started", "alert-success")
+        })
         .catch(error => myAlert("The production could not be started. \n" + error, "alert-danger"));
 }
 

@@ -116,7 +116,7 @@ section .title::after {
 }
 
 /* Service Section Styling */
-#productionOverview img{
+#cardContainer img{
   --webkit-background-size:cover; 
   -moz-background-size:cover; 
   background-size: cover;
@@ -124,7 +124,7 @@ section .title::after {
   position:absolute;
   left:0;
   top:111px;
-  height: 77%;
+  height: 82%;
   width:100%;
   background-position: center;
   overflow: auto;  
@@ -142,6 +142,15 @@ section .title::after {
   width:100%;
   background-position: center;
   overflow: auto;  
+}
+
+.col-md-10{
+  background:rgba(60,60,60,0.8)
+}
+
+.card{
+  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
 }
 
 .services {
@@ -199,6 +208,8 @@ section .title::after {
 /* Skills Section Styling */
 .skills .title::after {
   content: "Current Production";
+  top:70px;
+  background: transparent;
 }
 
 .skills .skills-content .column {

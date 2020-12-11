@@ -782,8 +782,8 @@ function getProducedAmount() {
                     acceptableCount = _a.sent();
                     returnResult = { "statusCode": 200,
                         "message": "Got the values",
-                        "defective": defectiveCount,
-                        "acceptable": acceptableCount };
+                        "defective": defectiveCount.value.value,
+                        "acceptable": acceptableCount.value.value };
                     return [2 /*return*/, returnResult];
                 case 6: 
                 // Returns the statuscode that means bad request and a message

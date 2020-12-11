@@ -588,8 +588,8 @@ export async function getProducedAmount() {
             //Setting up the json return object
             let returnResult = {"statusCode": 200,
                                 "message": "Got the values", 
-                                "defective": defectiveCount, 
-                                "acceptable": acceptableCount};
+                                "defective": defectiveCount.value.value, 
+                                "acceptable": acceptableCount.value.value};
             return returnResult;
         }else{
             // Returns the statuscode that means bad request and a message

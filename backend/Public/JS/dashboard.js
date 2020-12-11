@@ -2,9 +2,9 @@
 function scrollWin(x, y) {
     window.scrollBy(x, y);
 }
-document.addEventListener("DOMContentLoaded", fetchData, false);
+document.addEventListener("DOMContentLoaded", setupRefresh, false);
 
-function fetchData(params) {
+function setupRefresh() {
     var requestOptions = {
         method: 'GET',
         redirect: 'follow'
@@ -14,26 +14,27 @@ function fetchData(params) {
         .then(response => response.text())
         .then(result => addDataToTable(result))
         .catch(error => console.log('error', error));
-};
+
+    setTimeout(setupRefresh, 5000); // milliseconds
+}
 
 function addDataToTable(jsonData) {
 
     jsonData = JSON.parse(jsonData)
-
-    let col = ['Produced', 'Current state', 'Batch number', 'Batch size', 'Beer Type', 'Maintenance Status','Production Speed', 'Defects', 'Acceptable'];
-    let cardIDs = ['produced', 'state', 'batchNumber', 'batchSize', 'beerType', 'maintenance', 'productionSpeed', 'defects', 'acceptable'];
+    
+    let cardIDs = ['batchNumber', 'beerType', 'productionSpeed', 'batchSize', 'acceptable', 'defects', 'produced', 'state','maintenance'];
 
     let dataTable = [];
 
+    dataTable.push(jsonData.batchNumberNodeID)
+    dataTable.push(jsonData.beerTypeNodeID)
+    dataTable.push(jsonData.getCurrentProductionSpeedNodeID)
+    dataTable.push(jsonData.batchSizeNodeID)
+    dataTable.push(jsonData.acceptableProductsNodeId)
+    dataTable.push(jsonData.defectiveProductsNodeId)
     dataTable.push(jsonData.producedNodeID)
     dataTable.push(jsonData.currentStateNodeID)
-    dataTable.push(jsonData.batchNumberNodeID)
-    dataTable.push(jsonData.batchSizeNodeID)
-    dataTable.push(jsonData.beerTypeNodeID)
     dataTable.push(jsonData.maintenanceStatusNodeID)
-    dataTable.push(jsonData.getCurrentProductionSpeedNodeID)
-    dataTable.push(jsonData.defectiveProductsNodeId)
-    dataTable.push(jsonData.acceptableProductsNodeId)
 
     for (let index = 0; index < cardIDs.length; index++) {
         // let div = document.createElement("div")

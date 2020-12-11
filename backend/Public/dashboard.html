@@ -35,21 +35,72 @@
                 <li><a href="dashboard.html">Dashboard</a></li>
                 <li><a href="production.html">Production</a></li>
                 <li><a href="batchOverview.html">Batch Overview</a></li>
-                <li><a href="batchDetail.html">Batch Details</a></li>
             </ul>
         </nav>
     </header>
 
-    <!--Skills Section Start-->
+    <!--Production Section Start-->
     <section class="skills" id="skills">
-        <div class="max-width" id="productionOverview">
+        <div class="max-width" id="cardContainer">
             <img src="./images/BeerGlasses.jpg">
             <h2 class="title">Production Data</h2>
             <div class="skills-content">
-                <div class="column left col-md-10 mx-auto text-center">
-                    <div class="row col-md-9 mx-auto  pt-5">
+                <div class="column left col-md-10 mx-auto text-center pb-5" id="cards">
+                    <div class="row col-md-9 mx-auto pt-5">
                         <div class="col-sm-4">
                             <div class="card text-center">
+                                <div class="card-body text-center">
+                                    <h4 class="card-title">Batch ID</h4>
+                                    <p class="card-text text-center" id="batchNumber"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h4 class="card-title">Beer Type</h4>
+                                    <p class="card-text text-center" id="beerType"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h4 class="card-title">Production Speed</h4>
+                                    <p class="card-text text-center" id="productionSpeed"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row col-md-9 mx-auto pt-5">
+                        <div class="col-sm-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h4 class="card-title">Batch Size</h4>
+                                    <p class="card-text text-center" id="batchSize"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h4 class="card-title">Acceptable Beers</h4>
+                                    <p class="card-text text-center" id="acceptable"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h4 class="card-title">Defects Beer</h4>
+                                    <p class="card-text text-center" id="defects"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row col-md-9 mx-auto pt-5">
+                        <div class="col-sm-4">
+                            <div class="card">
                                 <div class="card-body text-center">
                                     <h4 class="card-title">Produced Beers</h4>
                                     <p class="card-text text-center" id="produced"></p>
@@ -67,60 +118,8 @@
                         <div class="col-sm-4">
                             <div class="card">
                                 <div class="card-body text-center">
-                                    <h4 class="card-title">Batch Number</h4>
-                                    <p class="card-text text-center" id="batchNumber"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row col-md-9 mx-auto pt-5">
-                        <div class="col-sm-4">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <h4 class="card-title">Batch Size</h4>
-                                    <p class="card-text text-center" id="batchSize"></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <h4 class="card-title">Beer Type</h4>
-                                    <p class="card-text text-center" id="beerType"></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="card">
-                                <div class="card-body text-center">
                                     <h4 class="card-title">Maintenance Status</h4>
                                     <p class="card-text text-center" id="maintenance"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row col-md-9 mx-auto pt-5">
-                        <div class="col-sm-4">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <h4 class="card-title">Production Speed</h4>
-                                    <p class="card-text text-center" id="productionSpeed"></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <h4 class="card-title">Defective Beers</h4>
-                                    <p class="card-text text-center" id="defects"></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <h4 class="card-title">Acceptable Beers</h4>
-                                    <p class="card-text text-center" id="acceptable"></p>
                                 </div>
                             </div>
                         </div>
@@ -138,7 +137,18 @@
                 <div class="card">
                     <div class="box">
                         <i class="fas fa-chart-line"></i>
-                        <div div class="text"><a href="production.html" style="color: white;">Production</a></div>
+                        <div div class="text"><a style="color: white;">Dashboard</a></div>
+                        <p>
+                            Dashboard is the Overview of the current production
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="box">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div div class="text"><a href="production.html" style="color: white;">Production</a>
+                        </div>
                         <p>
                             Production is where you can start a production. </br>
                             The Simulation, is used to calculate the optimal speed from the batch size, amount of valid
@@ -150,21 +160,10 @@
 
                 <div class="card">
                     <div class="box">
-                        <i class="fas fa-calendar-alt"></i>
-                        <div div class="text"><a href="batchOverview.html" style="color: white;">Batch Overview</a>
-                        </div>
+                        <i class="fas fa-chart-bar"></i>
+                        <div div class="text"><a href="batchOverview.html" style="color: white;">Batch Overview</a></div>
                         <p>
                             Batch Overview can you get a list of all the Batches produced
-                        </p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="box">
-                        <i class="fas fa-chart-bar"></i>
-                        <div div class="text"><a href="batchDetail.html" style="color: white;">Batch Details</a></div>
-                        <p>
-                            Batch Detail will illustrate a specific batch
                         </p>
                     </div>
                 </div>
