@@ -58,5 +58,3 @@ function addDataToTable(jsonData) {
         // divContainer.appendChild(div);
     }
 }
-
-e

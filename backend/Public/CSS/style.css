@@ -11,20 +11,22 @@ html {
   scroll-behavior: smooth;
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 30px 5%;
-  background-color: rgb(161, 12, 42);
-}
-
 .logo {
   color: rgb(226, 226, 266);
   text-transform: uppercase;
   letter-spacing: 5px;
   font-size: 20px;
   padding-right: 30px;
+}
+
+/* Navigationbar Styles */
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 5%;
+  background-color: rgb(161, 12, 42);
 }
 
 .nav__links a {
@@ -56,18 +58,14 @@ header {
   color: black;
 }
 
-.alert{
-  display:none;
-}
-
-#productionContainer{
-  background-color:#ffffff;
-  margin: 3px 3px 3px 0;
-}
-
 /* All Similar content styling */
 section {
   padding: 100px 0;
+}
+
+#sim {
+  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
 }
 
 .services,
@@ -116,41 +114,51 @@ section .title::after {
 }
 
 /* Service Section Styling */
-#cardContainer img{
-  --webkit-background-size:cover; 
-  -moz-background-size:cover; 
+#cardContainer img {
+  --webkit-background-size: cover;
+  -moz-background-size: cover;
   background-size: cover;
-  opacity:0.7;
-  position:absolute;
-  left:0;
-  top:111px;
-  height: 82%;
-  width:100%;
+  opacity: 0.7;
+  position: absolute;
+  left: 0;
+  top: 111px;
+  height: 90%;
+  width: 100%;
   background-position: center;
-  overflow: auto;  
+  overflow: auto;
 }
 
-#productionContainer img{
-  --webkit-background-size:cover; 
-  -moz-background-size:cover; 
+.alert {
+  display: none;
+}
+
+#productionContainer {
+  background-color: #ffffff;
+  margin: 3px 3px 3px 0;
+}
+
+#productionContainer img {
+  --webkit-background-size: cover;
+  -moz-background-size: cover;
   background-size: cover;
-  opacity:0.7;
-  position:absolute;
-  left:0;
-  top:111px;
+  opacity: 0.7;
+  position: absolute;
+  left: 0;
+  top: 111px;
   height: 81%;
-  width:100%;
+  width: 100%;
   background-position: center;
-  overflow: auto;  
+  overflow: auto;
 }
 
-.col-md-10{
-  background:rgba(60,60,60,0.8)
+.col-md-10 {
+  background: rgba(60, 60, 60, 0.8);
 }
 
-.card{
+.card {
   box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
+  margin: 1px 0 0 0;
 }
 
 .services {
@@ -208,7 +216,7 @@ section .title::after {
 /* Skills Section Styling */
 .skills .title::after {
   content: "Current Production";
-  top:70px;
+  top: 70px;
   background: transparent;
 }
 
@@ -294,6 +302,11 @@ section .title::after {
 
 .skills .skills-content .right .psql::before {
   width: 70%;
+}
+
+/* Batch Overview Styles */
+.batchoverview {
+  padding: 0 0 153px 0;
 }
 
 /* Button */
