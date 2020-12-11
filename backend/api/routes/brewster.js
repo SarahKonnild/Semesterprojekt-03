@@ -12,12 +12,16 @@ router.route('/stopProduction').get(opcua.stopProduction);
 //Reset Production
 router.route('/resetProduction').get(opcua.resetProduction);
 
+//Get machine status 
+router.route('/machineStatus').get(opcua.getCurrentStatePublic);
+
 //Detect Maintenance Status
 router.route('/detectMaintenanceStatus').get(opcua.detectMaintenanceStatus);
 
 //Get the count of the produced products, if the production is done, and the machine hasnt been reset
 router.route('/getProductionCount').get(opcua.getProductionCount);
 
+router.route('/getSubValues').get(opcua.getSubValues);
 
 //Optimization Controller
 //Calculate Error Speed

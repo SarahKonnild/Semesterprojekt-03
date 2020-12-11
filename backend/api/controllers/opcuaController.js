@@ -9,7 +9,7 @@ const nodeOPCUA = require ('../../nodeopcua.ts');
 */
 exports.startProduction = async function(req,res){
     //beers, productionSpeed, batchnumber, beerType
-    let someValue = await nodeOPCUA.startProduction(req.body.beers, req.body.speed, req.body.batchnumber, req.body.beerType);
+    let someValue = await nodeOPCUA.startProduction(req.body.beers, req.body.speed, req.body.batchNumber, req.body.beerType);
     res.send(someValue)
     res.end;
 };
@@ -58,6 +58,18 @@ exports.detectMaintenanceStatus = async function(req,res){
 */
 exports.getProductionCount = async function(req,res){
     returnValue = await nodeOPCUA.getProducedAmount();
+    res.send(returnValue);
+    res.end;
+}
+
+exports.getCurrentStatePublic = async function(req,res){
+    returnValue = await nodeOPCUA.getCurrentStatePublic();
+    res.send(returnValue);
+    res.end;
+}
+
+exports.getSubValues = async function(req,res){
+    returnValue = await nodeOPCUA.getSubValues();
     res.send(returnValue);
     res.end;
 }

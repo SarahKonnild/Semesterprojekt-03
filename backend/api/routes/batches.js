@@ -17,29 +17,20 @@ router.route('/:id').get((req, res) => {
 
 //Create Batch
 router.route('/add').post((req, res) => {
-        const _id = req.body._id;
-        const startTime = req.body.startTime;
-        const endTime = req.body.endTime;
+        const batchNumber = req.body.batchNumber;
         const beerType = req.body.beerType;
-        const batchSize= req.body.batchSize;
+        const batchSize = req.body.batchSize;
+        const acceptable = req.body.acceptable;
         const defects = req.body.defects;
         const productionSpeed = req.body.productionSpeed;
-        const temp = req.body.temp;
-        const humidity = req.body.humidity;
-        const vibration = req.body.vibration;
-
 
         const newBatch = new Batches({
-            _id,
-            startTime,
-            endTime,
+            batchNumber,
             beerType,
             batchSize,
+            acceptable,
             defects,
-            productionSpeed,
-            temp,
-            humidity,
-            vibration
+            productionSpeed
         })
 
         newBatch.save()
@@ -51,16 +42,12 @@ router.route('/add').post((req, res) => {
 router.route('/update/:id').post((req, res) => {
     Batches.findById(req.params.id)
     .then(batch => {
-        batch._id = req.body._id;
-        batch.startTime = req.body.startTime;
-        batch.endTime = req.body.endTime;
-        batch.beerType = req.body.beerType;
-        batch.batchSize = req.body.batchSize;
+        batch.batchNumber = req.body._id;
+        batch.beerType = req.body.startTime;
+        batch.batchSize = req.body.endTime;
+        batch.acceptable = req.body.beerType;
         batch.defects = req.body.defects;
         batch.productionSpeed = req.body.productionSpeed;
-        batch.temp = req.body.temp;
-        batch.humidity = req.body.humidity;
-        batch.vibration = req.body.vibration;
 
         batch.save()
         .then(() => res.json('Batch updated'))

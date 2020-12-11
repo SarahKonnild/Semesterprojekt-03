@@ -1,11 +1,17 @@
 // declarationer til node OPC UA
 import {
     OPCUAClient,
-    MessageSecurityMode,
-    SecurityPolicy,
+    MessageSecurityMode, SecurityPolicy,
     AttributeIds,
-    DataType,
-    ClientSession
+    makeBrowsePath,
+    ClientSubscription,
+    TimestampsToReturn,
+    MonitoringParametersOptions,
+    ReadValueIdLike,
+    ClientMonitoredItem,
+    DataValue,
+    ClientSession,
+    DataType
 } from "node-opcua";
 
 
@@ -13,6 +19,30 @@ import {
 const stopProductionCommand = 3;
 const resetProductionCommand = 1;
 const startProductionCommand = 2;
+
+// set up some global values
+let producedAmounts = null;
+let batchID = null;
+let marchineSpeed = null;
+let toProduce = null;
+
+//node ids 
+const stateNodeID = "ns=6;s=::Program:Cube.Command.CntrlCmd";
+const producedNodeID = "ns=6;s=::Program:Cube.Status.StateCurrent";
+const producedProcessedNodeID = "ns=6;s=::Program:Cube.Admin.ProdProcessedCount";
+const maintenanceStatusNodeID = "ns=6;s=::Program:Maintenance.Counter";
+const currentStateNodeID = "ns=6;s=::Program:Cube.Status.StateCurrent";
+const requestChangeCommandNodeID = "ns=6;s=::Program:Cube.Command.CmdChangeRequest";
+const beerTypeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[1].Value";
+const productionSpeedNodeID = "ns=6;s=::Program:Cube.Command.MachSpeed";
+const batchSizeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[2].Value";
+const batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0].Value";
+const defectiveProductsNodeId = "ns=6;s=::Program:Maintenance.State"
+const acceptableProductsNodeId = "ns=6;s=::Program:Maintenance.State"
+const getBatchNumberNodeID = "ns=6;s=::Program:Cube.Status.Parameter[0].Value";
+const getCurrentProductionSpeedNodeID = "ns=6;s=::Program:Cube.Status.MachSpeed";
+const getBeerTypeNodeID = "ns=6;s=::Program:Cube.Admin.Parameter[0].Value";
+const getBatchSizeNodeID = "ns=6;s=::Program:Cube.Status.Parameter[1].Value";
 
 
 // Setting up the connection strategy 
@@ -30,6 +60,109 @@ const clientOPCUA = OPCUAClient.create({
     endpoint_must_exist: false
 });
 
+export async function getSubValues(){
+
+    let nodeIDArray = [producedProcessedNodeID, currentStateNodeID, getBatchNumberNodeID, getBatchSizeNodeID, getBeerTypeNodeID, maintenanceStatusNodeID, getCurrentProductionSpeedNodeID, defectiveProductsNodeId, acceptableProductsNodeId]
+    let session = null;
+    try {
+        session = await startSession();
+
+        //Checking to make sure there is an active connection, otherwise throw an error.
+        if(session == null){
+            throw new Error("No session");
+        }
+        let resultArray = [];
+        const nodeToRead0 = {
+            nodeId: nodeIDArray[0],
+            attributeId: AttributeIds.Value,
+        };
+    
+        resultArray.push((await session.read(nodeToRead0)).value.value);
+
+        const nodeToRead1 = {
+            nodeId: nodeIDArray[1],
+            attributeId: AttributeIds.Value,
+        };
+    
+        resultArray.push((await session.read(nodeToRead1)).value.value);
+
+        const nodeToRead2 = {
+            nodeId: nodeIDArray[2],
+            attributeId: AttributeIds.Value,
+        };
+    
+        resultArray.push((await session.read(nodeToRead2)).value.value);
+
+        const nodeToRead3 = {
+            nodeId: nodeIDArray[3],
+            attributeId: AttributeIds.Value,
+        };
+    
+        resultArray.push((await session.read(nodeToRead3)).value.value);
+
+        const nodeToRead4 = {
+            nodeId: nodeIDArray[4],
+            attributeId: AttributeIds.Value,
+        };
+    
+        resultArray.push((await session.read(nodeToRead4)).value.value);
+
+        const nodeToRead5 = {
+            nodeId: nodeIDArray[5],
+            attributeId: AttributeIds.Value,
+        };
+    
+        resultArray.push((await session.read(nodeToRead5)).value.value);
+
+        const nodeToRead6 = {
+            nodeId: nodeIDArray[6],
+            attributeId: AttributeIds.Value,
+        };
+    
+        resultArray.push((await session.read(nodeToRead6)).value.value);
+
+        const nodeToRead7 = {
+            nodeId: nodeIDArray[7],
+            attributeId: AttributeIds.Value,
+        };
+    
+        resultArray.push((await session.read(nodeToRead7)).value.value);
+
+        const nodeToRead8 = {
+            nodeId: nodeIDArray[8],
+            attributeId: AttributeIds.Value,
+        };
+    
+        resultArray.push((await session.read(nodeToRead8)).value.value);
+
+        
+        
+        return {"statusCode": 200,
+                "message": "Got the status",
+                "producedNodeID": resultArray[0],
+                "currentStateNodeID": resultArray[1],
+                "batchNumberNodeID": resultArray[2],
+                "batchSizeNodeID": resultArray[3],
+                "beerTypeNodeID": resultArray[4],
+                "maintenanceStatusNodeID": resultArray[5],
+                "getCurrentProductionSpeedNodeID": resultArray[6],
+                "defectiveProductsNodeId": resultArray[7],
+                "acceptableProductsNodeId": resultArray[8]};
+    }
+    catch (err) {
+        console.log("Ohh no something went wrong when opening connection ", err);
+        return {"statusCode": 400,
+                "message":"Could not get the maintenace status",
+                "maintenacneStatus": null,
+                "error": err};
+    }finally{
+        // Make sure to close down the session so its possible to connect to it again through another function
+        if(session != null){
+            await stopSession(session);
+        };
+    };
+}
+
 /**
  * The function takes an open session to the machine, writes a value to the state node. 
  *
@@ -37,7 +170,6 @@ const clientOPCUA = OPCUAClient.create({
  * @param command The state that the machine should be changed to
  */
 async function changeToState(session: ClientSession, command) {
-    const stateNodeID = "ns=6;s=::Program:Cube.Command.CntrlCmd"; //Takes an int32
 
     //Setting up the payload to send to the machine
     const stateToWrite = [{
@@ -62,7 +194,6 @@ async function changeToState(session: ClientSession, command) {
  */
 async function changeStateToTrue(session: ClientSession) {
     //Send request to change state
-    const requestChangeCommandNodeID = "ns=6;s=::Program:Cube.Command.CmdChangeRequest"; //Takes a boolean
     let changeStateRequest = true;
 
     // Setting up the payload to send to the machine
@@ -132,7 +263,6 @@ async function stopSession(session: ClientSession) {
  * @param session The current open client session
  */
 async function getCurrentState(session: ClientSession) {
-    const currentStateNodeID = "ns=6;s=::Program:Cube.Status.StateCurrent";
 
     //Reads the current state of the machine, by accessing the node adress and getting the value
     const nodeToRead = {
@@ -144,6 +274,39 @@ async function getCurrentState(session: ClientSession) {
 
     return stateStatus;
 };
+export async function getCurrentStatePublic() {
+    let session = null;
+    try {
+        session = await startSession();
+
+        //Checking to make sure there is an active connection, otherwise throw an error.
+        if(session == null){
+            throw new Error("No session");
+        }
+        const nodeToRead = {
+            nodeId: currentStateNodeID,
+            attributeId: AttributeIds.Value,
+        };
+    
+        const stateStatus = await (await session.read(nodeToRead)).value.value;
+        
+        return {"statusCode": 200,
+                "message": "Got the status",
+                "state": stateStatus};
+    }
+    catch (err) {
+        console.log("Ohh no something went wrong when opening connection ", err);
+        return {"statusCode": 400,
+                "message":"Could not get the maintenace status",
+                "state": null,
+                "error": err};
+    }finally{
+        // Make sure to close down the session so its possible to connect to it again through another function
+        if(session != null){
+            await stopSession(session);
+        };
+    };
+};
 /**
  * The function starts up a session with the machine, writes the values needed to start a production of beers on the machine
  * It recives the values from the api call, and those values gets written to the machine. 
@@ -151,10 +314,6 @@ async function getCurrentState(session: ClientSession) {
 export async function startProduction(beers, productionSpeed, batchnumber, beerType) {
 
     //Saving the adresses of the nodes to be used in this function.
-    const beerTypeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[1].Value";
-    const productionSpeedNodeID = "ns=6;s=::Program:Cube.Command.MachSpeed";
-    const batchSizeNodeID = "ns=6;s=::Program:Cube.Command.Parameter[2].Value";
-    const batchNumberNodeID = "ns=6;s=::Program:Cube.Command.Parameter[0].Value";
     let session = null;
 
     try {
@@ -165,6 +324,10 @@ export async function startProduction(beers, productionSpeed, batchnumber, beerT
         if(session == null){
             throw new Error("No session");
         }
+
+        let state = await getCurrentState(session);
+
+        if(state != 4) throw new Error("Machine not ready for production, please reset the machine to state 4")
 
         // setting the amount of beers to produce
         const beerAmountToWrite = [{
@@ -346,7 +509,7 @@ export async function stopProduction() {
 };
 
 export async function getMaintenanceStatus() {
-    const maintenanceStatusNodeID = "ns=6;s=::Program:Maintenance.Counter";
+
     let session = null;
     try {
         session = await startSession();
@@ -389,8 +552,7 @@ export async function getMaintenanceStatus() {
  * Finally the function will return a JSON object with the information. 
  */
 export async function getProducedAmount() {
-    const defectiveProductsNodeId = "ns=6;s=::Program:Maintenance.State"
-    const acceptableProductsNodeId = "ns=6;s=::Program:Maintenance.State"
+
     let defectiveCount = null; 
     let acceptableCount = null; 
 
@@ -426,8 +588,8 @@ export async function getProducedAmount() {
             //Setting up the json return object
             let returnResult = {"statusCode": 200,
                                 "message": "Got the values", 
-                                "defective": defectiveCount, 
-                                "acceptable": acceptableCount};
+                                "defective": defectiveCount.value.value, 
+                                "acceptable": acceptableCount.value.value};
             return returnResult;
         }else{
             // Returns the statuscode that means bad request and a message

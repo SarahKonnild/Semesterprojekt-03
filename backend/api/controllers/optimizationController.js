@@ -194,9 +194,9 @@ exports.calculateOptimalSpeedUsingValids = function(req,res){
 
         let calcValidMarg = speed - (0.00312*Math.pow(speed,2)+0.0658*speed-3.54);
         if(calcValidMarg >= amount){
-            res.send({"speed":speed});
+            res.status(200).send({"speed":parseFloat(speed.toFixed(2))});
         }else{
-            res.status(400).send('Bad Request');
+            res.status(400).send('Bad Request')
         }
     }
 }

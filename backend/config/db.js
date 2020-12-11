@@ -4,5 +4,5 @@ module.exports = {
     //db: process.env.DB
 
     //Test API without Docker
-    db: "mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test?retryWrites=true&w=majority"
+    db: "mongodb+srv://svane:1234@cluster0.izgdh.mongodb.net/brewster?retryWrites=true&w=majority"
 };

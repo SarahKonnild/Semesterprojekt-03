@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<!-- THIS IS THE DASHBOARD PAGE -->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="CSS/style.css">
+        <link href='https://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script> 
+        <script type="text/javascript" src='JS\production.js'></script>
+    </head>
+    <body>
+        <!--Header with Navigation bar-->  
+        <header>
+            <nav>
+                <ul class="nav__links">
+                    <div class="logo">
+                        <h4>Refslevbæk Bryghus A/S</h4>
+                    </div>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="production.html">Production</a></li>
+                    <li><a href="batchOverview.html">Batch Overview</a></li>
+                </ul>
+            </nav>
+        </header>
+        <section>
+        <div>
+            <div class="container-fluid fill" id="productionContainer">
+                <img src="./images/BeerProduction.jpg">
+                <div class="row">
+                    <!-- SARAH WAS HERE FIRST -->
+                    <div class="col-md-1"></div>
+                    <div class="col-md-3 ml-5 mt-4 bg-dark border border-dark rounded" id="sim">
+                        <h3 class="text-center mt-2" style="color:crimson">Simulation</h3>
+                        <p class="text-left text-center" style="color:white">Here you can check if your desired production parameters are valid:</p>
+                        <form class="needs-validation" novalidate>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text bg-dark form-control text-center" style="color:crimson; width:130px;" for="beerTypes" data-toggle="tooltip" data-placement="top" title="Choose desired beer type">Beer Type</label>
+                                </div>
+                                <select class="custom-select form-control bg-dark" id="simType" style="color:white" required>
+                                    <option value="Pilsner">Pilsner</option>
+                                    <option selected value="Wheat">Wheat (Only supported type)</option>
+                                    <option value="IPA">IPA</option>
+                                    <option value="Stout">Stout</option>
+                                    <option value="Ale">Ale</option>
+                                    <option value="AlcoholFree">Alcohol Free</option>
+                                </select>
+                            </div>
+                            <div class="input-group mb-3 position-relative">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-dark" style="color:crimson;width:130px;" data-toggle="tooltip" data-placement="top" title="Enter batch size in total beers, including invalid beers">Batch Size</span>
+                                </div>
+                                <input type="text" style="color:white" id="simSize" aria-label="batch" class="form-control bg-dark">
+                                <div class="invalid-tooltip">Please enter a valid batch size</div>
+                            </div>
+                            <div class="input-group mb-3 position-relative">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-dark" style="color:crimson; width:130px;" data-toggle="tooltip" data-placement="top" title="Enter minimum amount of valid beers that you need, from the batch size">Valid Beers</span>
+                                </div>
+                                <input type="text" id="amountValid" aria-label="valid" class="form-control bg-dark" style="color:white">
+                                <div class="invalid-tooltip">Please enter a valid amount of beers</div>
+                            </div>
+                            <div class="input-group mb-3 position-relative">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-dark" style="color:crimson; width:130px;" data-toggle="tooltip" data-placement="top" title="Enter the amount of time (in minutes) you have available to produce">Time Allotted</span>
+                                </div>
+                                <input type="text" id="allottedTime" aria-label="time" class="form-control bg-dark" style="color:white">
+                                <div class="invalid-tooltip">Please enter a valid amount of time</div>
+                            </div>
+                            <div class="text-center pb-3 position-relative">
+                                <button type="button" class="btn btn-success" id="simulate">Simulate</button>
+                                <script type="text/javascript">
+                                    document.getElementById("simulate").addEventListener("click", calcOptimal);
+                                    document.getElementById("simulate").addEventListener("click", function(){
+                                        document.getElementById("simType").value = "Wheat";
+                                        document.getElementById("simSize").value = "";
+                                        document.getElementById("amountValid").value ="";
+                                        document.getElementById("allottedTime").value ="";
+                                    })
+                                </script>
+                            </div>
+                            <p class="text-center" style="color:white"> Here you can see the estimated maximum production speed you can employ, while still achieving the minimum amount of valid beers, that you desire.
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-dark" style="color:crimson; width:130px;" data-toggle="tooltip" data-placement="top" id="optiLabel" title="This is the maximum possible speed to produce at, to get the desired result"> Optimal Speed </span>
+                                </div>
+                                <input type="text" id="optimalSpeed" aria-label="optimalSpeed" class="form-control bg-dark" style="color:white" disabled>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-5 mt-4 bg-dark border border-dark rounded">
+                        <h3 class="text-center mt-2" style="color:crimson">Manage Production</h3>
+                        <p class="text-center" style="color:white">Here you can enter the parameters that you wish to produce your next production with.</p>
+                        <div class="row">
+                            <div class="col-12" id="">
+                                <div id="alert"></div>
+                            </div>
+                            <div class="col-6">
+                            <!-- SARAH WAS HERE FIRST <3 -->
+                                <div class="input-group">
+                                    <form class="needs-validation" novalidate>
+                                        <p class="text-left mt-4 mb-1" style="color:white">Enter a batch ID to save under:</p>
+                                            <div class="input-group mb-2 position-relative">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text px-3 bg-dark" style="color:crimson; width:130px;" data-toggle="tooltip" data-placement="top" title="Enter the batch ID">Batch ID</span>
+                                                </div>
+                                                <input type="text" id="batchID" aria-label="batch" class="form-control bg-dark" style="color:white" placeholder="Ex. 21379183" required>
+                                                <div class="invalid-feedback">Please enter a valid batch ID</div>
+                                            </div>
+                                            <p class="text-left mb-1" style="color:white">Choose a beer type:</p>
+                                            <div class="input-group mb-2">
+                                                <div class="input-group-prepend">
+                                                    <label class="input-group-text form-control bg-dark" style="color:crimson; width:130px;" for="beerTypes" data-toggle="tooltip" data-placement="top" title="Choose desired beer type">Beer Type</label>
+                                                </div>
+                                                <select class="custom-select form-control bg-dark" style="color:white" id="beerTypes" required>
+                                                    <option value="empty" id="empty" selected></option>
+                                                    <option value="0" id="pils">Pilsner</option>
+                                                    <option value="1" id="wheat">Wheat</option>
+                                                    <option value="2" id="ipa">IPA</option>
+                                                    <option value="3" id="stout">Stout</option>
+                                                    <option value="4" id="ale">Ale</option>
+                                                    <option value="5" id="af">Alcohol Free</option>
+                                                </select>
+                                            </div>
+                                            <p class="text-left mb-1" style="color:white">Select a batch size (includes error beers):</p>
+                                            <div class="input-group mb-3 position-relative">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-dark" style="color:crimson; width:130px;" data-toggle="tooltip" data-placement="top" title="Enter batch size in total beers, including invalid beers">Batch Size</span>
+                                            </div>
+                                            <input type="text" id="batchSize" aria-label="batch" class="form-control bg-dark" style="color:white" placeholder="Ex. 2000" required>
+                                            <div class="invalid-feedback">Please enter a valid batch size</div>
+                                        </div>
+                                        <p class="text-left mb-1" style="color:white">Choose a speed (measured in beers per minute):</p>
+                                        <div class="input-group mb-2 position-relative">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text bg-dark" style="color:crimson;width:130px;" data-toggle="tooltip" data-placement="top" title="Enter production speed (in beers per minute)">Speed</span>
+                                            </div>
+                                            <input type="text" id="speed" style="color:white" aria-label="speed" class="form-control bg-dark" placeholder="Ex. 20" required>
+                                            <div class="invalid-feedback">Please enter a valid speed</div>
+                                        </div>
+                                        <div class="row mt-4 mr-1 pl-4">
+                                            <div class="col text-center">
+                                                <button type="button" class="btn btn-success" id="start">Start</button>
+                                                <script type="text/javascript">
+                                                    document.getElementById("start").addEventListener("click", startProduction);
+                                                    document.getElementById("start").addEventListener("click", function(){
+                                                        document.getElementById("batchID").value = "";
+                                                        document.getElementById("beerTypes").value = "empty";
+                                                        document.getElementById("batchSize").value = "";
+                                                        document.getElementById("speed").value = "";
+                                                    })
+                                                </script>
+                                            </div> 
+                                            <div class="col text-center">
+                                                <button type="button" class="btn btn-warning" id="reset">Reset</button>
+                                                <script type="text/javascript">
+                                                    document.getElementById("reset").addEventListener("click", resetProduction);
+                                                </script>
+                                            </div>
+                                            <div class="col text-center">
+                                                <button type="button" class="btn btn-danger" id="stop">Stop</button>
+                                                <script type="text/javascript">
+                                                    document.getElementById("stop").addEventListener("click", stopProduction);
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-center mt-4" style="color:white">Your production details:</div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-dark border border-dark rounded" style="color:crimson; width:140px;"> Batch ID </span>
+                                    </div>
+                                    <input type="text" aria-label="showID" class="form-control bg-dark border border-dark rounded" style="color:white" id="showId" disabled>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-dark border border-dark rounded" style="color:crimson; width:140px;"> Batch Size </span>
+                                    </div>
+                                    <input type="text" aria-label="showSize" class="form-control bg-dark border border-dark rounded" style="color:white" id="showSize" disabled>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-dark border border-dark rounded" style="color:crimson; width:140px;"> Beer Type </span>
+                                    </div>
+                                    <input type="text" aria-label="showType" class="form-control bg-dark border border-dark rounded" style="color:white" id="showType" disabled>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-dark border border-dark rounded" style="color:crimson; width:140px;"> Production Speed </span>
+                                    </div>
+                                    <input type="text" aria-label="showSpeed" class="form-control bg-dark border border-dark rounded" style="color:white" id="showSpeed" disabled>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-dark border border-dark rounded" style="color:crimson; width:140px;"> Machine State </span>
+                                    </div>
+                                    <input type="text" aria-label="showState" class="form-control bg-dark border border-dark rounded" style="color:white" id="showState" disabled>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-dark border border-dark rounded" style="color:crimson; width:140px;"> Produced </span>
+                                    </div>
+                                    <input type="text" aria-label="showProduced" class="form-control bg-dark border border-dark rounded" style="color:white" id="showProduced" disabled>
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Footer Section Start-->
+    <footer>
+        <div class="wrapper">
+            <div class="icon github">
+                <span><a href="https://github.com/SarahKonnild/Semesterprojekt-03" target="_blank">
+                    <i class="fab fa-github"></i class=></a></span></div>
+        </div>
+        <span>Created by <a style="color: black;">Group 2 ST</a> | <span class="far fa-copyright"></span> 2020 All
+            Rights reserved.</span>
+    </footer>
+    </footer>
+    </body>
+</html>
