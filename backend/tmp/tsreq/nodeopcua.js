@@ -1,4 +1,9 @@
 "use strict";
+/**
+* @author Simon Quvang
+*
+* The entire TypeScript is implementation enabling the transmission between the brewing machine and the MES system
+*/
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -37,18 +42,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getProducedAmount = exports.getMaintenanceStatus = exports.stopProduction = exports.resetProduction = exports.startProduction = exports.getCurrentStatePublic = exports.getSubValues = void 0;
-// declarationer til node OPC UA
+//Importing dependencies for Node OPC UA
 var node_opcua_1 = require("node-opcua");
 //Setting up constants that are used globally. 
 var stopProductionCommand = 3;
 var resetProductionCommand = 1;
 var startProductionCommand = 2;
-// set up some global values
-var producedAmounts = null;
-var batchID = null;
-var marchineSpeed = null;
-var toProduce = null;
-//node ids 
+//Node IDs 
 var stateNodeID = "ns=6;s=::Program:Cube.Command.CntrlCmd";
 var producedNodeID = "ns=6;s=::Program:Cube.Status.StateCurrent";
 var producedProcessedNodeID = "ns=6;s=::Program:Cube.Admin.ProdProcessedCount";
@@ -65,12 +65,12 @@ var getBatchNumberNodeID = "ns=6;s=::Program:Cube.Status.Parameter[0].Value";
 var getCurrentProductionSpeedNodeID = "ns=6;s=::Program:Cube.Status.MachSpeed";
 var getBeerTypeNodeID = "ns=6;s=::Program:Cube.Admin.Parameter[0].Value";
 var getBatchSizeNodeID = "ns=6;s=::Program:Cube.Status.Parameter[1].Value";
-// Setting up the connection strategy 
+//Setting up the connection strategy 
 var connectionStrategy = {
     initialDelay: 1000,
     maxRetry: 1
 };
-// Creates the OPC UA client that will be used when starting up new sessions to the machine. 
+//Creates the OPC UA client that will be used when starting up new sessions to the machine. 
 var clientOPCUA = node_opcua_1.OPCUAClient.create({
     applicationName: "MyClient",
     connectionStrategy: connectionStrategy,

@@ -1,5 +1,15 @@
+#
+# @author Kasper Svane
+# 
+# Docker-Compose to run the entire MES System
+# Since the server are serving the Client with HTML files then Docker-Compose is never used
+
+# Defining the Docker-Compose format version
 version: "3.7"
+
+#Defining the services
 services:
+  #The MongoDB Service
   mongo:
     container_name: Mongodb
     image: mongo:latest
@@ -7,6 +17,7 @@ services:
     ports:
       - "27017:27017"
 
+  #The API's Service
   api:
     container_name: API
     restart: always
@@ -14,14 +25,15 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - "DB=mongodb+srv://user1:test1234@sem03pg2.0eybl.mongodb.net/test"
+      - "DB=mongodb+srv://svane:1234@cluster0.izgdh.mongodb.net/brewster?retryWrites=true&w=majority"
       - NODE_ENV=development
     volumes:
       - ./backend:/usr/src/app
       - ./backend/usr/src/app/node_modules
     depends_on:
       - mongo
-
+    
+  #The React Service
   client:
     container_name: React
     build: ./frontend/

@@ -1,32 +1,24 @@
-// declarationer til node OPC UA
+/** 
+* @author Simon Quvang
+* 
+* The entire TypeScript is implementation enabling the transmission between the brewing machine and the MES system
+*/
+
+//Importing dependencies for Node OPC UA
 import {
     OPCUAClient,
     MessageSecurityMode, SecurityPolicy,
     AttributeIds,
-    makeBrowsePath,
-    ClientSubscription,
-    TimestampsToReturn,
-    MonitoringParametersOptions,
-    ReadValueIdLike,
-    ClientMonitoredItem,
-    DataValue,
     ClientSession,
     DataType
 } from "node-opcua";
-
 
 //Setting up constants that are used globally. 
 const stopProductionCommand = 3;
 const resetProductionCommand = 1;
 const startProductionCommand = 2;
 
-// set up some global values
-let producedAmounts = null;
-let batchID = null;
-let marchineSpeed = null;
-let toProduce = null;
-
-//node ids 
+//Node IDs 
 const stateNodeID = "ns=6;s=::Program:Cube.Command.CntrlCmd";
 const producedNodeID = "ns=6;s=::Program:Cube.Status.StateCurrent";
 const producedProcessedNodeID = "ns=6;s=::Program:Cube.Admin.ProdProcessedCount";
@@ -45,13 +37,14 @@ const getBeerTypeNodeID = "ns=6;s=::Program:Cube.Admin.Parameter[0].Value";
 const getBatchSizeNodeID = "ns=6;s=::Program:Cube.Status.Parameter[1].Value";
 
 
-// Setting up the connection strategy 
-const connectionStrategy = {
+//Setting up the connection strategy 
+const connectionStrategy = 
+{
     initialDelay: 1000,
     maxRetry: 1
 };
 
-// Creates the OPC UA client that will be used when starting up new sessions to the machine. 
+//Creates the OPC UA client that will be used when starting up new sessions to the machine. 
 const clientOPCUA = OPCUAClient.create({
     applicationName: "MyClient",
     connectionStrategy: connectionStrategy,

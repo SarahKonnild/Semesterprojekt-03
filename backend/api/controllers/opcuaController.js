@@ -1,5 +1,6 @@
 
 const nodeOPCUA = require ('../../nodeopcua.ts');
+
 /**
  * @author Simon Quvang
  * 
@@ -62,12 +63,25 @@ exports.getProductionCount = async function(req,res){
     res.end;
 }
 
+/**
+ * @author Simon Quvang
+ * 
+ * @param res this parameter will send back a JSON formatted object of the current machine state
+*/
 exports.getCurrentStatePublic = async function(req,res){
     returnValue = await nodeOPCUA.getCurrentStatePublic();
     res.send(returnValue);
     res.end;
 }
 
+/**
+ * @author Simon Quvang
+ * 
+ * 
+ * @param req this parameter must include a JSON formatted object: 
+ * {"producedNodeID":int, "currentStateNodeID":int, "batchNumberNodeID":int, "batchSizeNodeID":int
+ * beerTypeNodeID":int, maintenanceStatusNodeID":int, getCurrentProductionSpeedNodeID":int, defectiveProductsNodeId":int, acceptableProductsNodeId":int} 
+*/
 exports.getSubValues = async function(req,res){
     returnValue = await nodeOPCUA.getSubValues();
     res.send(returnValue);

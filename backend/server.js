@@ -1,3 +1,23 @@
+/**
+ * @author Kasper Svane
+ * 
+ * The entire server is setup from here
+ * 
+ * @req To start the MES System: 
+ * @req 1. Open the terminal
+ * @req 2. Write "cd backend" to access the backend folder
+ * @req 3. Write "npm start", nodemon is implemented so if the server crashes then the server will automatically restart itself
+ * @req 4. Open a Chrome browser for best use of the MES System and write "http://localhost:5000/" to access the MES System
+ * @req 5. Enjoy
+ * 
+ * @description Set the server to listen to port 5000
+ * @description Setup the configuration to MongoDB with a prompt to the user that the connection is connected
+ * @description Implemented the required Middleware to work across different port (cors) and the API tool (Express)
+ * @description Implemented the API Connections from the API folder
+ * @description Setup the static files (HTML, CSS, JavaScript and images) to be served from the server
+ * 
+*/
+
 //Importing dependencies
 const express = require('express');
 const mongoose = require('mongoose');

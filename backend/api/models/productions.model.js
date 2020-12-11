@@ -1,3 +1,14 @@
+/**
+ * @author Kasper Svane
+ * 
+ * The mongoose Schema for Productions to MongoDB
+ * 
+ * @param req All the variables in the production Schema are need to store data to the database
+ * 
+ * Timestamps is an extra feature when data is stored to the database to see when the data was stored to the database 
+ * and when the current data was last modified
+*/
+
 const mongoose = require('mongoose');
 
 //Importing Types for Schema 

@@ -1,8 +1,16 @@
+/**
+ * @author Kasper Svane
+ * 
+ * The mongoose Schema for Batches to MongoDB
+ * 
+ * @param req batchNumber, beerType, batchSize, productionSpeed must be used in order to store data to the database
+ * @param req Since the simulatation and the physical machine are connected to the application, acceptable and defects beers are not required
+*/
+
 const mongoose = require('mongoose');
 
 //Importing Types for Schema 
 const Int32 = require('mongoose-int32');
-const Double = require('@mongoosejs/double');
 
 const Schema = mongoose.Schema;
 

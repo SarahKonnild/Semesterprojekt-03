@@ -1,16 +1,24 @@
+/** 
+ * @author Kasper Svane, Simon Quvang and Sarah Manon Pradel
+ * 
+ * Javascript for Production HTML
+*/
 
+//Alert with close function
 $(document).ready(function () {
     $(".close").click(function () {
         $("#myAlert").alert("close");
     });
 });
 
+//Enable Tooltip
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
 })
 
 document.addEventListener("DOMContentLoaded", setupRefresh, false);
 
+//Get "Live Data" from the API
 function setupRefresh() {
     var requestOptions = {
         method: 'GET',
@@ -25,6 +33,7 @@ function setupRefresh() {
     setTimeout(setupRefresh, 5000); // milliseconds
 }
 
+//Fetch the getSubValues API
 function fetchData(params) {
     var requestOptions = {
         method: 'GET',
@@ -37,6 +46,7 @@ function fetchData(params) {
         .catch(error => console.log('error', error));
 };
 
+//Function to insert all values from the getSubValues API into the table and the table setup
 function addDataToTable(jsonData) {
     jsonData = JSON.parse(jsonData)
 
@@ -51,13 +61,12 @@ function addDataToTable(jsonData) {
     dataTable.push(jsonData.currentStateNodeID);
     dataTable.push(jsonData.producedNodeID);
 
-    console.log(dataTable);
     for (let i = 0; i < valueID.length; i++) {
         document.getElementById(valueID[i]).value = dataTable[i];
     }
-    //use the data here
 }
 
+//The function for all the calculation for the Simulator
 function calcOptimal() {
     let batchSize = parseInt(document.getElementById("simSize").value);
     let amountValid = parseInt(document.getElementById("amountValid").value);
@@ -92,10 +101,12 @@ function calcOptimal() {
         });
 }
 
+//Change the border for correct or impossible optimal speed in the Simulator
 function recolor(element, color) {
     document.getElementById(element).style.borderColor = color;
 }
 
+//Save all the inputted data from the "Manage Production" to the database
 function saveToDatabase(raw, interval) {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -113,27 +124,7 @@ function saveToDatabase(raw, interval) {
         .catch(error => console.log('error', error));
 }
 
-// const interval = setInterval(function(raw) {
-//     let data = raw;
-//     console.log(data);
-//     var requestOptions = {
-//         method: 'GET',
-//         redirect: 'follow'
-//       };
-
-//       fetch("http://localhost:5000/brewster/machineStatus", requestOptions)
-//         .then(response => response.text())
-//         .then(result => {
-//             let json = JSON.parse(result)
-//             if(json.statusCode != 200) throw new Error("not supported");
-//             if(json.state == 17) {
-//                 console.log(raw);
-//                 saveToDatabase(raw)};
-//             console.log(JSON.parse(result).state)})
-//         .catch(error => console.log('error', error));
-//   }, 5000);
-
-
+//Start the production
 function startProduction() {
     let batchID = parseInt(document.getElementById("batchID").value);
     let beerType = document.getElementById("beerTypes").value;
@@ -196,6 +187,7 @@ function startProduction() {
         .catch(error => myAlert("The production could not be started. \n" + error, "alert-danger"));
 }
 
+//Stop the Production
 function stopProduction() {
     let requestOptions = {
         method: 'GET',
@@ -208,6 +200,7 @@ function stopProduction() {
         .catch(error => myAlert("The production could not be stopped. \n" + error, "alert-danger"));
 }
 
+//Reset the Production
 function resetProduction() {
     let requestOptions = {
         method: 'GET',
@@ -219,6 +212,7 @@ function resetProduction() {
         .catch(error => myAlert("The machine could not be reset. \n" + error, "alert-danger"));
 }
 
+//Alert to be displayed
 function myAlert(message, alerttype) {
     $('#alert').append('<div id="alertdiv" class="alert ' + alerttype + ' alert-dismissible fade show" role="alert">' + message + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
     $('#alert').css("display", "");

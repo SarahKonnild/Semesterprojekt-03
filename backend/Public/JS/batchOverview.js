@@ -1,13 +1,20 @@
+/** 
+ * @author Kasper Svane, Simon Quvang and Sarah Manon Pradel
+ * 
+ * Javascript for Batch Overview HTML
+*/
+
 document.addEventListener("DOMContentLoaded", get_json_data, false);
 
+//Fetch all the batches produced from the database
 function get_json_data() {
   let getBatchesURL = "http://localhost:5000/batches/";
   fetch(getBatchesURL)
-    .then((res) => res.json())
-    .then((json) =>
-      append_json(json));
-
+  .then((res) => res.json())
+  .then((json) => append_json(json));
 }
+
+//Function to insert all batches data into the table and the table setup
 function append_json(myBooks) {
 
   // EXTRACT VALUE FOR HTML HEADER.
@@ -22,7 +29,6 @@ function append_json(myBooks) {
   table.appendChild(thead)
 
   // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
-
   let tr = thead.insertRow(-1); // TABLE ROW.
 
   for (let i = 0; i < col.length; i++) {
@@ -30,6 +36,7 @@ function append_json(myBooks) {
     th.innerHTML = col[i];
     tr.appendChild(th);
   }
+
   let tbody = document.createElement('tbody')
   table.classList.add('table-hover')
   table.appendChild(tbody)
@@ -62,7 +69,6 @@ function append_json(myBooks) {
 
         default:
           break;
-
       }
     }
   }
@@ -71,4 +77,5 @@ function append_json(myBooks) {
   var divContainer = document.getElementById("mytable");
   divContainer.innerHTML = "";
   divContainer.appendChild(table);
+  
 }

@@ -1,4 +1,8 @@
 # Semesterprojekt-03
 
-SpringbootApp mappen skal overføres + ændringerne til domænet; bare kopiér hele domænemappen og indsæt + IFacade filen, så skulle det gerne være finno. 
-Også kopiér server.js filen. 
+To start the MES System
+1. Open the terminal
+2. Write "cd backend" to access the backend folder
+3. Write "npm start", nodemon is implemented so if the server crashes then the server will automatically restart itself
+4. Open a Chrome browser for best use of the MES System and write "http://localhost:5000/" to access the MES System
+5. Enjoy

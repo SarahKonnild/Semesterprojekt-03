@@ -1,9 +1,17 @@
-// Slide-Up script
+/** 
+ * @author Kasper Svane, Simon Quvang and Sarah Manon Pradel
+ * 
+ * Javascript for Dashboard HTML
+*/
+
+// Slide-Down script for the button
 function scrollWin(x, y) {
     window.scrollBy(x, y);
 }
+
 document.addEventListener("DOMContentLoaded", setupRefresh, false);
 
+//Get "Live Data" from the API
 function setupRefresh() {
     var requestOptions = {
         method: 'GET',
@@ -18,6 +26,7 @@ function setupRefresh() {
     setTimeout(setupRefresh, 5000); // milliseconds
 }
 
+//Function to insert all values from the getSubValues API into the table and the table setup
 function addDataToTable(jsonData) {
 
     jsonData = JSON.parse(jsonData)
@@ -37,24 +46,6 @@ function addDataToTable(jsonData) {
     dataTable.push(jsonData.maintenanceStatusNodeID)
 
     for (let index = 0; index < cardIDs.length; index++) {
-        // let div = document.createElement("div")
-        // div.classList.add('col-sm-4')
-        // let card = document.createElement('div')
-        // card.classList.add('card')
-        // div.appendChild(card)
-        // let cardBody = document.createElement('div')
-        // cardBody.classList.add('card-body')
-        // card.append(cardBody)
-        // let h5 = document.createElement('h5')
-        // h5.classList('card-title')
-        // cardBody.appendChild(h5)
-        // let p = document.createElement('p')
-        // p.classList('card-text')
-        // cardBody.appendChild(p)
-
         document.getElementById(cardIDs[index]).textContent = dataTable[index]
-        // var divContainer = document.getElementById("test");
-        // divContainer.innerHTML = "";
-        // divContainer.appendChild(div);
     }
 }

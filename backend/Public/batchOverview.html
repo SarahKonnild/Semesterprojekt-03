@@ -1,20 +1,27 @@
 <!DOCTYPE html>
-<!-- THIS IS THE DASHBOARD PAGE -->
+<!-- 
+* @author Kasper Svane, Simon Quvang and Sarah Manon Pradel
+* 
+* THIS IS THE BATCH OVERVIEW PAGE
+-->
 <html>
     <head>
+        <!-- Meta Data -->
         <meta charset="utf-8">
         <title>Batch Overview</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Bootstrap -->
+        <!-- CSS and Bootstrap -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="CSS/style.css">
         <link href='https://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
+        <!--JavaScript-->
         <script type="text/javascript" src='JS\batchOverview.js'></script>
     </head>
+    
     <body>
         <!--Header with Navigation bar--> 
         <header>
@@ -29,25 +36,22 @@
                 </ul>
             </nav>
         </header>
-    
+        
+        <!--Table with the database data-->
         <section class="batchoverview">
-        <div class="col-md-7 mx-auto pt-5" >
-            <table class='table col-md-8 mx-auto shadow rounded' id='mytable'>
-            </table>
-        </div>
-    </section>
+            <div class="col-md-7 mx-auto pt-5" >
+                <table class='table col-md-8 mx-auto shadow rounded' id='mytable'> </table>
+            </div>
+        </section>
 
         <!--Footer Section Start-->
-    <footer>
-        <div class="wrapper">
-
-            <div class="icon github">
-                <span><a href="https://github.com/SarahKonnild/Semesterprojekt-03" target="_blank"> <i class="fab fa-github"></i class=></a></span></div>
-        </div>
-
-
-        <span>Created by <a style="color: black;">Group 2 ST</a> | <span class="far fa-copyright"></span> 2020 All
-            Rights reserved.</span>
-    </footer>
+        <footer>
+            <div class="wrapper">
+                <div class="icon github">
+                    <span><a href="https://github.com/SarahKonnild/Semesterprojekt-03" target="_blank"> <i class="fab fa-github"></i class=></a></span>
+                </div>
+            </div>
+            <span>Created by <a style="color: black;">Group 2 ST</a> | <span class="far fa-copyright"></span> 2020 All Rights reserved.</span>
+        </footer>
     </body>
 </html>
